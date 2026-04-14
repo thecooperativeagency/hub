@@ -412,23 +412,27 @@
     <section>
         <h2>🤖 AI Agents Status</h2>
         <div class="health-panel">
-            <div class="link-list" style="font-family: 'JetBrains Mono', monospace; font-size: 0.85rem;">
-                <div class="link-item" style="display: flex; justify-content: space-between; background: none; border-bottom: 1px solid #222; border-radius: 0;">
-                    <span>Luc (Main) — Claude Sonnet 4.6</span>
-                    <span style="color: var(--success);">ACTIVE ✅</span>
+            <div id="agent-status-content" style="font-family: 'JetBrains Mono', monospace; font-size: 0.85rem;">
+                <div style="color: var(--text-dim); text-align: center; padding: 1rem;">Loading agent stats...</div>
+            </div>
+            
+            <div id="run-feed-container" style="margin-top: 1.5rem; padding-top: 1.5rem; border-top: 1px solid #222;">
+                <div style="font-size: 0.75rem; color: var(--text-dim); margin-bottom: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em;">Recent Subagent Runs (Last 10)</div>
+                <div id="recent-runs-feed" style="max-height: 200px; overflow-y: auto; font-family: 'JetBrains Mono', monospace; font-size: 0.8rem;">
+                    <!-- Runs injected here -->
                 </div>
-                <div class="link-item" style="display: flex; justify-content: space-between; background: none; border-bottom: 1px solid #222; border-radius: 0;">
-                    <span>Scout (Research) — xai/grok-4-1-fast</span>
-                    <span style="color: var(--text-dim);">ON CALL</span>
+            </div>
+
+            <div class="link-list" style="margin-top: 1rem; font-family: 'JetBrains Mono', monospace; font-size: 0.85rem;">
+                <div class="link-item" style="display: flex; justify-content: space-between; background: none; border-radius: 0; padding: 0.75rem 0;">
+                    <span>Kalshi Scanner — Every 30min</span>
+                    <span style="color: var(--warning);">PAPER MODE: ACTIVE 📝</span>
                 </div>
-                <div class="link-item" style="display: flex; justify-content: space-between; background: none; border-bottom: 1px solid #222; border-radius: 0;">
-                    <span>Wrench (Code) — google/gemini-3-flash</span>
-                    <span style="color: var(--text-dim);">ON CALL</span>
-                </div>
-                <div class="link-item" style="display: flex; justify-content: space-between; background: none; border-radius: 0;">
-                    <span>Kalshi Scanner — Every 30m</span>
-                    <span style="color: var(--warning);">PAPER MODE 📝</span>
-                </div>
+            </div>
+
+            <div class="health-footer" style="margin-top: 1rem;">
+                <span id="agent-refresh-status">Auto-refreshes every 60s</span>
+                <span id="agent-last-updated">Last updated: --:--:--</span>
             </div>
         </div>
     </section>
@@ -501,8 +505,97 @@
 
     setInterval(updateClock, 1000);
     setInterval(fetchHealth, 30000);
+    setInterval(fetchAgents, 60000);
     updateClock();
     fetchHealth();
+    fetchAgents();
+
+    async function fetchAgents() {
+        const agentContent = document.getElementById('agent-status-content');
+        const runsFeed = document.getElementById('recent-runs-feed');
+        const refreshStatus = document.getElementById('agent-refresh-status');
+        const lastUpdated = document.getElementById('agent-last-updated');
+
+        try {
+            const response = await fetch('https://macmini.thecoopbrla.com/agents');
+            if (!response.ok) throw new Error('Unavailable');
+            const data = await response.json();
+
+            // Model Mapping
+            const modelConfig = {
+                'google/gemini-3-flash': { name: 'Gemini', color: '#3498db', role: 'Wrench ✅' },
+                'xai/grok-4-1-fast': { name: 'Grok', color: '#e67e22', role: 'Scout ✅' },
+                'anthropic/claude-sonnet-4-6': { name: 'Sonnet', color: '#9b59b6', role: 'Luc (main) ✅' }
+            };
+
+            // Part 1: Model Compute Summary
+            let summaryHtml = '';
+            const models = Object.keys(data.modelStats);
+            
+            // Ensure main agent is listed if missing from stats
+            if (!data.modelStats['anthropic/claude-sonnet-4-6']) {
+                models.unshift('anthropic/claude-sonnet-4-6');
+            }
+
+            models.forEach(modelId => {
+                const stats = data.modelStats[modelId] || { count: 0, errors: 0 };
+                const config = modelConfig[modelId] || { name: modelId.split('/').pop(), color: '#94a3b8', role: '<span style="color:var(--danger)">⚠️ Unknown agent</span>' };
+                
+                summaryHtml += `
+                    <div style="display: flex; justify-content: space-between; align-items: center; padding: 0.75rem 0; border-bottom: 1px solid #222;">
+                        <div style="display: flex; align-items: center; gap: 10px;">
+                            <span style="background: ${config.color}; color: white; padding: 2px 6px; border-radius: 4px; font-size: 0.7rem; font-weight: 700;">${config.name.toUpperCase()}</span>
+                            <span>${config.role}</span>
+                        </div>
+                        <div style="display: flex; gap: 12px; font-size: 0.8rem;">
+                            <span>RUNS: <b style="color: var(--text-main)">${stats.count}</b></span>
+                            ${stats.errors > 0 ? `<span style="color: var(--danger)">ERRORS: <b>${stats.errors}</b></span>` : ''}
+                        </div>
+                    </div>`;
+            });
+            agentContent.innerHTML = summaryHtml;
+
+            // Part 2: Recent Run Feed
+            let runsHtml = '';
+            const recentRuns = (data.recentRuns || []).slice(0, 10);
+            
+            if (recentRuns.length === 0) {
+                runsHtml = '<div style="color: #555; padding: 1rem; text-align: center;">No recent subagent activity</div>';
+            } else {
+                recentRuns.forEach(run => {
+                    const time = new Date(run.time).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false });
+                    const config = modelConfig[run.model] || { name: 'UNK' };
+                    const dotColor = run.status === 'subagent-complete' ? 'var(--success)' : 'var(--danger)';
+                    const taskSnippet = run.task.length > 50 ? run.task.substring(0, 50) + '...' : run.task;
+
+                    runsHtml += `
+                        <div style="display: flex; gap: 12px; padding: 6px 0; border-bottom: 1px solid #111; align-items: center;">
+                            <span style="color: #555; width: 45px; flex-shrink: 0;">${time}</span>
+                            <span style="width: 60px; flex-shrink: 0; font-weight: 600;">${config.name}</span>
+                            <span style="width: 10px; height: 10px; border-radius: 50%; background: ${dotColor}; flex-shrink: 0;"></span>
+                            <span style="color: var(--text-dim); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${taskSnippet}</span>
+                        </div>`;
+                });
+            }
+            runsFeed.innerHTML = runsHtml;
+
+            // Update footer
+            const now = new Date();
+            lastUpdated.innerText = `Last updated: ${now.toTimeString().split(' ')[0]}`;
+            refreshStatus.innerText = 'Auto-refreshes every 60s';
+            refreshStatus.style.color = '';
+            agentContent.style.opacity = '1';
+            runsFeed.style.opacity = '1';
+
+        } catch (error) {
+            console.error('Agent fetch failed:', error);
+            agentContent.innerHTML = '<div style="color: #555; text-align: center; padding: 1rem;">Agent data unavailable</div>';
+            refreshStatus.innerText = 'Agent API unreachable';
+            refreshStatus.style.color = 'var(--text-dim)';
+            agentContent.style.opacity = '0.5';
+            runsFeed.style.opacity = '0.5';
+        }
+    }
 
     async function resetMac() {
       const btn = document.querySelector('button[onclick="resetMac()"]');
