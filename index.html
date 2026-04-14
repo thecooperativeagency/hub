@@ -308,6 +308,7 @@
             <div class="health-footer">
                 <span id="refresh-status">Auto-refreshes every 30s</span>
                 <span id="last-updated">Last updated: --:--:--</span>
+                <button onclick="resetMac()" style="margin-left:12px;padding:4px 12px;background:#c0392b;border:none;border-radius:6px;color:white;font-size:11px;font-weight:600;cursor:pointer;" title="Restart heavy services to free RAM">🔄 Reset RAM</button>
             </div>
         </div>
     </section>
@@ -502,6 +503,21 @@
     setInterval(fetchHealth, 30000);
     updateClock();
     fetchHealth();
+
+    async function resetMac() {
+      const btn = document.querySelector('button[onclick="resetMac()"]');
+      btn.textContent = '⏳ Resetting...';
+      btn.disabled = true;
+      try {
+        const r = await fetch('https://macmini.thecoopbrla.com/reset', { method: 'POST' });
+        const d = await r.json();
+        btn.textContent = '✅ Done';
+        setTimeout(() => { btn.textContent = '🔄 Reset RAM'; btn.disabled = false; fetchHealth(); }, 3000);
+      } catch(e) {
+        btn.textContent = '❌ Failed';
+        setTimeout(() => { btn.textContent = '🔄 Reset RAM'; btn.disabled = false; }, 3000);
+      }
+    }
 </script>
 
 </body>
