@@ -277,37 +277,37 @@
     <section>
         <h2>🖥️ Luc's Mac Mini — System Health</h2>
         <div class="health-panel">
-            <div class="health-grid">
+            <div id="health-content" class="health-grid">
                 <div>
                     <span class="metric-label">CPU USAGE</span>
-                    <span class="metric-value">14%</span>
+                    <span id="cpu-value" class="metric-value">--%</span>
                     <div class="progress-container">
-                        <div class="progress-bar" style="width: 14%; background: var(--success);"></div>
+                        <div id="cpu-bar" class="progress-bar" style="width: 0%; background: var(--success);"></div>
                     </div>
                 </div>
                 <div>
                     <span class="metric-label">MEMORY USAGE</span>
-                    <span class="metric-value">42%</span>
+                    <span id="mem-value" class="metric-value">--%</span>
                     <div class="progress-container">
-                        <div class="progress-bar" style="width: 42%; background: var(--warning);"></div>
+                        <div id="mem-bar" class="progress-bar" style="width: 0%; background: var(--success);"></div>
                     </div>
                 </div>
                 <div>
                     <span class="metric-label">DISK USAGE</span>
-                    <span class="metric-value">12GB / 228GB</span>
+                    <span id="disk-value" class="metric-value">--GB / --GB</span>
                     <div class="progress-container">
-                        <div class="progress-bar" style="width: 8%; background: var(--success);"></div>
+                        <div id="disk-bar" class="progress-bar" style="width: 0%; background: var(--success);"></div>
                     </div>
                 </div>
                 <div>
                     <span class="metric-label">SYSTEM STATUS</span>
-                    <span class="metric-value"><span class="status-indicator"></span> ONLINE</span>
-                    <span style="font-size: 0.75rem; color: #555;">UPTIME: Running since boot</span>
+                    <span id="status-text" class="metric-value"><span class="status-indicator"></span> ONLINE</span>
+                    <span id="uptime-value" style="font-size: 0.75rem; color: #555;">UPTIME: Loading...</span>
                 </div>
             </div>
             <div class="health-footer">
-                <span>Auto-refreshes every 30s</span>
-                <span>Note: Live metrics require local API server</span>
+                <span id="refresh-status">Auto-refreshes every 30s</span>
+                <span id="last-updated">Last updated: --:--:--</span>
             </div>
         </div>
     </section>
@@ -455,8 +455,53 @@
         document.getElementById('live-clock').innerText = now.toLocaleString('en-US', options);
     }
 
+    async function fetchHealth() {
+        try {
+            const response = await fetch('https://macmini.thecoopbrla.com/health');
+            if (!response.ok) throw new Error('Offline');
+            const data = await response.json();
+            
+            // Update values
+            document.getElementById('cpu-value').innerText = `${data.cpu.toFixed(1)}%`;
+            document.getElementById('mem-value').innerText = `${data.memory.percent}%`;
+            document.getElementById('disk-value').innerText = `${data.disk.used}GB / ${data.disk.total}GB`;
+            document.getElementById('uptime-value').innerText = `UPTIME: ${data.uptime}`;
+            document.getElementById('status-text').innerHTML = `<span class="status-indicator"></span> ${data.status.toUpperCase()}`;
+            
+            // Update bars and colors
+            const updateBar = (id, percent) => {
+                const bar = document.getElementById(id);
+                bar.style.width = `${percent}%`;
+                if (percent > 85) bar.style.background = 'var(--danger)';
+                else if (percent > 70) bar.style.background = 'var(--warning)';
+                else bar.style.background = 'var(--success)';
+            };
+            
+            updateBar('cpu-bar', data.cpu);
+            updateBar('mem-bar', data.memory.percent);
+            updateBar('disk-bar', data.disk.percent);
+            
+            // Reset status styles
+            document.getElementById('health-content').style.opacity = '1';
+            document.getElementById('refresh-status').innerText = 'Auto-refreshes every 30s';
+            document.getElementById('refresh-status').style.color = '';
+            
+            // Update timestamp
+            const now = new Date();
+            document.getElementById('last-updated').innerText = `Last updated: ${now.toTimeString().split(' ')[0]}`;
+            
+        } catch (error) {
+            console.error('Health fetch failed:', error);
+            document.getElementById('health-content').style.opacity = '0.5';
+            document.getElementById('refresh-status').innerText = 'Mac Mini offline or unreachable';
+            document.getElementById('refresh-status').style.color = 'var(--danger)';
+        }
+    }
+
     setInterval(updateClock, 1000);
+    setInterval(fetchHealth, 30000);
     updateClock();
+    fetchHealth();
 </script>
 
 </body>
