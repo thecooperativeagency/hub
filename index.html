@@ -408,7 +408,117 @@
         </div>
     </section>
 
-    <!-- SECTION 5: AI Agents Status -->
+    <!-- SECTION 5: The Crew -->
+    <section>
+        <h2>🤖 The Crew</h2>
+        <style>
+            .crew-grid {
+                display: grid;
+                grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+                gap: 1.5rem;
+            }
+            .crew-card {
+                background: var(--card-bg);
+                border: 1px solid var(--border-color);
+                border-radius: 12px;
+                padding: 1.5rem;
+                text-align: center;
+                transition: transform 0.2s ease;
+            }
+            .crew-card:hover {
+                transform: translateY(-5px);
+            }
+            .crew-avatar {
+                width: 100px;
+                height: 100px;
+                border-radius: 8px;
+                margin-bottom: 1rem;
+                object-fit: cover;
+                border: 2px solid transparent;
+            }
+            .glow-purple { border-color: #9b59b6; box-shadow: 0 0 10px rgba(155, 89, 182, 0.3); }
+            .glow-orange { border-color: #e67e22; box-shadow: 0 0 10px rgba(230, 126, 34, 0.3); }
+            .glow-amber  { border-color: #f39c12; box-shadow: 0 0 10px rgba(243, 156, 18, 0.3); }
+            .glow-pink   { border-color: #e91e63; box-shadow: 0 0 10px rgba(233, 30, 99, 0.3); }
+
+            .crew-name {
+                font-weight: 800;
+                font-size: 1.1rem;
+                margin-bottom: 0.25rem;
+                letter-spacing: 0.05em;
+            }
+            .crew-role {
+                font-size: 0.85rem;
+                color: var(--text-dim);
+                margin-bottom: 0.75rem;
+            }
+            .model-badge {
+                display: inline-block;
+                background: rgba(255, 255, 255, 0.05);
+                padding: 2px 8px;
+                border-radius: 10px;
+                font-family: 'JetBrains Mono', monospace;
+                font-size: 0.7rem;
+                color: var(--text-dim);
+                margin-bottom: 1rem;
+            }
+            .status-row {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                gap: 6px;
+                font-size: 0.75rem;
+                font-weight: 700;
+                text-transform: uppercase;
+            }
+            .dot-active { background: var(--success); box-shadow: 0 0 8px var(--success); }
+            .dot-oncall { background: #3498db; box-shadow: 0 0 8px #3498db; }
+        </style>
+        <div class="crew-grid">
+            <!-- LUC -->
+            <div class="crew-card">
+                <img src="avatars/luc-avatar.png" alt="Luc" class="crew-avatar glow-purple">
+                <div class="crew-name">LUC</div>
+                <div class="crew-role">Chief Orchestrator</div>
+                <div class="model-badge">anthropic/claude-sonnet-4-6</div>
+                <div class="status-row">
+                    <span class="status-indicator dot-active"></span> ACTIVE
+                </div>
+            </div>
+            <!-- WRENCH -->
+            <div class="crew-card">
+                <img src="avatars/wrench-avatar.jpg" alt="Wrench" class="crew-avatar glow-orange">
+                <div class="crew-name">WRENCH</div>
+                <div class="crew-role">Code & Builds</div>
+                <div class="model-badge">google/gemini-3-flash</div>
+                <div class="status-row">
+                    <span class="status-indicator dot-oncall"></span> ON CALL
+                </div>
+            </div>
+            <!-- SCOUT -->
+            <div class="crew-card">
+                <img src="avatars/scout-avatar.png" alt="Scout" class="crew-avatar glow-amber">
+                <div class="crew-name">SCOUT</div>
+                <div class="crew-role">Research & Intel</div>
+                <div class="model-badge">xai/grok-4-1-fast</div>
+                <div class="status-row">
+                    <span class="status-indicator dot-oncall"></span> ON CALL
+                </div>
+            </div>
+            <!-- PIXIE -->
+            <div class="crew-card">
+                <img src="avatars/pixie-avatar.jpg" alt="Pixie" class="crew-avatar glow-pink">
+                <div class="crew-name">PIXIE</div>
+                <div class="crew-role">Image Generation</div>
+                <div class="model-badge">google/gemini-3-pro-image-preview</div>
+                <div class="status-row">
+                    <span class="status-indicator dot-oncall"></span> ON CALL
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SECTION 6: AI Agents Status -->
     <section>
         <h2>🤖 AI Agents Status</h2>
         <div class="health-panel">
@@ -525,11 +635,25 @@
             const modelConfig = {
                 'google/gemini-3-flash': { name: 'Gemini', color: '#3498db', role: 'Wrench ✅' },
                 'xai/grok-4-1-fast': { name: 'Grok', color: '#e67e22', role: 'Scout ✅' },
-                'anthropic/claude-sonnet-4-6': { name: 'Sonnet', color: '#9b59b6', role: 'Luc (main) ✅' }
+                'anthropic/claude-sonnet-4-6': { name: 'Sonnet', color: '#9b59b6', role: 'Luc (main) ✅' },
+                'google/gemini-3-pro-image-preview': { name: 'Pixie', color: '#f1c40f', role: 'Image Gen ✅' }
             };
 
             // Part 1: Model Compute Summary
             let summaryHtml = '';
+            
+            // Add Pixie (Image Generator) - Static entry as requested
+            summaryHtml += `
+                <div style="display: flex; justify-content: space-between; align-items: center; padding: 0.75rem 0; border-bottom: 1px solid #222;">
+                    <div style="display: flex; align-items: center; gap: 10px;">
+                        <span style="background: #f1c40f; color: black; padding: 2px 6px; border-radius: 4px; font-size: 0.7rem; font-weight: 700;">PIXIE</span>
+                        <span>Image generation — marketing assets, avatars, hero images, social visuals</span>
+                    </div>
+                    <div style="display: flex; gap: 12px; font-size: 0.8rem;">
+                        <span style="color: var(--success); font-weight: 700;">ON CALL</span>
+                    </div>
+                </div>`;
+
             const models = Object.keys(data.modelStats);
             
             // Ensure main agent is listed if missing from stats
