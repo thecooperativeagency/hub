@@ -48,7 +48,9 @@
 
         /* Header */
         header {
-            padding: 3rem 0 1.5rem;
+            padding: 3rem 0;
+            border-bottom: 1px solid var(--border-color);
+            margin-bottom: 3rem;
             display: flex;
             align-items: center;
             justify-content: space-between;
@@ -76,44 +78,6 @@
             font-family: 'JetBrains Mono', monospace;
             color: var(--text-dim);
             font-size: 0.9rem;
-        }
-
-        /* Quick Access Bar */
-        .quick-access {
-            display: flex;
-            justify-content: flex-end;
-            align-items: center;
-            gap: 0.25rem;
-            padding: 0.5rem 0 1.5rem;
-            border-bottom: 1px solid var(--border-color);
-            margin-bottom: 3rem;
-            flex-wrap: wrap;
-        }
-
-        .quick-access a {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.4rem;
-            padding: 0.35rem 0.75rem;
-            font-size: 0.8rem;
-            font-weight: 500;
-            color: var(--text-dim);
-            border-radius: 6px;
-            border: 1px solid transparent;
-        }
-
-        .quick-access a:hover {
-            color: var(--text-main);
-            background: rgba(255, 255, 255, 0.04);
-            border-color: var(--border-color);
-        }
-
-        .quick-access .qa-label {
-            font-size: 0.7rem;
-            color: #555;
-            text-transform: uppercase;
-            letter-spacing: 0.08em;
-            margin-right: 0.5rem;
         }
 
         /* Section Headlines */
@@ -289,7 +253,6 @@
         @media (max-width: 768px) {
             header { flex-direction: column; text-align: center; gap: 2rem; }
             .header-datetime { text-align: center; }
-            .quick-access { justify-content: center; }
             .grid-3, .grid-4 { grid-template-columns: 1fr; }
         }
     </style>
@@ -310,266 +273,7 @@
         </div>
     </header>
 
-    <!-- Quick Access Bar -->
-    <div class="quick-access">
-        <span class="qa-label">Quick Access</span>
-        <a href="https://mail.google.com/" target="_blank" title="Gmail — lance@thecoopbrla.com">✉️ Gmail</a>
-        <a href="https://calendar.google.com/" target="_blank" title="Google Calendar">📅 Calendar</a>
-        <a href="https://todoist.com/app" target="_blank" title="Todoist">✅ Todoist</a>
-        <a href="https://app.slack.com/" target="_blank" title="Slack">💬 Slack</a>
-    </div>
-
-    <!-- SECTION 2: Client-Facing Resources -->
-    <section>
-        <h2>📋 Client-Facing Resources</h2>
-        <div class="grid-4">
-            <a href="https://thecooperativeagency.github.io/vendor-briefs/" target="_blank" class="card" style="text-align: center;">
-                <div style="font-size: 2rem; margin-bottom: 0.5rem;">📁</div>
-                <div class="card-title" style="justify-content: center;">All Vendor Briefs</div>
-            </a>
-            <a href="https://thecooperativeagency.github.io/Ga4-dashboards/" target="_blank" class="card" style="text-align: center;">
-                <div style="font-size: 2rem; margin-bottom: 0.5rem;">📊</div>
-                <div class="card-title" style="justify-content: center;">GA4 Dashboards</div>
-            </a>
-            <a href="https://thecooperativeagency.github.io/email-creative/" target="_blank" class="card" style="text-align: center;">
-                <div style="font-size: 2rem; margin-bottom: 0.5rem;">✉️</div>
-                <div class="card-title" style="justify-content: center;">Email Creative Library</div>
-            </a>
-            <a href="https://postengine.thecoopbrla.com" target="_blank" class="card" style="text-align: center;">
-                <div style="font-size: 2rem; margin-bottom: 0.5rem;">📣</div>
-                <div class="card-title" style="justify-content: center;">PostEngine</div>
-            </a>
-            <a href="https://thecooperativeagency.github.io/seo-pages/" target="_blank" class="card" style="text-align: center;">
-                <div style="font-size: 2rem; margin-bottom: 0.5rem;">🔍</div>
-                <div class="card-title" style="justify-content: center;">SEO Pages Index</div>
-            </a>
-            <a href="https://thecooperativeagency.github.io/vendor-briefs/demo-prestige-bmw.html" target="_blank" class="card" style="text-align: center;">
-                <div style="font-size: 2rem; margin-bottom: 0.5rem;">✨</div>
-                <div class="card-title" style="justify-content: center;">Demo Brief</div>
-            </a>
-        </div>
-    </section>
-
-    <!-- SECTION 3: Clients -->
-    <section>
-        <h2>👥 Clients</h2>
-        <div class="grid-4">
-            <!-- Brian Harris BMW -->
-            <div class="card">
-                <div class="card-title">Brian Harris BMW</div>
-                <div class="card-subtitle">Baton Rouge, LA</div>
-                <div class="link-list">
-                    <a href="https://thecooperativeagency.github.io/vendor-briefs/brian-harris-bmw.html" target="_blank" class="link-item">Vendor Brief</a>
-                    <a href="https://thecooperativeagency.github.io/Ga4-dashboards/brian-harris-bmw-dashboard.html" target="_blank" class="link-item">GA4 Dashboard</a>
-                    <a href="https://thecooperativeagency.github.io/email-creative/Brian%20Harris%20BMW/Sales/bh-bmw-april-2026-email.html" target="_blank" class="link-item">Email Creative</a>
-                    <a href="https://thecooperativeagency.github.io/seo-pages/" target="_blank" class="link-item">SEO Pages <span class="badge badge-info">13 Pages</span></a>
-                </div>
-            </div>
-            <!-- Audi Baton Rouge -->
-            <div class="card">
-                <div class="card-title">Audi Baton Rouge</div>
-                <div class="card-subtitle">Baton Rouge, LA</div>
-                <div class="link-list">
-                    <a href="https://thecooperativeagency.github.io/vendor-briefs/audi-baton-rouge.html" target="_blank" class="link-item">Vendor Brief</a>
-                    <a href="https://thecooperativeagency.github.io/Ga4-dashboards/audi-baton-rouge-dashboard.html" target="_blank" class="link-item">GA4 Dashboard</a>
-                    <a href="https://thecooperativeagency.github.io/email-creative/Audi%20Baton%20Rouge/Sales/abr-april-2026-sales-email.html" target="_blank" class="link-item">Email Creative</a>
-                    <a href="https://thecooperativeagency.github.io/seo-pages/" target="_blank" class="link-item">SEO Pages <span class="badge badge-info">4 Pages</span></a>
-                </div>
-            </div>
-            <!-- BMW of Jackson -->
-            <div class="card">
-                <div class="card-title">BMW of Jackson</div>
-                <div class="card-subtitle">Jackson, MS</div>
-                <div class="link-list">
-                    <a href="https://thecooperativeagency.github.io/vendor-briefs/bmw-of-jackson.html" target="_blank" class="link-item">Vendor Brief</a>
-                    <a href="https://thecooperativeagency.github.io/Ga4-dashboards/bmw-jackson-dashboard.html" target="_blank" class="link-item">GA4 Dashboard</a>
-                    <a href="https://thecooperativeagency.github.io/email-creative/BMW%20of%20Jackson/Sales/bmw-jackson-april-2026-email.html" target="_blank" class="link-item">Email Creative</a>
-                    <a href="https://thecooperativeagency.github.io/seo-pages/" target="_blank" class="link-item">SEO Pages <span class="badge badge-info">5 Pages</span></a>
-                </div>
-            </div>
-            <!-- Harris Porsche -->
-            <div class="card">
-                <div class="card-title">Harris Porsche</div>
-                <div class="card-subtitle">Baton Rouge, LA</div>
-                <div class="link-list">
-                    <a href="https://thecooperativeagency.github.io/vendor-briefs/harris-porsche.html" target="_blank" class="link-item">Vendor Brief</a>
-                    <a href="https://thecooperativeagency.github.io/email-creative/Harris%20Porsche/Sales/harris-porsche-april-2026-email.html" target="_blank" class="link-item">Email Creative</a>
-                    <a href="https://thecooperativeagency.github.io/seo-pages/" target="_blank" class="link-item">SEO Pages <span class="badge badge-info">1 Page</span></a>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- SECTION 4: Internal Tools -->
-    <section>
-        <h2>🔧 Internal Tools</h2>
-        <div class="grid-3">
-            <div class="card">
-                <div class="card-title">Operations Hub</div>
-                <div class="link-list">
-                    <a href="https://postengine.thecoopbrla.com" target="_blank" class="link-item">PostEngine (Social Media)</a>
-                    <a href="https://mission.thecoopbrla.com" target="_blank" class="link-item">Mission Control (Tasks)</a>
-                    <a href="https://thecooperativeagency.github.io/content-engine/" target="_blank" class="link-item">Content Engine</a>
-                </div>
-            </div>
-            <div class="card">
-                <div class="card-title">Analytics & Creative</div>
-                <div class="link-list">
-                    <a href="https://thecooperativeagency.github.io/Ga4-dashboards/" target="_blank" class="link-item">GA4 Master Dashboards</a>
-                    <a href="https://thecooperativeagency.github.io/email-creative/" target="_blank" class="link-item">Email Creative Library</a>
-                    <a href="https://thecooperativeagency.github.io/tas/dashboard/bhbmw-pma.html" target="_blank" class="link-item">Tactical Intelligence (TAS)</a>
-                </div>
-            </div>
-            <div class="card">
-                <div class="card-title">Trading & Signals</div>
-                <div class="link-list">
-                    <a href="https://kalshi.thecoopbrla.com" target="_blank" class="link-item">Kalshi Dashboard</a>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- SECTION 5: The Crew -->
-    <section>
-        <h2>🤖 The Crew</h2>
-        <style>
-            .crew-grid {
-                display: grid;
-                grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-                gap: 1.5rem;
-            }
-            .crew-card {
-                background: var(--card-bg);
-                border: 1px solid var(--border-color);
-                border-radius: 12px;
-                padding: 1.5rem;
-                text-align: center;
-                transition: transform 0.2s ease;
-            }
-            .crew-card:hover {
-                transform: translateY(-5px);
-            }
-            .crew-avatar {
-                width: 100px;
-                height: 100px;
-                border-radius: 8px;
-                margin-bottom: 1rem;
-                object-fit: cover;
-                border: 2px solid transparent;
-            }
-            .glow-purple { border-color: #9b59b6; box-shadow: 0 0 10px rgba(155, 89, 182, 0.3); }
-            .glow-orange { border-color: #e67e22; box-shadow: 0 0 10px rgba(230, 126, 34, 0.3); }
-            .glow-amber  { border-color: #f39c12; box-shadow: 0 0 10px rgba(243, 156, 18, 0.3); }
-            .glow-pink   { border-color: #e91e63; box-shadow: 0 0 10px rgba(233, 30, 99, 0.3); }
-
-            .crew-name {
-                font-weight: 800;
-                font-size: 1.1rem;
-                margin-bottom: 0.25rem;
-                letter-spacing: 0.05em;
-            }
-            .crew-role {
-                font-size: 0.85rem;
-                color: var(--text-dim);
-                margin-bottom: 0.75rem;
-            }
-            .model-badge {
-                display: inline-block;
-                background: rgba(255, 255, 255, 0.05);
-                padding: 2px 8px;
-                border-radius: 10px;
-                font-family: 'JetBrains Mono', monospace;
-                font-size: 0.7rem;
-                color: var(--text-dim);
-                margin-bottom: 1rem;
-            }
-            .status-row {
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                gap: 6px;
-                font-size: 0.75rem;
-                font-weight: 700;
-                text-transform: uppercase;
-            }
-            .dot-active { background: var(--success); box-shadow: 0 0 8px var(--success); }
-            .dot-oncall { background: #3498db; box-shadow: 0 0 8px #3498db; }
-            .dot-fallback { background: #7f8c8d; box-shadow: 0 0 8px #7f8c8d; }
-        </style>
-        <div class="crew-grid">
-            <!-- LUC -->
-            <div class="crew-card">
-                <img src="avatars/luc-avatar.png" alt="Luc" class="crew-avatar glow-purple">
-                <div class="crew-name">LUC</div>
-                <div class="crew-role">Chief Orchestrator</div>
-                <div class="model-badge">openrouter/moonshotai/kimi-k2.6</div>
-                <div class="status-row">
-                    <span class="status-indicator dot-active"></span> ACTIVE
-                </div>
-            </div>
-            <!-- WRENCH -->
-            <div class="crew-card">
-                <img src="avatars/wrench-avatar.jpg" alt="Wrench" class="crew-avatar glow-orange">
-                <div class="crew-name">WRENCH</div>
-                <div class="crew-role">Code & Builds</div>
-                <div class="model-badge">google/gemini-3-flash</div>
-                <div class="status-row">
-                    <span class="status-indicator dot-fallback"></span> FALLBACK
-                </div>
-            </div>
-            <!-- SCOUT -->
-            <div class="crew-card">
-                <img src="avatars/scout-avatar.png" alt="Scout" class="crew-avatar glow-amber">
-                <div class="crew-name">SCOUT</div>
-                <div class="crew-role">Research & Intel</div>
-                <div class="model-badge">xai/grok-4-1-fast</div>
-                <div class="status-row">
-                    <span class="status-indicator dot-active"></span> ACTIVE
-                </div>
-            </div>
-            <!-- PIXIE -->
-            <div class="crew-card">
-                <img src="avatars/pixie-avatar.jpg" alt="Pixie" class="crew-avatar glow-pink">
-                <div class="crew-name">PIXIE</div>
-                <div class="crew-role">Image Generation</div>
-                <div class="model-badge">google/gemini-3-pro-image-preview</div>
-                <div class="status-row">
-                    <span class="status-indicator dot-oncall"></span> ON CALL
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- SECTION 6: AI Agents Status -->
-    <section>
-        <h2>🤖 AI Agents Status</h2>
-        <div class="health-panel">
-            <div id="agent-status-content" style="font-family: 'JetBrains Mono', monospace; font-size: 0.85rem;">
-                <div style="color: var(--text-dim); text-align: center; padding: 1rem;">Loading agent stats...</div>
-            </div>
-
-            <div id="run-feed-container" style="margin-top: 1.5rem; padding-top: 1.5rem; border-top: 1px solid #222;">
-                <div style="font-size: 0.75rem; color: var(--text-dim); margin-bottom: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em;">Recent Subagent Runs (Last 10)</div>
-                <div id="recent-runs-feed" style="max-height: 200px; overflow-y: auto; font-family: 'JetBrains Mono', monospace; font-size: 0.8rem;">
-                    <!-- Runs injected here -->
-                </div>
-            </div>
-
-            <div class="link-list" style="margin-top: 1rem; font-family: 'JetBrains Mono', monospace; font-size: 0.85rem;">
-                <div class="link-item" style="display: flex; justify-content: space-between; background: none; border-radius: 0; padding: 0.75rem 0;">
-                    <span>Kalshi Scanner — Every 30min</span>
-                    <span style="color: var(--warning);">PAPER MODE: ACTIVE 📝</span>
-                </div>
-            </div>
-
-            <div class="health-footer" style="margin-top: 1rem;">
-                <span id="agent-refresh-status">Auto-refreshes every 60s</span>
-                <span id="agent-last-updated">Last updated: --:--:--</span>
-            </div>
-        </div>
-    </section>
-
-    <!-- SECTION 7: System Health (moved to bottom) -->
+    <!-- SECTION 1: System Health -->
     <section>
         <h2>🖥️ Luc's Mac Mini — System Health</h2>
         <div class="health-panel">
@@ -609,6 +313,257 @@
         </div>
     </section>
 
+    <!-- SECTION 2: Internal Tools -->
+    <section>
+        <h2>🔧 Internal Tools</h2>
+        <div class="grid-3">
+            <div class="card">
+                <div class="card-title">Operations Hub</div>
+                <div class="link-list">
+                    <a href="https://postengine.thecoopbrla.com" target="_blank" class="link-item">PostEngine (Social Media)</a>
+                    <a href="https://mission.thecoopbrla.com" target="_blank" class="link-item">Mission Control (Tasks)</a>
+                    <a href="https://thecooperativeagency.github.io/content-engine/" target="_blank" class="link-item">Content Engine</a>
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-title">Analytics & Creative</div>
+                <div class="link-list">
+                    <a href="https://thecooperativeagency.github.io/Ga4-dashboards/" target="_blank" class="link-item">GA4 Master Dashboards</a>
+                    <a href="https://thecooperativeagency.github.io/email-creative/" target="_blank" class="link-item">Email Creative Library</a>
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-title">Trading & Signals</div>
+                <div class="link-list">
+                    <a href="https://kalshi.thecoopbrla.com" target="_blank" class="link-item">Kalshi Dashboard</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SECTION 3: Clients -->
+    <section>
+        <h2>👥 Clients</h2>
+        <div class="grid-4">
+            <!-- Brian Harris BMW -->
+            <div class="card">
+                <div class="card-title">Brian Harris BMW</div>
+                <div class="card-subtitle">Baton Rouge, LA</div>
+                <div class="link-list">
+                    <a href="https://thecooperativeagency.github.io/vendor-briefs/brian-harris-bmw.html" target="_blank" class="link-item">Vendor Brief</a>
+                    <a href="https://thecooperativeagency.github.io/Ga4-dashboards/brian-harris-bmw-dashboard.html" target="_blank" class="link-item">GA4 Dashboard</a>
+                    <a href="https://thecooperativeagency.github.io/seo-pages/" target="_blank" class="link-item">SEO Pages <span class="badge badge-info">12 Pages</span></a>
+                </div>
+            </div>
+            <!-- Audi Baton Rouge -->
+            <div class="card">
+                <div class="card-title">Audi Baton Rouge</div>
+                <div class="card-subtitle">Baton Rouge, LA</div>
+                <div class="link-list">
+                    <a href="https://thecooperativeagency.github.io/vendor-briefs/audi-baton-rouge.html" target="_blank" class="link-item">Vendor Brief</a>
+                    <a href="https://thecooperativeagency.github.io/Ga4-dashboards/audi-baton-rouge-dashboard.html" target="_blank" class="link-item">GA4 Dashboard</a>
+                    <a href="https://thecooperativeagency.github.io/seo-pages/" target="_blank" class="link-item">SEO Pages <span class="badge badge-info">3 Pages</span></a>
+                </div>
+            </div>
+            <!-- BMW of Jackson -->
+            <div class="card">
+                <div class="card-title">BMW of Jackson</div>
+                <div class="card-subtitle">Jackson, MS</div>
+                <div class="link-list">
+                    <a href="https://thecooperativeagency.github.io/vendor-briefs/bmw-of-jackson.html" target="_blank" class="link-item">Vendor Brief</a>
+                    <a href="https://thecooperativeagency.github.io/Ga4-dashboards/bmw-jackson-dashboard.html" target="_blank" class="link-item">GA4 Dashboard</a>
+                    <a href="https://thecooperativeagency.github.io/Ga4-dashboards/bmw-jackson-sales-baseline.html" target="_blank" class="link-item">CRM Engine — Management Baseline <span class="badge badge-success">NEW</span></a>
+                    <a href="https://thecooperativeagency.github.io/Ga4-dashboards/bmw-jackson-sales-opportunity-brief.html" target="_blank" class="link-item">CRM Engine — Opportunity Brief <span class="badge badge-success">NEW</span></a>
+                </div>
+            </div>
+            <!-- Harris Porsche -->
+            <div class="card">
+                <div class="card-title">Harris Porsche</div>
+                <div class="card-subtitle">Baton Rouge, LA</div>
+                <div class="link-list">
+                    <a href="https://thecooperativeagency.github.io/vendor-briefs/harris-porsche.html" target="_blank" class="link-item">Vendor Brief</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SECTION 4: Client-Facing -->
+    <section>
+        <h2>📋 Client-Facing Resources</h2>
+        <div class="grid-4">
+            <a href="https://thecooperativeagency.github.io/vendor-briefs/" target="_blank" class="card" style="text-align: center;">
+                <div style="font-size: 2rem; margin-bottom: 0.5rem;">📁</div>
+                <div class="card-title" style="justify-content: center;">All Vendor Briefs</div>
+            </a>
+            <a href="https://thecooperativeagency.github.io/seo-pages/" target="_blank" class="card" style="text-align: center;">
+                <div style="font-size: 2rem; margin-bottom: 0.5rem;">🔍</div>
+                <div class="card-title" style="justify-content: center;">SEO Pages Index</div>
+            </a>
+            <a href="https://thecooperativeagency.github.io/content-engine/" target="_blank" class="card" style="text-align: center;">
+                <div style="font-size: 2rem; margin-bottom: 0.5rem;">📸</div>
+                <div class="card-title" style="justify-content: center;">Content Engine</div>
+            </a>
+            <a href="https://thecooperativeagency.github.io/Ga4-dashboards/bmw-jackson-sales-opportunity-brief.html" target="_blank" class="card" style="text-align: center;">
+                <div style="font-size: 2rem; margin-bottom: 0.5rem;">📈</div>
+                <div class="card-title" style="justify-content: center;">BMW Jackson CRM Engine Report</div>
+            </a>
+            <a href="https://thecooperativeagency.github.io/vendor-briefs/demo-prestige-bmw.html" target="_blank" class="card" style="text-align: center;">
+                <div style="font-size: 2rem; margin-bottom: 0.5rem;">✨</div>
+                <div class="card-title" style="justify-content: center;">Demo Brief</div>
+            </a>
+        </div>
+    </section>
+
+    <!-- SECTION 5: The Crew -->
+    <section>
+        <h2>🤖 The Crew</h2>
+        <style>
+            .crew-grid {
+                display: grid;
+                grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+                gap: 1.5rem;
+            }
+            .crew-card {
+                background: var(--card-bg);
+                border: 1px solid var(--border-color);
+                border-radius: 12px;
+                padding: 1.5rem;
+                text-align: center;
+                transition: transform 0.2s ease;
+            }
+            .crew-card:hover {
+                transform: translateY(-5px);
+            }
+            .crew-avatar {
+                width: 100px;
+                height: 100px;
+                border-radius: 8px;
+                margin-bottom: 1rem;
+                object-fit: cover;
+                border: 2px solid transparent;
+            }
+            .glow-purple { border-color: #9b59b6; box-shadow: 0 0 10px rgba(155, 89, 182, 0.3); }
+            .glow-orange { border-color: #e67e22; box-shadow: 0 0 10px rgba(230, 126, 34, 0.3); }
+            .glow-amber  { border-color: #f39c12; box-shadow: 0 0 10px rgba(243, 156, 18, 0.3); }
+            .glow-pink   { border-color: #e91e63; box-shadow: 0 0 10px rgba(233, 30, 99, 0.3); }
+            .glow-red    { box-shadow: 0 0 18px rgba(220, 50, 50, 0.6); }
+
+            .crew-name {
+                font-weight: 800;
+                font-size: 1.1rem;
+                margin-bottom: 0.25rem;
+                letter-spacing: 0.05em;
+            }
+            .crew-role {
+                font-size: 0.85rem;
+                color: var(--text-dim);
+                margin-bottom: 0.75rem;
+            }
+            .model-badge {
+                display: inline-block;
+                background: rgba(255, 255, 255, 0.05);
+                padding: 2px 8px;
+                border-radius: 10px;
+                font-family: 'JetBrains Mono', monospace;
+                font-size: 0.7rem;
+                color: var(--text-dim);
+                margin-bottom: 1rem;
+            }
+            .status-row {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                gap: 6px;
+                font-size: 0.75rem;
+                font-weight: 700;
+                text-transform: uppercase;
+            }
+            .dot-active { background: var(--success); box-shadow: 0 0 8px var(--success); }
+            .dot-oncall { background: #3498db; box-shadow: 0 0 8px #3498db; }
+        </style>
+        <div class="crew-grid">
+            <!-- LUC -->
+            <div class="crew-card">
+                <img src="avatars/luc-avatar.png" alt="Luc" class="crew-avatar glow-purple">
+                <div class="crew-name">LUC</div>
+                <div class="crew-role">Chief Orchestrator</div>
+                <div class="model-badge">anthropic/claude-sonnet-4-6</div>
+                <div class="status-row">
+                    <span class="status-indicator dot-active"></span> ACTIVE
+                </div>
+            </div>
+            <!-- WRENCH -->
+            <div class="crew-card">
+                <img src="avatars/wrench-avatar.jpg" alt="Wrench" class="crew-avatar glow-orange">
+                <div class="crew-name">WRENCH</div>
+                <div class="crew-role">Code & Builds</div>
+                <div class="model-badge">google/gemini-3-flash</div>
+                <div class="status-row">
+                    <span class="status-indicator dot-oncall"></span> ON CALL
+                </div>
+            </div>
+            <!-- SCOUT -->
+            <div class="crew-card">
+                <img src="avatars/scout-avatar.png" alt="Scout" class="crew-avatar glow-amber">
+                <div class="crew-name">SCOUT</div>
+                <div class="crew-role">Research & Intel</div>
+                <div class="model-badge">xai/grok-4-1-fast</div>
+                <div class="status-row">
+                    <span class="status-indicator dot-oncall"></span> ON CALL
+                </div>
+            </div>
+            <!-- PIXIE -->
+            <div class="crew-card">
+                <img src="avatars/pixie-avatar.jpg" alt="Pixie" class="crew-avatar glow-pink">
+                <div class="crew-name">PIXIE</div>
+                <div class="crew-role">Image Generation</div>
+                <div class="model-badge">google/gemini-3-pro-image-preview</div>
+                <div class="status-row">
+                    <span class="status-indicator dot-oncall"></span> ON CALL
+                </div>
+            </div>
+            <!-- PEPPER -->
+            <div class="crew-card">
+                <img src="avatars/pepper-avatar.jpg" alt="Pepper" class="crew-avatar glow-red">
+                <div class="crew-name">PEPPER</div>
+                <div class="crew-role">Perplexity AI — Mac Mini</div>
+                <div class="model-badge">perplexity/personal</div>
+                <div class="status-row">
+                    <span class="status-indicator dot-oncall"></span> ON CALL
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SECTION 6: AI Agents Status -->
+    <section>
+        <h2>🤖 AI Agents Status</h2>
+        <div class="health-panel">
+            <div id="agent-status-content" style="font-family: 'JetBrains Mono', monospace; font-size: 0.85rem;">
+                <div style="color: var(--text-dim); text-align: center; padding: 1rem;">Loading agent stats...</div>
+            </div>
+            
+            <div id="run-feed-container" style="margin-top: 1.5rem; padding-top: 1.5rem; border-top: 1px solid #222;">
+                <div style="font-size: 0.75rem; color: var(--text-dim); margin-bottom: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em;">Recent Subagent Runs (Last 10)</div>
+                <div id="recent-runs-feed" style="max-height: 200px; overflow-y: auto; font-family: 'JetBrains Mono', monospace; font-size: 0.8rem;">
+                    <!-- Runs injected here -->
+                </div>
+            </div>
+
+            <div class="link-list" style="margin-top: 1rem; font-family: 'JetBrains Mono', monospace; font-size: 0.85rem;">
+                <div class="link-item" style="display: flex; justify-content: space-between; background: none; border-radius: 0; padding: 0.75rem 0;">
+                    <span>Kalshi Scanner — Every 30min</span>
+                    <span style="color: var(--warning);">PAPER MODE: ACTIVE 📝</span>
+                </div>
+            </div>
+
+            <div class="health-footer" style="margin-top: 1rem;">
+                <span id="agent-refresh-status">Auto-refreshes every 60s</span>
+                <span id="agent-last-updated">Last updated: --:--:--</span>
+            </div>
+        </div>
+    </section>
+
     <footer class="page-footer">
         <img src="https://images.squarespace-cdn.com/content/v1/68fac8a3d20e8d72215ede75/6669040e-00b7-4113-a0c0-a29b3706227f/Asset+26.png?format=200w" alt="" class="footer-logo"><br>
         The Cooperative Agency · lance@thecoopbrla.com · thecoopbrla.com<br>
@@ -619,15 +574,15 @@
 <script>
     function updateClock() {
         const now = new Date();
-        const options = {
-            weekday: 'short',
-            year: 'numeric',
-            month: 'short',
+        const options = { 
+            weekday: 'short', 
+            year: 'numeric', 
+            month: 'short', 
             day: 'numeric',
-            hour: '2-digit',
-            minute: '2-digit',
+            hour: '2-digit', 
+            minute: '2-digit', 
             second: '2-digit',
-            timeZoneName: 'short'
+            timeZoneName: 'short' 
         };
         document.getElementById('live-clock').innerText = now.toLocaleString('en-US', options);
     }
@@ -637,14 +592,14 @@
             const response = await fetch('https://macmini.thecoopbrla.com/health');
             if (!response.ok) throw new Error('Offline');
             const data = await response.json();
-
+            
             // Update values
             document.getElementById('cpu-value').innerText = `${data.cpu.toFixed(1)}%`;
             document.getElementById('mem-value').innerText = `${data.memory.percent}%`;
             document.getElementById('disk-value').innerText = `${data.disk.used}GB / ${data.disk.total}GB`;
             document.getElementById('uptime-value').innerText = `UPTIME: ${data.uptime}`;
             document.getElementById('status-text').innerHTML = `<span class="status-indicator"></span> ${data.status.toUpperCase()}`;
-
+            
             // Update bars and colors
             const updateBar = (id, percent) => {
                 const bar = document.getElementById(id);
@@ -653,20 +608,20 @@
                 else if (percent > 70) bar.style.background = 'var(--warning)';
                 else bar.style.background = 'var(--success)';
             };
-
+            
             updateBar('cpu-bar', data.cpu);
             updateBar('mem-bar', data.memory.percent);
             updateBar('disk-bar', data.disk.percent);
-
+            
             // Reset status styles
             document.getElementById('health-content').style.opacity = '1';
             document.getElementById('refresh-status').innerText = 'Auto-refreshes every 30s';
             document.getElementById('refresh-status').style.color = '';
-
+            
             // Update timestamp
             const now = new Date();
             document.getElementById('last-updated').innerText = `Last updated: ${now.toTimeString().split(' ')[0]}`;
-
+            
         } catch (error) {
             console.error('Health fetch failed:', error);
             document.getElementById('health-content').style.opacity = '0.5';
@@ -695,18 +650,15 @@
 
             // Model Mapping
             const modelConfig = {
-                'openrouter/moonshotai/kimi-k2.6': { name: 'Kimi', color: '#9b59b6', role: 'Luc (main) ✅' },
-                'moonshotai/kimi-k2.6': { name: 'Kimi', color: '#9b59b6', role: 'Luc (main) ✅' },
-                'anthropic/claude-sonnet-4-6': { name: 'Sonnet', color: '#9b59b6', role: 'Luc (legacy) ✅' },
-                'anthropic/claude-opus-4-7': { name: 'Opus', color: '#9b59b6', role: 'Luc (1M ctx) ✅' },
-                'google/gemini-3-flash': { name: 'Gemini', color: '#3498db', role: 'Wrench (fallback)' },
+                'google/gemini-3-flash': { name: 'Gemini', color: '#3498db', role: 'Wrench ✅' },
                 'xai/grok-4-1-fast': { name: 'Grok', color: '#e67e22', role: 'Scout ✅' },
+                'anthropic/claude-sonnet-4-6': { name: 'Sonnet', color: '#9b59b6', role: 'Luc (main) ✅' },
                 'google/gemini-3-pro-image-preview': { name: 'Pixie', color: '#f1c40f', role: 'Image Gen ✅' }
             };
 
             // Part 1: Model Compute Summary
             let summaryHtml = '';
-
+            
             // Add Pixie (Image Generator) - Static entry as requested
             summaryHtml += `
                 <div style="display: flex; justify-content: space-between; align-items: center; padding: 0.75rem 0; border-bottom: 1px solid #222;">
@@ -720,16 +672,16 @@
                 </div>`;
 
             const models = Object.keys(data.modelStats);
-
+            
             // Ensure main agent is listed if missing from stats
-            if (!data.modelStats['openrouter/moonshotai/kimi-k2.6'] && !data.modelStats['moonshotai/kimi-k2.6']) {
-                models.unshift('openrouter/moonshotai/kimi-k2.6');
+            if (!data.modelStats['anthropic/claude-sonnet-4-6']) {
+                models.unshift('anthropic/claude-sonnet-4-6');
             }
 
             models.forEach(modelId => {
                 const stats = data.modelStats[modelId] || { count: 0, errors: 0 };
                 const config = modelConfig[modelId] || { name: modelId.split('/').pop(), color: '#94a3b8', role: '<span style="color:var(--danger)">⚠️ Unknown agent</span>' };
-
+                
                 summaryHtml += `
                     <div style="display: flex; justify-content: space-between; align-items: center; padding: 0.75rem 0; border-bottom: 1px solid #222;">
                         <div style="display: flex; align-items: center; gap: 10px;">
@@ -747,7 +699,7 @@
             // Part 2: Recent Run Feed
             let runsHtml = '';
             const recentRuns = (data.recentRuns || []).slice(0, 10);
-
+            
             if (recentRuns.length === 0) {
                 runsHtml = '<div style="color: #555; padding: 1rem; text-align: center;">No recent subagent activity</div>';
             } else {
