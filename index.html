@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>🦞 Command Hub — The Cooperative Agency</title>
+    <title>Coop Operator Hub — The Cooperative Agency</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
@@ -12,194 +12,371 @@
             --bg-color: #0f1115;
             --card-bg: #1a1d23;
             --accent-red: #c0392b;
+            --accent-soft: rgba(192, 57, 43, 0.12);
             --text-main: #e2e8f0;
             --text-dim: #94a3b8;
             --border-color: #2d3748;
             --success: #2ecc71;
             --warning: #f1c40f;
             --danger: #e74c3c;
+            --rail: #151820;
         }
 
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
 
         body {
             font-family: 'Inter', sans-serif;
             background-color: var(--bg-color);
             color: var(--text-main);
-            line-height: 1.6;
+            line-height: 1.55;
             padding-bottom: 4rem;
         }
 
-        a {
-            color: inherit;
-            text-decoration: none;
-            transition: all 0.2s ease;
-        }
+        a { color: inherit; text-decoration: none; transition: all 0.15s ease; }
 
         .container {
-            max-width: 1200px;
+            max-width: 1180px;
             margin: 0 auto;
-            padding: 0 1.5rem;
+            padding: 0 1.25rem;
         }
 
-        /* Header */
         header {
-            padding: 3rem 0;
+            padding: 2rem 0 1.5rem;
             border-bottom: 1px solid var(--border-color);
-            margin-bottom: 3rem;
+            margin-bottom: 1.75rem;
             display: flex;
             align-items: center;
             justify-content: space-between;
+            gap: 1rem;
         }
 
         .header-brand {
             display: flex;
             align-items: center;
-            gap: 1.5rem;
+            gap: 1.1rem;
         }
 
-        .logo {
-            height: 60px;
-            width: auto;
-        }
+        .logo { height: 48px; width: auto; }
 
         .header-text h1 {
-            font-size: 1.75rem;
+            font-size: 1.55rem;
             font-weight: 800;
             letter-spacing: -0.02em;
+            line-height: 1.15;
+        }
+
+        .header-text p {
+            color: var(--accent-red);
+            font-weight: 600;
+            font-size: 0.85rem;
+            margin-top: 0.2rem;
         }
 
         .header-datetime {
             text-align: right;
             font-family: 'JetBrains Mono', monospace;
             color: var(--text-dim);
-            font-size: 0.9rem;
+            font-size: 0.82rem;
         }
 
-        /* Section Headlines */
-        section {
-            margin-bottom: 4rem;
+        section { margin-bottom: 2.25rem; }
+
+        .section-head {
+            display: flex;
+            align-items: baseline;
+            justify-content: space-between;
+            gap: 1rem;
+            margin-bottom: 0.9rem;
         }
 
         h2 {
-            font-size: 1.25rem;
+            font-size: 0.78rem;
             font-weight: 700;
-            margin-bottom: 1.5rem;
             display: flex;
             align-items: center;
-            gap: 0.75rem;
+            gap: 0.55rem;
             text-transform: uppercase;
-            letter-spacing: 0.05em;
+            letter-spacing: 0.08em;
             color: var(--text-dim);
         }
 
-        /* Grid Layouts */
-        .grid-3 {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
-            gap: 1.5rem;
+        .section-note {
+            font-size: 0.75rem;
+            color: #64748b;
         }
 
+        /* Daily rails */
+        .rails {
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            gap: 0.75rem;
+        }
+
+        .rail {
+            background: linear-gradient(180deg, #1c2028 0%, var(--rail) 100%);
+            border: 1px solid var(--border-color);
+            border-radius: 14px;
+            padding: 1.05rem 0.9rem 1rem;
+            min-height: 108px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            gap: 0.65rem;
+        }
+
+        .rail:hover {
+            border-color: var(--accent-red);
+            transform: translateY(-2px);
+            background: linear-gradient(180deg, #22181a 0%, #171114 100%);
+        }
+
+        .rail-kicker {
+            font-size: 0.68rem;
+            font-weight: 700;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            color: #64748b;
+        }
+
+        .rail-title {
+            font-size: 1.02rem;
+            font-weight: 750;
+            letter-spacing: -0.01em;
+            line-height: 1.2;
+        }
+
+        .rail-sub {
+            font-size: 0.78rem;
+            color: var(--text-dim);
+        }
+
+        /* Grids / cards */
         .grid-4 {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-            gap: 1.5rem;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1rem;
         }
 
-        /* Cards */
+        .grid-3 {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1rem;
+        }
+
         .card {
             background: var(--card-bg);
             border: 1px solid var(--border-color);
             border-radius: 12px;
-            padding: 1.5rem;
-            transition: transform 0.2s ease, border-color 0.2s ease;
+            padding: 1.15rem 1.15rem 1rem;
+            transition: border-color 0.15s ease, transform 0.15s ease;
         }
 
-        .card:hover {
-            border-color: var(--accent-red);
-            transform: translateY(-2px);
+        .card:hover { border-color: rgba(192, 57, 43, 0.55); }
+
+        a.card.tile {
+            display: block;
+            text-align: center;
+            padding: 1.25rem 1rem;
         }
+
+        a.card.tile:hover {
+            transform: translateY(-2px);
+            border-color: var(--accent-red);
+        }
+
+        .tile-icon { font-size: 1.5rem; margin-bottom: 0.45rem; }
+        .tile-title { font-weight: 700; font-size: 0.98rem; }
+        .tile-sub { color: var(--text-dim); font-size: 0.78rem; margin-top: 0.25rem; }
 
         .card-title {
-            font-size: 1.1rem;
-            font-weight: 700;
-            margin-bottom: 1rem;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
+            font-size: 1.05rem;
+            font-weight: 750;
+            margin-bottom: 0.15rem;
+            letter-spacing: -0.01em;
         }
 
         .card-subtitle {
-            font-size: 0.85rem;
+            font-size: 0.8rem;
             color: var(--text-dim);
-            margin-top: -0.75rem;
-            margin-bottom: 1.25rem;
-        }
-
-        .link-list {
-            list-style: none;
+            margin-bottom: 0.95rem;
         }
 
         .link-item {
             display: block;
-            padding: 0.75rem;
+            padding: 0.62rem 0.7rem;
             background: rgba(255, 255, 255, 0.03);
             border-radius: 8px;
-            margin-bottom: 0.5rem;
-            font-size: 0.9rem;
+            margin-bottom: 0.4rem;
+            font-size: 0.86rem;
             font-weight: 500;
             border: 1px solid transparent;
         }
 
         .link-item:hover {
-            background: rgba(192, 57, 43, 0.1);
+            background: var(--accent-soft);
             border-color: rgba(192, 57, 43, 0.3);
-            color: var(--accent-red);
+            color: #f0b4ad;
         }
 
-        .badge {
-            font-size: 0.7rem;
-            padding: 0.2rem 0.5rem;
-            border-radius: 4px;
-            text-transform: uppercase;
+        .link-item.muted {
+            color: #7c8798;
+            font-size: 0.82rem;
+        }
+
+        .group-label {
+            font-size: 0.68rem;
             font-weight: 700;
-            margin-left: 0.5rem;
+            letter-spacing: 0.07em;
+            text-transform: uppercase;
+            color: #64748b;
+            margin: 0.7rem 0 0.35rem;
         }
 
-        .badge-success { background: rgba(46, 204, 113, 0.2); color: var(--success); }
-        .badge-info { background: rgba(52, 152, 219, 0.2); color: #3498db; }
+        .group-label:first-of-type { margin-top: 0; }
 
-        /* System Health Panel */
+        /* Collapsible ops */
+        details.ops {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 14px;
+            overflow: hidden;
+        }
+
+        details.ops + details.ops { margin-top: 0.75rem; }
+
+        details.ops > summary {
+            list-style: none;
+            cursor: pointer;
+            padding: 1rem 1.15rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1rem;
+            font-weight: 700;
+            font-size: 0.95rem;
+            user-select: none;
+        }
+
+        details.ops > summary::-webkit-details-marker { display: none; }
+
+        details.ops > summary .hint {
+            font-weight: 500;
+            font-size: 0.78rem;
+            color: var(--text-dim);
+        }
+
+        details.ops[open] > summary {
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .ops-body { padding: 1.15rem; }
+
+        .chev {
+            color: var(--text-dim);
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.85rem;
+        }
+
+        details.ops[open] .chev { transform: rotate(90deg); }
+
+        /* Agents slim */
+        .agent-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.85rem;
+            margin-bottom: 1rem;
+        }
+
+        .agent-card {
+            display: flex;
+            align-items: center;
+            gap: 0.85rem;
+            background: rgba(0,0,0,0.28);
+            border: 1px solid #2a3140;
+            border-radius: 12px;
+            padding: 0.9rem 1rem;
+        }
+
+        .agent-avatar {
+            width: 48px;
+            height: 48px;
+            border-radius: 10px;
+            object-fit: cover;
+            flex-shrink: 0;
+        }
+
+        .agent-mono {
+            width: 48px;
+            height: 48px;
+            border-radius: 10px;
+            display: grid;
+            place-items: center;
+            font-weight: 800;
+            letter-spacing: 0.04em;
+            background: #2a1520;
+            border: 1px solid rgba(192, 57, 43, 0.45);
+            color: #f0b4ad;
+            flex-shrink: 0;
+        }
+
+        .agent-name { font-weight: 800; letter-spacing: 0.04em; font-size: 0.95rem; }
+        .agent-role { color: var(--text-dim); font-size: 0.8rem; }
+        .agent-model {
+            margin-top: 0.25rem;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.68rem;
+            color: #7c8798;
+        }
+
+        .status-pill {
+            margin-left: auto;
+            font-size: 0.68rem;
+            font-weight: 800;
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+            color: var(--success);
+            display: flex;
+            align-items: center;
+            gap: 0.35rem;
+            white-space: nowrap;
+        }
+
+        .dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--success);
+            box-shadow: 0 0 8px var(--success);
+        }
+
+        /* Health */
         .health-panel {
             background: #000;
-            border: 1px solid var(--border-color);
+            border: 1px solid #222;
             border-radius: 12px;
-            padding: 2rem;
+            padding: 1.25rem;
             font-family: 'JetBrains Mono', monospace;
         }
 
         .health-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 2rem;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1.25rem;
         }
 
         .metric-label {
-            font-size: 0.8rem;
+            font-size: 0.72rem;
             color: var(--text-dim);
-            margin-bottom: 0.5rem;
+            margin-bottom: 0.4rem;
             display: block;
+            letter-spacing: 0.04em;
         }
 
         .metric-value {
-            font-size: 1.25rem;
+            font-size: 1.1rem;
             font-weight: 600;
             display: block;
-            margin-bottom: 0.75rem;
+            margin-bottom: 0.55rem;
         }
 
         .progress-container {
@@ -209,384 +386,386 @@
             overflow: hidden;
         }
 
-        .progress-bar {
-            height: 100%;
-            border-radius: 3px;
-        }
+        .progress-bar { height: 100%; border-radius: 3px; }
 
         .status-indicator {
             display: inline-block;
-            width: 10px;
-            height: 10px;
+            width: 9px;
+            height: 9px;
             border-radius: 50%;
-            margin-right: 8px;
+            margin-right: 7px;
             background: var(--success);
             box-shadow: 0 0 10px var(--success);
         }
 
         .health-footer {
-            margin-top: 1.5rem;
-            padding-top: 1rem;
+            margin-top: 1rem;
+            padding-top: 0.85rem;
             border-top: 1px solid #222;
-            font-size: 0.75rem;
+            font-size: 0.72rem;
             color: #555;
             display: flex;
+            flex-wrap: wrap;
+            gap: 0.75rem;
+            align-items: center;
             justify-content: space-between;
         }
 
-        /* Footer */
+        .reset-btn {
+            padding: 5px 12px;
+            background: var(--accent-red);
+            border: none;
+            border-radius: 6px;
+            color: white;
+            font-size: 11px;
+            font-weight: 700;
+            cursor: pointer;
+            font-family: Inter, sans-serif;
+        }
+
+        .reset-btn:disabled { opacity: 0.7; cursor: wait; }
+
         .page-footer {
-            margin-top: 6rem;
-            padding: 3rem 0;
+            margin-top: 3.5rem;
+            padding: 2.25rem 0;
             border-top: 1px solid var(--border-color);
             text-align: center;
             color: var(--text-dim);
-            font-size: 0.9rem;
+            font-size: 0.88rem;
         }
 
         .footer-logo {
-            height: 30px;
-            opacity: 0.5;
-            margin-bottom: 1rem;
+            height: 28px;
+            opacity: 0.45;
+            margin-bottom: 0.75rem;
         }
 
-        @media (max-width: 768px) {
-            header { flex-direction: column; text-align: center; gap: 2rem; }
+        @media (max-width: 1100px) {
+            .rails { grid-template-columns: repeat(3, 1fr); }
+            .grid-4 { grid-template-columns: repeat(2, 1fr); }
+        }
+
+        @media (max-width: 720px) {
+            header { flex-direction: column; text-align: center; }
             .header-datetime { text-align: center; }
-            .grid-3, .grid-4 { grid-template-columns: 1fr; }
+            .rails, .grid-4, .grid-3, .health-grid, .agent-row {
+                grid-template-columns: 1fr;
+            }
+            .section-head { flex-direction: column; align-items: flex-start; }
         }
     </style>
 </head>
 <body>
-
 <div class="container">
     <header>
         <div class="header-brand">
-            <img src="https://images.squarespace-cdn.com/content/v1/68fac8a3d20e8d72215ede75/6669040e-00b7-4113-a0c0-a29b3706227f/Asset+26.png?format=200w" alt="Cooperative Agency Logo" class="logo">
+            <img src="https://images.squarespace-cdn.com/content/v1/68fac8a3d20e8d72215ede75/6669040e-00b7-4113-a0c0-a29b3706227f/Asset+26.png?format=200w" alt="Cooperative Agency" class="logo">
             <div class="header-text">
-                <h1>🦞 Command Hub</h1>
-                <p style="color: var(--accent-red); font-weight: 600; font-size: 0.9rem;">The Cooperative Agency</p>
+                <h1>Coop Operator Hub</h1>
+                <p>The Cooperative Agency</p>
             </div>
         </div>
-        <div class="header-datetime" id="live-clock">
-            Loading system time...
-        </div>
+        <div class="header-datetime" id="live-clock">Loading…</div>
     </header>
 
-    <!-- SECTION 1: System Health -->
+    <!-- DAILY RAILS -->
     <section>
-        <h2>🖥️ Luc's Mac Mini — System Health</h2>
-        <div class="health-panel">
-            <div id="health-content" class="health-grid">
+        <div class="section-head">
+            <h2>Daily</h2>
+            <span class="section-note">One click to the work that actually moves</span>
+        </div>
+        <div class="rails">
+            <a class="rail" href="https://postengine.thecoopbrla.com/" target="_blank" rel="noopener">
                 <div>
-                    <span class="metric-label">CPU USAGE</span>
-                    <span id="cpu-value" class="metric-value">--%</span>
-                    <div class="progress-container">
-                        <div id="cpu-bar" class="progress-bar" style="width: 0%; background: var(--success);"></div>
-                    </div>
+                    <div class="rail-kicker">Social</div>
+                    <div class="rail-title">PostEngine</div>
                 </div>
+                <div class="rail-sub">Queue · approve · publish</div>
+            </a>
+            <a class="rail" href="https://thecooperativeagency.github.io/email-creative/" target="_blank" rel="noopener">
                 <div>
-                    <span class="metric-label">MEMORY USAGE</span>
-                    <span id="mem-value" class="metric-value">--%</span>
-                    <div class="progress-container">
-                        <div id="mem-bar" class="progress-bar" style="width: 0%; background: var(--success);"></div>
-                    </div>
+                    <div class="rail-kicker">Creative</div>
+                    <div class="rail-title">Email</div>
                 </div>
+                <div class="rail-sub">Monthly store creatives</div>
+            </a>
+            <a class="rail" href="https://thecooperativeagency.github.io/seo-pages/" target="_blank" rel="noopener">
                 <div>
-                    <span class="metric-label">DISK USAGE</span>
-                    <span id="disk-value" class="metric-value">--GB / --GB</span>
-                    <div class="progress-container">
-                        <div id="disk-bar" class="progress-bar" style="width: 0%; background: var(--success);"></div>
-                    </div>
+                    <div class="rail-kicker">Pages</div>
+                    <div class="rail-title">SEO / Motive</div>
                 </div>
+                <div class="rail-sub">Specials · model · guides</div>
+            </a>
+            <a class="rail" href="https://acquire.thecoopbrla.com/" target="_blank" rel="noopener">
                 <div>
-                    <span class="metric-label">SYSTEM STATUS</span>
-                    <span id="status-text" class="metric-value"><span class="status-indicator"></span> ONLINE</span>
-                    <span id="uptime-value" style="font-size: 0.75rem; color: #555;">UPTIME: Loading...</span>
+                    <div class="rail-kicker">SMS</div>
+                    <div class="rail-title">CoopAcquire</div>
                 </div>
-            </div>
-            <div class="health-footer">
-                <span id="refresh-status">Auto-refreshes every 30s</span>
-                <span id="last-updated">Last updated: --:--:--</span>
-                <button onclick="resetMac()" style="margin-left:12px;padding:4px 12px;background:#c0392b;border:none;border-radius:6px;color:white;font-size:11px;font-weight:600;cursor:pointer;" title="Restart heavy services to free RAM">🔄 Reset RAM</button>
-            </div>
+                <div class="rail-sub">Opt-in · appraisal · A2P</div>
+            </a>
+            <a class="rail" href="https://todoist.com/app" target="_blank" rel="noopener">
+                <div>
+                    <div class="rail-kicker">Tasks</div>
+                    <div class="rail-title">Todoist</div>
+                </div>
+                <div class="rail-sub">Today + commitments</div>
+            </a>
+            <a class="rail" href="https://thecooperativeagency.github.io/Ga4-dashboards/" target="_blank" rel="noopener">
+                <div>
+                    <div class="rail-kicker">Analytics</div>
+                    <div class="rail-title">GA4</div>
+                </div>
+                <div class="rail-sub">Master dashboards</div>
+            </a>
         </div>
     </section>
 
-    <!-- SECTION 2: Internal Tools -->
+    <!-- CLIENTS -->
     <section>
-        <h2>🔧 Internal Tools</h2>
-        <div class="grid-3">
-            <div class="card">
-                <div class="card-title">Operations Hub</div>
-                <div class="link-list">
-                    <a href="https://postengine.thecoopbrla.com" target="_blank" class="link-item">PostEngine (Social Media)</a>
-                    <a href="https://mission.thecoopbrla.com" target="_blank" class="link-item">Mission Control (Tasks)</a>
-                    <a href="https://thecooperativeagency.github.io/content-engine/" target="_blank" class="link-item">Content Engine</a>
-                </div>
-            </div>
-            <div class="card">
-                <div class="card-title">Analytics & Creative</div>
-                <div class="link-list">
-                    <a href="https://thecooperativeagency.github.io/Ga4-dashboards/" target="_blank" class="link-item">GA4 Master Dashboards</a>
-                    <a href="https://thecooperativeagency.github.io/email-creative/" target="_blank" class="link-item">Email Creative Library</a>
-                </div>
-            </div>
-            <div class="card">
-                <div class="card-title">Trading & Signals</div>
-                <div class="link-list">
-                    <a href="https://kalshi.thecoopbrla.com" target="_blank" class="link-item">Kalshi Dashboard</a>
-                </div>
-            </div>
+        <div class="section-head">
+            <h2>Clients</h2>
+            <span class="section-note">Same card shape every store</span>
         </div>
-    </section>
-
-    <!-- SECTION 3: Clients -->
-    <section>
-        <h2>👥 Clients</h2>
         <div class="grid-4">
             <!-- Brian Harris BMW -->
             <div class="card">
                 <div class="card-title">Brian Harris BMW</div>
                 <div class="card-subtitle">Baton Rouge, LA</div>
-                <div class="link-list">
-                    <a href="https://thecooperativeagency.github.io/vendor-briefs/brian-harris-bmw.html" target="_blank" class="link-item">Vendor Brief</a>
-                    <a href="https://thecooperativeagency.github.io/Ga4-dashboards/brian-harris-bmw-dashboard.html" target="_blank" class="link-item">GA4 Dashboard</a>
-                    <a href="https://thecooperativeagency.github.io/seo-pages/" target="_blank" class="link-item">SEO Pages <span class="badge badge-info">14 Pages</span></a>
-                </div>
+
+                <div class="group-label">Shareable</div>
+                <a class="link-item" href="https://thecooperativeagency.github.io/vendor-briefs/brian-harris-bmw.html" target="_blank" rel="noopener">Vendor brief</a>
+                <a class="link-item" href="https://thecooperativeagency.github.io/seo-pages/Brian%20Harris%20BMW/new-bmw-specials-august-2026.html" target="_blank" rel="noopener">August specials</a>
+                <a class="link-item" href="https://thecooperativeagency.github.io/seo-pages/" target="_blank" rel="noopener">SEO pages</a>
+
+                <div class="group-label">Internal</div>
+                <a class="link-item" href="https://thecooperativeagency.github.io/Ga4-dashboards/brian-harris-bmw-dashboard.html" target="_blank" rel="noopener">GA4 dashboard</a>
+                <a class="link-item muted" href="https://thecooperativeagency.github.io/Ga4-dashboards/brian-harris-bmw-sales-baseline.html" target="_blank" rel="noopener">Sales baseline</a>
+                <a class="link-item muted" href="https://thecooperativeagency.github.io/Ga4-dashboards/brian-harris-bmw-sales-opportunity-brief.html" target="_blank" rel="noopener">Opportunity brief</a>
             </div>
+
             <!-- Audi Baton Rouge -->
             <div class="card">
                 <div class="card-title">Audi Baton Rouge</div>
                 <div class="card-subtitle">Baton Rouge, LA</div>
-                <div class="link-list">
-                    <a href="https://thecooperativeagency.github.io/vendor-briefs/audi-baton-rouge.html" target="_blank" class="link-item">Vendor Brief</a>
-                    <a href="https://thecooperativeagency.github.io/Ga4-dashboards/audi-baton-rouge-dashboard.html" target="_blank" class="link-item">GA4 Dashboard</a>
-                    <a href="https://thecooperativeagency.github.io/seo-pages/" target="_blank" class="link-item">SEO Pages <span class="badge badge-info">3 Pages</span></a>
-                </div>
+
+                <div class="group-label">Shareable</div>
+                <a class="link-item" href="https://thecooperativeagency.github.io/vendor-briefs/audi-baton-rouge.html" target="_blank" rel="noopener">Vendor brief</a>
+                <a class="link-item" href="https://thecooperativeagency.github.io/seo-pages/" target="_blank" rel="noopener">SEO pages</a>
+
+                <div class="group-label">Internal</div>
+                <a class="link-item" href="https://thecooperativeagency.github.io/Ga4-dashboards/audi-baton-rouge-dashboard.html" target="_blank" rel="noopener">GA4 dashboard</a>
+                <a class="link-item muted" href="https://thecooperativeagency.github.io/Ga4-dashboards/audi-baton-rouge-sales-baseline.html" target="_blank" rel="noopener">Sales baseline</a>
+                <a class="link-item muted" href="https://thecooperativeagency.github.io/Ga4-dashboards/audi-baton-rouge-sales-opportunity-brief.html" target="_blank" rel="noopener">Opportunity brief</a>
             </div>
+
             <!-- BMW of Jackson -->
             <div class="card">
                 <div class="card-title">BMW of Jackson</div>
                 <div class="card-subtitle">Jackson, MS</div>
-                <div class="link-list">
-                    <a href="https://thecooperativeagency.github.io/vendor-briefs/bmw-of-jackson.html" target="_blank" class="link-item">Vendor Brief</a>
-                    <a href="https://thecooperativeagency.github.io/Ga4-dashboards/bmw-jackson-dashboard.html" target="_blank" class="link-item">GA4 Dashboard</a>
-                    <a href="https://thecooperativeagency.github.io/Ga4-dashboards/bmw-jackson-sales-baseline.html" target="_blank" class="link-item">CRM Engine — Management Baseline <span class="badge badge-success">NEW</span></a>
-                    <a href="https://thecooperativeagency.github.io/Ga4-dashboards/bmw-jackson-sales-opportunity-brief.html" target="_blank" class="link-item">CRM Engine — Opportunity Brief <span class="badge badge-success">NEW</span></a>
-                    <a href="https://thecooperativeagency.github.io/Ga4-dashboards/bmw-jackson-used-inventory-stocking-brief.html" target="_blank" class="link-item">Used Inventory Stocking Brief <span class="badge badge-success">NEW</span></a>
-                    <a href="https://thecooperativeagency.github.io/vendor-briefs/bmw-jackson-management-hub.html" target="_blank" class="link-item">BMW Jackson Management Hub <span class="badge badge-success">NEW</span></a>
-                </div>
+
+                <div class="group-label">Shareable</div>
+                <a class="link-item" href="https://thecooperativeagency.github.io/vendor-briefs/bmw-of-jackson.html" target="_blank" rel="noopener">Vendor brief</a>
+                <a class="link-item" href="https://thecooperativeagency.github.io/vendor-briefs/bmw-jackson-management-hub.html" target="_blank" rel="noopener">Management hub</a>
+                <a class="link-item" href="https://thecooperativeagency.github.io/seo-pages/BMW%20of%20Jackson/new-bmw-specials-august-2026.html" target="_blank" rel="noopener">August specials</a>
+                <a class="link-item" href="https://thecooperativeagency.github.io/seo-pages/" target="_blank" rel="noopener">SEO pages</a>
+
+                <div class="group-label">Internal</div>
+                <a class="link-item" href="https://thecooperativeagency.github.io/Ga4-dashboards/bmw-jackson-dashboard.html" target="_blank" rel="noopener">GA4 dashboard</a>
+                <a class="link-item muted" href="https://thecooperativeagency.github.io/Ga4-dashboards/bmw-jackson-sales-baseline.html" target="_blank" rel="noopener">Sales baseline</a>
+                <a class="link-item muted" href="https://thecooperativeagency.github.io/Ga4-dashboards/bmw-jackson-sales-opportunity-brief.html" target="_blank" rel="noopener">Opportunity brief</a>
+                <a class="link-item muted" href="https://thecooperativeagency.github.io/Ga4-dashboards/bmw-jackson-used-inventory-stocking-brief.html" target="_blank" rel="noopener">Used stocking</a>
             </div>
+
             <!-- Harris Porsche -->
             <div class="card">
                 <div class="card-title">Harris Porsche</div>
                 <div class="card-subtitle">Baton Rouge, LA</div>
-                <div class="link-list">
-                    <a href="https://thecooperativeagency.github.io/vendor-briefs/harris-porsche.html" target="_blank" class="link-item">Vendor Brief</a>
-                </div>
+
+                <div class="group-label">Shareable</div>
+                <a class="link-item" href="https://thecooperativeagency.github.io/vendor-briefs/harris-porsche.html" target="_blank" rel="noopener">Vendor brief</a>
+                <a class="link-item" href="https://thecooperativeagency.github.io/seo-pages/Harris%20Porsche/harris-porsche-april-2026-specials.html" target="_blank" rel="noopener">Specials (Apr)</a>
+                <a class="link-item" href="https://thecooperativeagency.github.io/seo-pages/" target="_blank" rel="noopener">SEO pages</a>
+
+                <div class="group-label">Internal</div>
+                <a class="link-item muted" href="https://thecooperativeagency.github.io/Ga4-dashboards/" target="_blank" rel="noopener">GA4 master</a>
             </div>
         </div>
     </section>
 
-    <!-- SECTION 4: Client-Facing -->
+    <!-- LIBRARIES -->
     <section>
-        <h2>📋 Client-Facing Resources</h2>
+        <div class="section-head">
+            <h2>Libraries</h2>
+            <span class="section-note">Indexes + pitch pack</span>
+        </div>
         <div class="grid-4">
-            <a href="https://thecooperativeagency.github.io/vendor-briefs/" target="_blank" class="card" style="text-align: center;">
-                <div style="font-size: 2rem; margin-bottom: 0.5rem;">📁</div>
-                <div class="card-title" style="justify-content: center;">All Vendor Briefs</div>
+            <a class="card tile" href="https://thecooperativeagency.github.io/vendor-briefs/" target="_blank" rel="noopener">
+                <div class="tile-icon">📁</div>
+                <div class="tile-title">All vendor briefs</div>
+                <div class="tile-sub">Shareable client index</div>
             </a>
-            <a href="https://thecooperativeagency.github.io/seo-pages/" target="_blank" class="card" style="text-align: center;">
-                <div style="font-size: 2rem; margin-bottom: 0.5rem;">🔍</div>
-                <div class="card-title" style="justify-content: center;">SEO Pages Index</div>
+            <a class="card tile" href="https://thecooperativeagency.github.io/seo-pages/" target="_blank" rel="noopener">
+                <div class="tile-icon">🔍</div>
+                <div class="tile-title">SEO pages index</div>
+                <div class="tile-sub">Filter by store / type</div>
             </a>
-            <a href="https://thecooperativeagency.github.io/content-engine/" target="_blank" class="card" style="text-align: center;">
-                <div style="font-size: 2rem; margin-bottom: 0.5rem;">📸</div>
-                <div class="card-title" style="justify-content: center;">Content Engine</div>
+            <a class="card tile" href="https://thecooperativeagency.github.io/email-creative/" target="_blank" rel="noopener">
+                <div class="tile-icon">✉️</div>
+                <div class="tile-title">Email creative</div>
+                <div class="tile-sub">All rooftops</div>
             </a>
-            <a href="https://thecooperativeagency.github.io/Ga4-dashboards/bmw-jackson-sales-opportunity-brief.html" target="_blank" class="card" style="text-align: center;">
-                <div style="font-size: 2rem; margin-bottom: 0.5rem;">📈</div>
-                <div class="card-title" style="justify-content: center;">BMW Jackson CRM Engine Report</div>
-            </a>
-            <a href="https://thecooperativeagency.github.io/vendor-briefs/demo-prestige-bmw.html" target="_blank" class="card" style="text-align: center;">
-                <div style="font-size: 2rem; margin-bottom: 0.5rem;">✨</div>
-                <div class="card-title" style="justify-content: center;">Demo Brief</div>
+            <a class="card tile" href="https://thecooperativeagency.github.io/vendor-briefs/demo-prestige-bmw.html" target="_blank" rel="noopener">
+                <div class="tile-icon">✨</div>
+                <div class="tile-title">Demo brief</div>
+                <div class="tile-sub">Prospect pitch pack</div>
             </a>
         </div>
     </section>
 
-    <!-- SECTION 5: The Crew -->
+    <!-- MARKETS (collapsed) -->
     <section>
-        <h2>🤖 The Crew</h2>
-        <style>
-            .crew-grid {
-                display: grid;
-                grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-                gap: 1.5rem;
-            }
-            .crew-card {
-                background: var(--card-bg);
-                border: 1px solid var(--border-color);
-                border-radius: 12px;
-                padding: 1.5rem;
-                text-align: center;
-                transition: transform 0.2s ease;
-            }
-            .crew-card:hover {
-                transform: translateY(-5px);
-            }
-            .crew-avatar {
-                width: 100px;
-                height: 100px;
-                border-radius: 8px;
-                margin-bottom: 1rem;
-                object-fit: cover;
-                border: 2px solid transparent;
-            }
-            .glow-purple { border-color: #9b59b6; box-shadow: 0 0 10px rgba(155, 89, 182, 0.3); }
-            .glow-orange { border-color: #e67e22; box-shadow: 0 0 10px rgba(230, 126, 34, 0.3); }
-            .glow-amber  { border-color: #f39c12; box-shadow: 0 0 10px rgba(243, 156, 18, 0.3); }
-            .glow-pink   { border-color: #e91e63; box-shadow: 0 0 10px rgba(233, 30, 99, 0.3); }
-            .glow-red    { box-shadow: 0 0 18px rgba(220, 50, 50, 0.6); }
-
-            .crew-name {
-                font-weight: 800;
-                font-size: 1.1rem;
-                margin-bottom: 0.25rem;
-                letter-spacing: 0.05em;
-            }
-            .crew-role {
-                font-size: 0.85rem;
-                color: var(--text-dim);
-                margin-bottom: 0.75rem;
-            }
-            .model-badge {
-                display: inline-block;
-                background: rgba(255, 255, 255, 0.05);
-                padding: 2px 8px;
-                border-radius: 10px;
-                font-family: 'JetBrains Mono', monospace;
-                font-size: 0.7rem;
-                color: var(--text-dim);
-                margin-bottom: 1rem;
-            }
-            .status-row {
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                gap: 6px;
-                font-size: 0.75rem;
-                font-weight: 700;
-                text-transform: uppercase;
-            }
-            .dot-active { background: var(--success); box-shadow: 0 0 8px var(--success); }
-            .dot-oncall { background: #3498db; box-shadow: 0 0 8px #3498db; }
-        </style>
-        <div class="crew-grid">
-            <!-- LUC -->
-            <div class="crew-card">
-                <img src="avatars/luc-avatar.png" alt="Luc" class="crew-avatar glow-purple">
-                <div class="crew-name">LUC</div>
-                <div class="crew-role">Chief Orchestrator</div>
-                <div class="model-badge">anthropic/claude-sonnet-4-6</div>
-                <div class="status-row">
-                    <span class="status-indicator dot-active"></span> ACTIVE
-                </div>
-            </div>
-            <!-- WRENCH -->
-            <div class="crew-card">
-                <img src="avatars/wrench-avatar.jpg" alt="Wrench" class="crew-avatar glow-orange">
-                <div class="crew-name">WRENCH</div>
-                <div class="crew-role">Code & Builds</div>
-                <div class="model-badge">google/gemini-3-flash</div>
-                <div class="status-row">
-                    <span class="status-indicator dot-oncall"></span> ON CALL
-                </div>
-            </div>
-            <!-- SCOUT -->
-            <div class="crew-card">
-                <img src="avatars/scout-avatar.png" alt="Scout" class="crew-avatar glow-amber">
-                <div class="crew-name">SCOUT</div>
-                <div class="crew-role">Research & Intel</div>
-                <div class="model-badge">xai/grok-4-1-fast</div>
-                <div class="status-row">
-                    <span class="status-indicator dot-oncall"></span> ON CALL
-                </div>
-            </div>
-            <!-- PIXIE -->
-            <div class="crew-card">
-                <img src="avatars/pixie-avatar.jpg" alt="Pixie" class="crew-avatar glow-pink">
-                <div class="crew-name">PIXIE</div>
-                <div class="crew-role">Image Generation</div>
-                <div class="model-badge">google/gemini-3-pro-image-preview</div>
-                <div class="status-row">
-                    <span class="status-indicator dot-oncall"></span> ON CALL
-                </div>
-            </div>
-            <!-- PEPPER -->
-            <div class="crew-card">
-                <img src="avatars/pepper-avatar.jpg" alt="Pepper" class="crew-avatar glow-red">
-                <div class="crew-name">PEPPER</div>
-                <div class="crew-role">Perplexity AI — Mac Mini</div>
-                <div class="model-badge">perplexity/personal</div>
-                <div class="status-row">
-                    <span class="status-indicator dot-oncall"></span> ON CALL
-                </div>
-            </div>
+        <div class="section-head">
+            <h2>Also</h2>
         </div>
+        <details class="ops">
+            <summary>
+                <span>Markets & personal</span>
+                <span>
+                    <span class="hint">Kalshi · optional surface</span>
+                    <span class="chev">›</span>
+                </span>
+            </summary>
+            <div class="ops-body">
+                <div class="grid-3">
+                    <a class="card tile" href="https://kalshi.thecoopbrla.com/" target="_blank" rel="noopener">
+                        <div class="tile-icon">📈</div>
+                        <div class="tile-title">Kalshi</div>
+                        <div class="tile-sub">Paper / scanner dash</div>
+                    </a>
+                </div>
+            </div>
+        </details>
     </section>
 
-    <!-- SECTION 6: AI Agents Status -->
+    <!-- OPS (collapsed): Agents + Mini -->
     <section>
-        <h2>🤖 AI Agents Status</h2>
-        <div class="health-panel">
-            <div id="agent-status-content" style="font-family: 'JetBrains Mono', monospace; font-size: 0.85rem;">
-                <div style="color: var(--text-dim); text-align: center; padding: 1rem;">Loading agent stats...</div>
-            </div>
-            
-            <div id="run-feed-container" style="margin-top: 1.5rem; padding-top: 1.5rem; border-top: 1px solid #222;">
-                <div style="font-size: 0.75rem; color: var(--text-dim); margin-bottom: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em;">Recent Subagent Runs (Last 10)</div>
-                <div id="recent-runs-feed" style="max-height: 200px; overflow-y: auto; font-family: 'JetBrains Mono', monospace; font-size: 0.8rem;">
-                    <!-- Runs injected here -->
-                </div>
-            </div>
-
-            <div class="link-list" style="margin-top: 1rem; font-family: 'JetBrains Mono', monospace; font-size: 0.85rem;">
-                <div class="link-item" style="display: flex; justify-content: space-between; background: none; border-radius: 0; padding: 0.75rem 0;">
-                    <span>Kalshi Scanner — Every 30min</span>
-                    <span style="color: var(--warning);">PAPER MODE: ACTIVE 📝</span>
-                </div>
-            </div>
-
-            <div class="health-footer" style="margin-top: 1rem;">
-                <span id="agent-refresh-status">Auto-refreshes every 60s</span>
-                <span id="agent-last-updated">Last updated: --:--:--</span>
-            </div>
+        <div class="section-head">
+            <h2>Ops</h2>
+            <span class="section-note">Collapsed by default — open when something’s sick</span>
         </div>
+
+        <details class="ops">
+            <summary>
+                <span>Agents</span>
+                <span>
+                    <span class="hint">Ada · Luc</span>
+                    <span class="chev">›</span>
+                </span>
+            </summary>
+            <div class="ops-body">
+                <div class="agent-row">
+                    <div class="agent-card">
+                        <div class="agent-mono" title="Ada">ADA</div>
+                        <div>
+                            <div class="agent-name">ADA</div>
+                            <div class="agent-role">Chief of staff · Hermes</div>
+                            <div class="agent-model">xai / grok-4.5</div>
+                        </div>
+                        <div class="status-pill"><span class="dot"></span>Active</div>
+                    </div>
+                    <div class="agent-card">
+                        <img class="agent-avatar" src="avatars/luc-avatar.png" alt="Luc">
+                        <div>
+                            <div class="agent-name">LUC</div>
+                            <div class="agent-role">OpenClaw · Mini ops</div>
+                            <div class="agent-model">openclaw / main</div>
+                        </div>
+                        <div class="status-pill"><span class="dot"></span>On call</div>
+                    </div>
+                </div>
+                <p style="font-size:0.78rem;color:#64748b;">Wrench / Scout / Pixie / Pepper crew wall removed. Agent run feed lives on the Mini API if you need it later.</p>
+            </div>
+        </details>
+
+        <details class="ops" style="margin-top:0.75rem;">
+            <summary>
+                <span>Mac Mini</span>
+                <span>
+                    <span class="hint" id="mini-summary">health · RAM · reset</span>
+                    <span class="chev">›</span>
+                </span>
+            </summary>
+            <div class="ops-body">
+                <div class="health-panel">
+                    <div id="health-content" class="health-grid">
+                        <div>
+                            <span class="metric-label">CPU</span>
+                            <span id="cpu-value" class="metric-value">--%</span>
+                            <div class="progress-container">
+                                <div id="cpu-bar" class="progress-bar" style="width:0%;background:var(--success);"></div>
+                            </div>
+                        </div>
+                        <div>
+                            <span class="metric-label">MEMORY</span>
+                            <span id="mem-value" class="metric-value">--%</span>
+                            <div class="progress-container">
+                                <div id="mem-bar" class="progress-bar" style="width:0%;background:var(--success);"></div>
+                            </div>
+                        </div>
+                        <div>
+                            <span class="metric-label">DISK</span>
+                            <span id="disk-value" class="metric-value">-- / --</span>
+                            <div class="progress-container">
+                                <div id="disk-bar" class="progress-bar" style="width:0%;background:var(--success);"></div>
+                            </div>
+                        </div>
+                        <div>
+                            <span class="metric-label">STATUS</span>
+                            <span id="status-text" class="metric-value"><span class="status-indicator"></span>…</span>
+                            <span id="uptime-value" style="font-size:0.72rem;color:#555;">UPTIME: —</span>
+                        </div>
+                    </div>
+                    <div class="health-footer">
+                        <span id="refresh-status">Auto-refresh 30s</span>
+                        <span id="last-updated">Last updated: —</span>
+                        <button type="button" id="reset-btn" class="reset-btn" title="Restart heavy services to free RAM">Reset RAM</button>
+                    </div>
+                </div>
+            </div>
+        </details>
     </section>
 
     <footer class="page-footer">
         <img src="https://images.squarespace-cdn.com/content/v1/68fac8a3d20e8d72215ede75/6669040e-00b7-4113-a0c0-a29b3706227f/Asset+26.png?format=200w" alt="" class="footer-logo"><br>
         The Cooperative Agency · lance@thecoopbrla.com · thecoopbrla.com<br>
-        <span style="font-size: 0.75rem; margin-top: 1rem; display: block; opacity: 0.5;">Built by Luc 🦞</span>
+        <span style="font-size:0.75rem;margin-top:0.85rem;display:block;opacity:0.5;">Operator home · not a museum</span>
     </footer>
 </div>
 
 <script>
     function updateClock() {
         const now = new Date();
-        const options = { 
-            weekday: 'short', 
-            year: 'numeric', 
-            month: 'short', 
+        const options = {
+            weekday: 'short',
+            year: 'numeric',
+            month: 'short',
             day: 'numeric',
-            hour: '2-digit', 
-            minute: '2-digit', 
+            hour: '2-digit',
+            minute: '2-digit',
             second: '2-digit',
-            timeZoneName: 'short' 
+            timeZoneName: 'short'
         };
         document.getElementById('live-clock').innerText = now.toLocaleString('en-US', options);
+    }
+
+    function updateBar(id, percent) {
+        const bar = document.getElementById(id);
+        if (!bar) return;
+        const p = Math.max(0, Math.min(100, Number(percent) || 0));
+        bar.style.width = p + '%';
+        if (p > 85) bar.style.background = 'var(--danger)';
+        else if (p > 70) bar.style.background = 'var(--warning)';
+        else bar.style.background = 'var(--success)';
     }
 
     async function fetchHealth() {
@@ -594,167 +773,66 @@
             const response = await fetch('https://macmini.thecoopbrla.com/health');
             if (!response.ok) throw new Error('Offline');
             const data = await response.json();
-            
-            // Update values
-            document.getElementById('cpu-value').innerText = `${data.cpu.toFixed(1)}%`;
+
+            document.getElementById('cpu-value').innerText = `${Number(data.cpu).toFixed(1)}%`;
             document.getElementById('mem-value').innerText = `${data.memory.percent}%`;
             document.getElementById('disk-value').innerText = `${data.disk.used}GB / ${data.disk.total}GB`;
             document.getElementById('uptime-value').innerText = `UPTIME: ${data.uptime}`;
-            document.getElementById('status-text').innerHTML = `<span class="status-indicator"></span> ${data.status.toUpperCase()}`;
-            
-            // Update bars and colors
-            const updateBar = (id, percent) => {
-                const bar = document.getElementById(id);
-                bar.style.width = `${percent}%`;
-                if (percent > 85) bar.style.background = 'var(--danger)';
-                else if (percent > 70) bar.style.background = 'var(--warning)';
-                else bar.style.background = 'var(--success)';
-            };
-            
+            document.getElementById('status-text').innerHTML =
+                `<span class="status-indicator"></span> ${String(data.status || 'online').toUpperCase()}`;
+
             updateBar('cpu-bar', data.cpu);
             updateBar('mem-bar', data.memory.percent);
             updateBar('disk-bar', data.disk.percent);
-            
-            // Reset status styles
+
             document.getElementById('health-content').style.opacity = '1';
-            document.getElementById('refresh-status').innerText = 'Auto-refreshes every 30s';
+            document.getElementById('refresh-status').innerText = 'Auto-refresh 30s';
             document.getElementById('refresh-status').style.color = '';
-            
-            // Update timestamp
-            const now = new Date();
-            document.getElementById('last-updated').innerText = `Last updated: ${now.toTimeString().split(' ')[0]}`;
-            
+            document.getElementById('last-updated').innerText =
+                `Last updated: ${new Date().toTimeString().split(' ')[0]}`;
+
+            const mem = data.memory && data.memory.percent;
+            const miniSummary = document.getElementById('mini-summary');
+            if (miniSummary && mem != null) {
+                miniSummary.textContent = `mem ${mem}% · cpu ${Number(data.cpu).toFixed(0)}%`;
+            }
         } catch (error) {
             console.error('Health fetch failed:', error);
             document.getElementById('health-content').style.opacity = '0.5';
-            document.getElementById('refresh-status').innerText = 'Mac Mini offline or unreachable';
+            document.getElementById('refresh-status').innerText = 'Mini offline or unreachable';
             document.getElementById('refresh-status').style.color = 'var(--danger)';
-        }
-    }
-
-    setInterval(updateClock, 1000);
-    setInterval(fetchHealth, 30000);
-    setInterval(fetchAgents, 60000);
-    updateClock();
-    fetchHealth();
-    fetchAgents();
-
-    async function fetchAgents() {
-        const agentContent = document.getElementById('agent-status-content');
-        const runsFeed = document.getElementById('recent-runs-feed');
-        const refreshStatus = document.getElementById('agent-refresh-status');
-        const lastUpdated = document.getElementById('agent-last-updated');
-
-        try {
-            const response = await fetch('https://macmini.thecoopbrla.com/agents');
-            if (!response.ok) throw new Error('Unavailable');
-            const data = await response.json();
-
-            // Model Mapping
-            const modelConfig = {
-                'google/gemini-3-flash': { name: 'Gemini', color: '#3498db', role: 'Wrench ✅' },
-                'xai/grok-4-1-fast': { name: 'Grok', color: '#e67e22', role: 'Scout ✅' },
-                'anthropic/claude-sonnet-4-6': { name: 'Sonnet', color: '#9b59b6', role: 'Luc (main) ✅' },
-                'google/gemini-3-pro-image-preview': { name: 'Pixie', color: '#f1c40f', role: 'Image Gen ✅' }
-            };
-
-            // Part 1: Model Compute Summary
-            let summaryHtml = '';
-            
-            // Add Pixie (Image Generator) - Static entry as requested
-            summaryHtml += `
-                <div style="display: flex; justify-content: space-between; align-items: center; padding: 0.75rem 0; border-bottom: 1px solid #222;">
-                    <div style="display: flex; align-items: center; gap: 10px;">
-                        <span style="background: #f1c40f; color: black; padding: 2px 6px; border-radius: 4px; font-size: 0.7rem; font-weight: 700;">PIXIE</span>
-                        <span>Image generation — marketing assets, avatars, hero images, social visuals</span>
-                    </div>
-                    <div style="display: flex; gap: 12px; font-size: 0.8rem;">
-                        <span style="color: var(--success); font-weight: 700;">ON CALL</span>
-                    </div>
-                </div>`;
-
-            const models = Object.keys(data.modelStats);
-            
-            // Ensure main agent is listed if missing from stats
-            if (!data.modelStats['anthropic/claude-sonnet-4-6']) {
-                models.unshift('anthropic/claude-sonnet-4-6');
-            }
-
-            models.forEach(modelId => {
-                const stats = data.modelStats[modelId] || { count: 0, errors: 0 };
-                const config = modelConfig[modelId] || { name: modelId.split('/').pop(), color: '#94a3b8', role: '<span style="color:var(--danger)">⚠️ Unknown agent</span>' };
-                
-                summaryHtml += `
-                    <div style="display: flex; justify-content: space-between; align-items: center; padding: 0.75rem 0; border-bottom: 1px solid #222;">
-                        <div style="display: flex; align-items: center; gap: 10px;">
-                            <span style="background: ${config.color}; color: white; padding: 2px 6px; border-radius: 4px; font-size: 0.7rem; font-weight: 700;">${config.name.toUpperCase()}</span>
-                            <span>${config.role}</span>
-                        </div>
-                        <div style="display: flex; gap: 12px; font-size: 0.8rem;">
-                            <span>RUNS: <b style="color: var(--text-main)">${stats.count}</b></span>
-                            ${stats.errors > 0 ? `<span style="color: var(--danger)">ERRORS: <b>${stats.errors}</b></span>` : ''}
-                        </div>
-                    </div>`;
-            });
-            agentContent.innerHTML = summaryHtml;
-
-            // Part 2: Recent Run Feed
-            let runsHtml = '';
-            const recentRuns = (data.recentRuns || []).slice(0, 10);
-            
-            if (recentRuns.length === 0) {
-                runsHtml = '<div style="color: #555; padding: 1rem; text-align: center;">No recent subagent activity</div>';
-            } else {
-                recentRuns.forEach(run => {
-                    const time = new Date(run.time).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false });
-                    const config = modelConfig[run.model] || { name: 'UNK' };
-                    const dotColor = run.status === 'subagent-complete' ? 'var(--success)' : 'var(--danger)';
-                    const taskSnippet = run.task.length > 50 ? run.task.substring(0, 50) + '...' : run.task;
-
-                    runsHtml += `
-                        <div style="display: flex; gap: 12px; padding: 6px 0; border-bottom: 1px solid #111; align-items: center;">
-                            <span style="color: #555; width: 45px; flex-shrink: 0;">${time}</span>
-                            <span style="width: 60px; flex-shrink: 0; font-weight: 600;">${config.name}</span>
-                            <span style="width: 10px; height: 10px; border-radius: 50%; background: ${dotColor}; flex-shrink: 0;"></span>
-                            <span style="color: var(--text-dim); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${taskSnippet}</span>
-                        </div>`;
-                });
-            }
-            runsFeed.innerHTML = runsHtml;
-
-            // Update footer
-            const now = new Date();
-            lastUpdated.innerText = `Last updated: ${now.toTimeString().split(' ')[0]}`;
-            refreshStatus.innerText = 'Auto-refreshes every 60s';
-            refreshStatus.style.color = '';
-            agentContent.style.opacity = '1';
-            runsFeed.style.opacity = '1';
-
-        } catch (error) {
-            console.error('Agent fetch failed:', error);
-            agentContent.innerHTML = '<div style="color: #555; text-align: center; padding: 1rem;">Agent data unavailable</div>';
-            refreshStatus.innerText = 'Agent API unreachable';
-            refreshStatus.style.color = 'var(--text-dim)';
-            agentContent.style.opacity = '0.5';
-            runsFeed.style.opacity = '0.5';
+            const miniSummary = document.getElementById('mini-summary');
+            if (miniSummary) miniSummary.textContent = 'unreachable';
         }
     }
 
     async function resetMac() {
-      const btn = document.querySelector('button[onclick="resetMac()"]');
-      btn.textContent = '⏳ Resetting...';
-      btn.disabled = true;
-      try {
-        const r = await fetch('https://macmini.thecoopbrla.com/reset', { method: 'POST' });
-        const d = await r.json();
-        btn.textContent = '✅ Done';
-        setTimeout(() => { btn.textContent = '🔄 Reset RAM'; btn.disabled = false; fetchHealth(); }, 3000);
-      } catch(e) {
-        btn.textContent = '❌ Failed';
-        setTimeout(() => { btn.textContent = '🔄 Reset RAM'; btn.disabled = false; }, 3000);
-      }
+        const btn = document.getElementById('reset-btn');
+        if (!btn) return;
+        btn.textContent = 'Resetting…';
+        btn.disabled = true;
+        try {
+            await fetch('https://macmini.thecoopbrla.com/reset', { method: 'POST' });
+            btn.textContent = 'Done';
+            setTimeout(() => {
+                btn.textContent = 'Reset RAM';
+                btn.disabled = false;
+                fetchHealth();
+            }, 3000);
+        } catch (e) {
+            btn.textContent = 'Failed';
+            setTimeout(() => {
+                btn.textContent = 'Reset RAM';
+                btn.disabled = false;
+            }, 3000);
+        }
     }
-</script>
 
+    document.getElementById('reset-btn').addEventListener('click', resetMac);
+    setInterval(updateClock, 1000);
+    setInterval(fetchHealth, 30000);
+    updateClock();
+    fetchHealth();
+</script>
 </body>
 </html>
