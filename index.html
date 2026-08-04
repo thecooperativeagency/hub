@@ -20,6 +20,10 @@
             --warning: #f1c40f;
             --danger: #e74c3c;
             --rail: #151820;
+            --blue: #3b82f6;
+            --violet: #8b5cf6;
+            --amber: #f59e0b;
+            --slate: #64748b;
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -41,9 +45,9 @@
         }
 
         header {
-            padding: 2rem 0 1.5rem;
+            padding: 2rem 0 1.35rem;
             border-bottom: 1px solid var(--border-color);
-            margin-bottom: 1.75rem;
+            margin-bottom: 1.5rem;
             display: flex;
             align-items: center;
             justify-content: space-between;
@@ -72,21 +76,32 @@
             margin-top: 0.2rem;
         }
 
-        .header-datetime {
+        .header-meta {
             text-align: right;
+        }
+
+        .header-datetime {
             font-family: 'JetBrains Mono', monospace;
             color: var(--text-dim);
             font-size: 0.82rem;
         }
 
-        section { margin-bottom: 2.25rem; }
+        .header-tagline {
+            margin-top: 0.35rem;
+            font-size: 0.78rem;
+            color: #64748b;
+            max-width: 280px;
+            margin-left: auto;
+        }
+
+        section { margin-bottom: 2.15rem; }
 
         .section-head {
             display: flex;
             align-items: baseline;
             justify-content: space-between;
             gap: 1rem;
-            margin-bottom: 0.9rem;
+            margin-bottom: 0.85rem;
         }
 
         h2 {
@@ -150,6 +165,67 @@
             color: var(--text-dim);
         }
 
+        /* GM weekly strip under rails */
+        .gm-strip {
+            margin-top: 0.85rem;
+            background: #12151b;
+            border: 1px solid var(--border-color);
+            border-radius: 14px;
+            padding: 0.85rem 1rem;
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 0.65rem 0.85rem;
+        }
+
+        .gm-strip-label {
+            font-size: 0.72rem;
+            font-weight: 800;
+            letter-spacing: 0.07em;
+            text-transform: uppercase;
+            color: #94a3b8;
+            margin-right: 0.25rem;
+        }
+
+        .gm-chip {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            padding: 0.42rem 0.75rem;
+            border-radius: 999px;
+            background: rgba(255,255,255,0.04);
+            border: 1px solid #2d3748;
+            font-size: 0.82rem;
+            font-weight: 600;
+        }
+
+        .gm-chip:hover {
+            border-color: var(--accent-red);
+            background: var(--accent-soft);
+            color: #f0b4ad;
+        }
+
+        .gm-chip .dot-live {
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            background: var(--success);
+            box-shadow: 0 0 8px rgba(46,204,113,0.6);
+        }
+
+        .gm-all {
+            margin-left: auto;
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: #94a3b8;
+            border-bottom: 1px solid transparent;
+        }
+
+        .gm-all:hover {
+            color: #e2e8f0;
+            border-bottom-color: var(--accent-red);
+        }
+
         /* Grids / cards */
         .grid-4 {
             display: grid;
@@ -160,6 +236,12 @@
         .grid-3 {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
+            gap: 1rem;
+        }
+
+        .grid-2 {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
             gap: 1rem;
         }
 
@@ -234,6 +316,85 @@
 
         .group-label:first-of-type { margin-top: 0; }
 
+        /* Project / idea cards */
+        .proj {
+            display: flex;
+            flex-direction: column;
+            gap: 0.55rem;
+            min-height: 150px;
+        }
+
+        .proj-top {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 0.6rem;
+        }
+
+        .proj-title {
+            font-size: 1.02rem;
+            font-weight: 750;
+            letter-spacing: -0.01em;
+            line-height: 1.25;
+        }
+
+        .proj-blurb {
+            font-size: 0.84rem;
+            color: var(--text-dim);
+            flex: 1;
+        }
+
+        .proj-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.4rem;
+            align-items: center;
+            margin-top: auto;
+            padding-top: 0.35rem;
+        }
+
+        .proj-link {
+            font-size: 0.8rem;
+            font-weight: 650;
+            color: #f0b4ad;
+        }
+
+        .proj-link:hover { text-decoration: underline; }
+
+        .proj-links {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.55rem 0.85rem;
+            margin-top: 0.15rem;
+        }
+
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            font-size: 0.66rem;
+            font-weight: 800;
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+            padding: 0.22rem 0.5rem;
+            border-radius: 999px;
+            white-space: nowrap;
+        }
+
+        .b-active { background: rgba(46, 204, 113, 0.15); color: #4ade80; }
+        .b-ongoing { background: rgba(59, 130, 246, 0.15); color: #60a5fa; }
+        .b-tabled { background: rgba(100, 116, 139, 0.22); color: #94a3b8; }
+        .b-warm { background: rgba(245, 158, 11, 0.16); color: #fbbf24; }
+        .b-polish { background: rgba(139, 92, 246, 0.16); color: #c4b5fd; }
+        .b-cold { background: rgba(100, 116, 139, 0.18); color: #7c8798; }
+        .b-personal { background: rgba(236, 72, 153, 0.12); color: #f9a8d4; }
+        .b-coop { background: rgba(192, 57, 43, 0.14); color: #f0b4ad; }
+
+        .idea {
+            min-height: 120px;
+        }
+
+        .idea .proj-title { font-size: 0.95rem; }
+
         /* Collapsible ops */
         details.ops {
             background: var(--card-bg);
@@ -275,6 +436,7 @@
             color: var(--text-dim);
             font-family: 'JetBrains Mono', monospace;
             font-size: 0.85rem;
+            display: inline-block;
         }
 
         details.ops[open] .chev { transform: rotate(90deg); }
@@ -443,15 +605,18 @@
         @media (max-width: 1100px) {
             .rails { grid-template-columns: repeat(3, 1fr); }
             .grid-4 { grid-template-columns: repeat(2, 1fr); }
+            .health-grid { grid-template-columns: repeat(2, 1fr); }
         }
 
         @media (max-width: 720px) {
             header { flex-direction: column; text-align: center; }
-            .header-datetime { text-align: center; }
-            .rails, .grid-4, .grid-3, .health-grid, .agent-row {
+            .header-meta { text-align: center; }
+            .header-tagline { margin-left: 0; max-width: none; }
+            .rails, .grid-4, .grid-3, .grid-2, .health-grid, .agent-row {
                 grid-template-columns: 1fr;
             }
             .section-head { flex-direction: column; align-items: flex-start; }
+            .gm-all { margin-left: 0; width: 100%; }
         }
     </style>
 </head>
@@ -465,22 +630,39 @@
                 <p>The Cooperative Agency</p>
             </div>
         </div>
-        <div class="header-datetime" id="live-clock">Loading…</div>
+        <div class="header-meta">
+            <div class="header-datetime" id="live-clock">Loading…</div>
+            <div class="header-tagline">Daily desk · tools you touch · work in flight · memory jog</div>
+        </div>
     </header>
 
-    <!-- DAILY RAILS -->
+    <!-- DAILY -->
     <section>
         <div class="section-head">
             <h2>Daily</h2>
-            <span class="section-note">One click to the work that actually moves</span>
+            <span class="section-note">What you actually open most days — not every project</span>
         </div>
         <div class="rails">
+            <a class="rail" href="https://thecooperativeagency.github.io/email-creative/manager-reports.html" target="_blank" rel="noopener">
+                <div>
+                    <div class="rail-kicker">Reports</div>
+                    <div class="rail-title">GM Weeklies</div>
+                </div>
+                <div class="rail-sub">Lead handling · BHBMW · ABR · BMWJ</div>
+            </a>
             <a class="rail" href="https://postengine.thecoopbrla.com/" target="_blank" rel="noopener">
                 <div>
                     <div class="rail-kicker">Social</div>
                     <div class="rail-title">PostEngine</div>
                 </div>
                 <div class="rail-sub">Queue · approve · publish</div>
+            </a>
+            <a class="rail" href="https://tag.thecoopbrla.com/dashboard" target="_blank" rel="noopener">
+                <div>
+                    <div class="rail-kicker">Tag</div>
+                    <div class="rail-title">CoopTag</div>
+                </div>
+                <div class="rail-sub">Audiences · stock signals</div>
             </a>
             <a class="rail" href="https://thecooperativeagency.github.io/email-creative/" target="_blank" rel="noopener">
                 <div>
@@ -496,13 +678,6 @@
                 </div>
                 <div class="rail-sub">Specials · model · guides</div>
             </a>
-            <a class="rail" href="https://acquire.thecoopbrla.com/" target="_blank" rel="noopener">
-                <div>
-                    <div class="rail-kicker">SMS</div>
-                    <div class="rail-title">CoopAcquire</div>
-                </div>
-                <div class="rail-sub">Opt-in · appraisal · A2P</div>
-            </a>
             <a class="rail" href="https://todoist.com/app" target="_blank" rel="noopener">
                 <div>
                     <div class="rail-kicker">Tasks</div>
@@ -510,83 +685,275 @@
                 </div>
                 <div class="rail-sub">Today + commitments</div>
             </a>
-            <a class="rail" href="https://thecooperativeagency.github.io/Ga4-dashboards/" target="_blank" rel="noopener">
-                <div>
-                    <div class="rail-kicker">Analytics</div>
-                    <div class="rail-title">GA4</div>
-                </div>
-                <div class="rail-sub">Master dashboards</div>
-            </a>
         </div>
+
+        <div class="gm-strip" aria-label="Open GM Weekly store packs">
+            <span class="gm-strip-label">Open pack</span>
+            <a class="gm-chip" href="https://thecooperativeagency.github.io/email-creative/gm-weekly/bhbmw.html" target="_blank" rel="noopener">
+                <span class="dot-live"></span> BHBMW
+            </a>
+            <a class="gm-chip" href="https://thecooperativeagency.github.io/email-creative/gm-weekly/abr.html" target="_blank" rel="noopener">
+                <span class="dot-live"></span> ABR
+            </a>
+            <a class="gm-chip" href="https://thecooperativeagency.github.io/email-creative/gm-weekly/bmwj.html" target="_blank" rel="noopener">
+                <span class="dot-live"></span> BMWJ
+            </a>
+            <a class="gm-all" href="https://thecooperativeagency.github.io/email-creative/manager-reports.html" target="_blank" rel="noopener">All manager reports →</a>
+        </div>
+    </section>
+
+    <!-- PROJECTS IN FLIGHT -->
+    <section>
+        <div class="section-head">
+            <h2>Projects</h2>
+            <span class="section-note">Active builds + tabled work — not daily rails</span>
+        </div>
+        <div class="grid-3">
+            <div class="card proj">
+                <div class="proj-top">
+                    <div class="proj-title">CoopAcquire</div>
+                    <span class="badge b-ongoing">Ongoing</span>
+                </div>
+                <p class="proj-blurb">Dealership SMS / appraisal opt-in. A2P per rooftop. Live product; not a daily open unless you’re in it.</p>
+                <div class="proj-links">
+                    <a class="proj-link" href="https://acquire.thecoopbrla.com/" target="_blank" rel="noopener">App →</a>
+                </div>
+                <div class="proj-meta">
+                    <span class="badge b-coop">Coop</span>
+                    <span class="badge b-ongoing">Product</span>
+                </div>
+            </div>
+
+            <div class="card proj">
+                <div class="proj-top">
+                    <div class="proj-title">PostEngine → PostHopper</div>
+                    <span class="badge b-warm">Warm</span>
+                </div>
+                <p class="proj-blurb">Internal social system is daily (above). SaaS spinoff / rename / domain still open product work.</p>
+                <div class="proj-links">
+                    <a class="proj-link" href="https://postengine.thecoopbrla.com/" target="_blank" rel="noopener">Live PE →</a>
+                </div>
+                <div class="proj-meta">
+                    <span class="badge b-coop">Coop</span>
+                    <span class="badge b-warm">SaaS</span>
+                </div>
+            </div>
+
+            <div class="card proj">
+                <div class="proj-top">
+                    <div class="proj-title">GA4 dashboards</div>
+                    <span class="badge b-tabled">Tabled</span>
+                </div>
+                <p class="proj-blurb">Store GA4 packs exist; not a daily driver. Pull when a GM/analytics thread needs them.</p>
+                <div class="proj-links">
+                    <a class="proj-link" href="https://thecooperativeagency.github.io/Ga4-dashboards/" target="_blank" rel="noopener">Master index →</a>
+                </div>
+                <div class="proj-meta">
+                    <span class="badge b-coop">Client</span>
+                    <span class="badge b-tabled">Paused energy</span>
+                </div>
+            </div>
+
+            <div class="card proj">
+                <div class="proj-top">
+                    <div class="proj-title">GM Weekly product</div>
+                    <span class="badge b-active">Active</span>
+                </div>
+                <p class="proj-blurb">Lead-care briefs Mon/Fri. Packs live under manager reports. DMS accuracy work continues (esp. ABR).</p>
+                <div class="proj-links">
+                    <a class="proj-link" href="https://thecooperativeagency.github.io/email-creative/manager-reports.html" target="_blank" rel="noopener">Manager hub →</a>
+                </div>
+                <div class="proj-meta">
+                    <span class="badge b-coop">Client ops</span>
+                </div>
+            </div>
+
+            <div class="card proj">
+                <div class="proj-top">
+                    <div class="proj-title">Annual Inventory</div>
+                    <span class="badge b-ongoing">Ongoing</span>
+                </div>
+                <p class="proj-blurb">Sold metal + lot packs. BHBMW live; ABR/BMWJ need real feeds before shipping.</p>
+                <div class="proj-links">
+                    <a class="proj-link" href="https://thecooperativeagency.github.io/annual-inventory/bhbmw.html" target="_blank" rel="noopener">BHBMW pack →</a>
+                    <a class="proj-link" href="https://thecooperativeagency.github.io/annual-inventory/" target="_blank" rel="noopener">Index →</a>
+                </div>
+                <div class="proj-meta">
+                    <span class="badge b-coop">Client ops</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- IDEAS / MEMORY JOG -->
+    <section>
+        <div class="section-head">
+            <h2>Ideas board</h2>
+            <span class="section-note">Parking lot snapshot — jog memory, not a full vault browser</span>
+        </div>
+        <div class="grid-3">
+            <div class="card proj idea">
+                <div class="proj-top">
+                    <div class="proj-title">Ultimate Sales Notebook</div>
+                    <span class="badge b-polish">Polishing</span>
+                </div>
+                <p class="proj-blurb">Salesman’s notebook product. Substantial work done — finish / package / ship decision.</p>
+                <div class="proj-meta"><span class="badge b-coop">Product</span></div>
+            </div>
+
+            <div class="card proj idea">
+                <div class="proj-top">
+                    <div class="proj-title">Avec Tous Provisions</div>
+                    <span class="badge b-polish">Polishing</span>
+                </div>
+                <p class="proj-blurb">Spice brand relaunch + Squarespace commerce API path.</p>
+                <div class="proj-meta"><span class="badge b-personal">Personal</span></div>
+            </div>
+
+            <div class="card proj idea">
+                <div class="proj-top">
+                    <div class="proj-title">Store Ops Agent</div>
+                    <span class="badge b-warm">Warm</span>
+                </div>
+                <p class="proj-blurb">Report-mated agent product for store ops / recurring briefs.</p>
+                <div class="proj-meta"><span class="badge b-coop">Product</span></div>
+            </div>
+
+            <div class="card proj idea">
+                <div class="proj-top">
+                    <div class="proj-title">Dealer Intel Platform</div>
+                    <span class="badge b-warm">Warm</span>
+                </div>
+                <p class="proj-blurb">Autograph-class alternative — market / competitive intel layer.</p>
+                <div class="proj-meta"><span class="badge b-coop">Product</span></div>
+            </div>
+
+            <div class="card proj idea">
+                <div class="proj-top">
+                    <div class="proj-title">VinSolutions + vAuto feeds</div>
+                    <span class="badge b-warm">Warm</span>
+                </div>
+                <p class="proj-blurb">Weekly data feeds into GM / inventory products. Plumbing still open.</p>
+                <div class="proj-meta"><span class="badge b-coop">Client data</span></div>
+            </div>
+
+            <div class="card proj idea">
+                <div class="proj-top">
+                    <div class="proj-title">CoopAcquire multi-tenant</div>
+                    <span class="badge b-warm">Warm</span>
+                </div>
+                <p class="proj-blurb">Productize beyond internal — multi-rooftop growth path.</p>
+                <div class="proj-meta"><span class="badge b-coop">Growth</span></div>
+            </div>
+
+            <div class="card proj idea">
+                <div class="proj-top">
+                    <div class="proj-title">Store media text-in</div>
+                    <span class="badge b-cold">Cold</span>
+                </div>
+                <p class="proj-blurb">Photo + note from store → Drive. Captured; no recent energy.</p>
+                <div class="proj-meta"><span class="badge b-coop">Product</span></div>
+            </div>
+
+            <div class="card proj idea">
+                <div class="proj-top">
+                    <div class="proj-title">Tactical Awareness Suite</div>
+                    <span class="badge b-cold">Cold</span>
+                </div>
+                <p class="proj-blurb">Earlier ops/awareness product concept — parked.</p>
+                <div class="proj-meta"><span class="badge b-coop">Product</span></div>
+            </div>
+
+            <div class="card proj idea">
+                <div class="proj-top">
+                    <div class="proj-title">FridgeDrop / ShotBrief / Envie</div>
+                    <span class="badge b-cold">Cold</span>
+                </div>
+                <p class="proj-blurb">Personal app research lane. Keep visible so it doesn’t vanish.</p>
+                <div class="proj-meta"><span class="badge b-personal">Personal</span></div>
+            </div>
+        </div>
+        <p style="margin-top:0.75rem;font-size:0.78rem;color:#64748b;">
+            Source of truth for full idea notes: AgentOps Vault → <code>08 - Ideas</code>. Tell Ada “idea debrief” or “park this” to update the real list; this board is a hub snapshot we refresh when the backlog moves.
+        </p>
     </section>
 
     <!-- CLIENTS -->
     <section>
         <div class="section-head">
             <h2>Clients</h2>
-            <span class="section-note">Same card shape every store</span>
+            <span class="section-note">Per-store jumps — briefs, specials, GM packs</span>
         </div>
         <div class="grid-4">
-            <!-- Brian Harris BMW -->
             <div class="card">
                 <div class="card-title">Brian Harris BMW</div>
                 <div class="card-subtitle">Baton Rouge, LA</div>
 
+                <div class="group-label">This week</div>
+                <a class="link-item" href="https://thecooperativeagency.github.io/email-creative/gm-weekly/bhbmw.html" target="_blank" rel="noopener">GM Weekly</a>
+                <a class="link-item" href="https://thecooperativeagency.github.io/seo-pages/Brian%20Harris%20BMW/new-bmw-specials-august-2026.html" target="_blank" rel="noopener">August specials</a>
+
                 <div class="group-label">Shareable</div>
                 <a class="link-item" href="https://thecooperativeagency.github.io/vendor-briefs/brian-harris-bmw.html" target="_blank" rel="noopener">Vendor brief</a>
-                <a class="link-item" href="https://thecooperativeagency.github.io/seo-pages/Brian%20Harris%20BMW/new-bmw-specials-august-2026.html" target="_blank" rel="noopener">August specials</a>
                 <a class="link-item" href="https://thecooperativeagency.github.io/seo-pages/" target="_blank" rel="noopener">SEO pages</a>
+                <a class="link-item muted" href="https://thecooperativeagency.github.io/annual-inventory/bhbmw.html" target="_blank" rel="noopener">Annual inventory</a>
 
-                <div class="group-label">Internal</div>
-                <a class="link-item" href="https://thecooperativeagency.github.io/Ga4-dashboards/brian-harris-bmw-dashboard.html" target="_blank" rel="noopener">GA4 dashboard</a>
+                <div class="group-label">When needed</div>
+                <a class="link-item muted" href="https://thecooperativeagency.github.io/Ga4-dashboards/brian-harris-bmw-dashboard.html" target="_blank" rel="noopener">GA4</a>
                 <a class="link-item muted" href="https://thecooperativeagency.github.io/Ga4-dashboards/brian-harris-bmw-sales-baseline.html" target="_blank" rel="noopener">Sales baseline</a>
                 <a class="link-item muted" href="https://thecooperativeagency.github.io/Ga4-dashboards/brian-harris-bmw-sales-opportunity-brief.html" target="_blank" rel="noopener">Opportunity brief</a>
             </div>
 
-            <!-- Audi Baton Rouge -->
             <div class="card">
                 <div class="card-title">Audi Baton Rouge</div>
                 <div class="card-subtitle">Baton Rouge, LA</div>
+
+                <div class="group-label">This week</div>
+                <a class="link-item" href="https://thecooperativeagency.github.io/email-creative/gm-weekly/abr.html" target="_blank" rel="noopener">GM Weekly</a>
 
                 <div class="group-label">Shareable</div>
                 <a class="link-item" href="https://thecooperativeagency.github.io/vendor-briefs/audi-baton-rouge.html" target="_blank" rel="noopener">Vendor brief</a>
                 <a class="link-item" href="https://thecooperativeagency.github.io/seo-pages/" target="_blank" rel="noopener">SEO pages</a>
 
-                <div class="group-label">Internal</div>
-                <a class="link-item" href="https://thecooperativeagency.github.io/Ga4-dashboards/audi-baton-rouge-dashboard.html" target="_blank" rel="noopener">GA4 dashboard</a>
+                <div class="group-label">When needed</div>
+                <a class="link-item muted" href="https://thecooperativeagency.github.io/Ga4-dashboards/audi-baton-rouge-dashboard.html" target="_blank" rel="noopener">GA4</a>
                 <a class="link-item muted" href="https://thecooperativeagency.github.io/Ga4-dashboards/audi-baton-rouge-sales-baseline.html" target="_blank" rel="noopener">Sales baseline</a>
                 <a class="link-item muted" href="https://thecooperativeagency.github.io/Ga4-dashboards/audi-baton-rouge-sales-opportunity-brief.html" target="_blank" rel="noopener">Opportunity brief</a>
             </div>
 
-            <!-- BMW of Jackson -->
             <div class="card">
                 <div class="card-title">BMW of Jackson</div>
                 <div class="card-subtitle">Jackson, MS</div>
 
+                <div class="group-label">This week</div>
+                <a class="link-item" href="https://thecooperativeagency.github.io/email-creative/gm-weekly/bmwj.html" target="_blank" rel="noopener">GM Weekly</a>
+                <a class="link-item" href="https://thecooperativeagency.github.io/seo-pages/BMW%20of%20Jackson/new-bmw-specials-august-2026.html" target="_blank" rel="noopener">August specials</a>
+
                 <div class="group-label">Shareable</div>
                 <a class="link-item" href="https://thecooperativeagency.github.io/vendor-briefs/bmw-of-jackson.html" target="_blank" rel="noopener">Vendor brief</a>
                 <a class="link-item" href="https://thecooperativeagency.github.io/vendor-briefs/bmw-jackson-management-hub.html" target="_blank" rel="noopener">Management hub</a>
-                <a class="link-item" href="https://thecooperativeagency.github.io/seo-pages/BMW%20of%20Jackson/new-bmw-specials-august-2026.html" target="_blank" rel="noopener">August specials</a>
                 <a class="link-item" href="https://thecooperativeagency.github.io/seo-pages/" target="_blank" rel="noopener">SEO pages</a>
 
-                <div class="group-label">Internal</div>
-                <a class="link-item" href="https://thecooperativeagency.github.io/Ga4-dashboards/bmw-jackson-dashboard.html" target="_blank" rel="noopener">GA4 dashboard</a>
+                <div class="group-label">When needed</div>
+                <a class="link-item muted" href="https://thecooperativeagency.github.io/Ga4-dashboards/bmw-jackson-dashboard.html" target="_blank" rel="noopener">GA4</a>
                 <a class="link-item muted" href="https://thecooperativeagency.github.io/Ga4-dashboards/bmw-jackson-sales-baseline.html" target="_blank" rel="noopener">Sales baseline</a>
                 <a class="link-item muted" href="https://thecooperativeagency.github.io/Ga4-dashboards/bmw-jackson-sales-opportunity-brief.html" target="_blank" rel="noopener">Opportunity brief</a>
                 <a class="link-item muted" href="https://thecooperativeagency.github.io/Ga4-dashboards/bmw-jackson-used-inventory-stocking-brief.html" target="_blank" rel="noopener">Used stocking</a>
             </div>
 
-            <!-- Harris Porsche -->
             <div class="card">
                 <div class="card-title">Harris Porsche</div>
                 <div class="card-subtitle">Baton Rouge, LA</div>
 
+                <div class="group-label">This week</div>
+                <a class="link-item muted" href="https://thecooperativeagency.github.io/email-creative/manager-reports.html" target="_blank" rel="noopener">No GM Weekly yet</a>
+                <a class="link-item" href="https://thecooperativeagency.github.io/seo-pages/Harris%20Porsche/harris-porsche-april-2026-specials.html" target="_blank" rel="noopener">Specials (Apr)</a>
+
                 <div class="group-label">Shareable</div>
                 <a class="link-item" href="https://thecooperativeagency.github.io/vendor-briefs/harris-porsche.html" target="_blank" rel="noopener">Vendor brief</a>
-                <a class="link-item" href="https://thecooperativeagency.github.io/seo-pages/Harris%20Porsche/harris-porsche-april-2026-specials.html" target="_blank" rel="noopener">Specials (Apr)</a>
                 <a class="link-item" href="https://thecooperativeagency.github.io/seo-pages/" target="_blank" rel="noopener">SEO pages</a>
 
-                <div class="group-label">Internal</div>
+                <div class="group-label">When needed</div>
                 <a class="link-item muted" href="https://thecooperativeagency.github.io/Ga4-dashboards/" target="_blank" rel="noopener">GA4 master</a>
             </div>
         </div>
@@ -596,17 +963,17 @@
     <section>
         <div class="section-head">
             <h2>Libraries</h2>
-            <span class="section-note">Indexes + pitch pack</span>
+            <span class="section-note">Indexes when you need the whole shelf</span>
         </div>
         <div class="grid-4">
             <a class="card tile" href="https://thecooperativeagency.github.io/vendor-briefs/" target="_blank" rel="noopener">
                 <div class="tile-icon">📁</div>
-                <div class="tile-title">All vendor briefs</div>
+                <div class="tile-title">Vendor briefs</div>
                 <div class="tile-sub">Shareable client index</div>
             </a>
             <a class="card tile" href="https://thecooperativeagency.github.io/seo-pages/" target="_blank" rel="noopener">
                 <div class="tile-icon">🔍</div>
-                <div class="tile-title">SEO pages index</div>
+                <div class="tile-title">SEO pages</div>
                 <div class="tile-sub">Filter by store / type</div>
             </a>
             <a class="card tile" href="https://thecooperativeagency.github.io/email-creative/" target="_blank" rel="noopener">
@@ -614,15 +981,25 @@
                 <div class="tile-title">Email creative</div>
                 <div class="tile-sub">All rooftops</div>
             </a>
+            <a class="card tile" href="https://thecooperativeagency.github.io/seo-pages/creative-review.html" target="_blank" rel="noopener">
+                <div class="tile-icon">✅</div>
+                <div class="tile-title">Creative review</div>
+                <div class="tile-sub">Ship checklist surface</div>
+            </a>
             <a class="card tile" href="https://thecooperativeagency.github.io/vendor-briefs/demo-prestige-bmw.html" target="_blank" rel="noopener">
                 <div class="tile-icon">✨</div>
                 <div class="tile-title">Demo brief</div>
                 <div class="tile-sub">Prospect pitch pack</div>
             </a>
+            <a class="card tile" href="https://thecooperativeagency.github.io/email-creative/manager-reports.html" target="_blank" rel="noopener">
+                <div class="tile-icon">📊</div>
+                <div class="tile-title">Manager reports</div>
+                <div class="tile-sub">GM Weekly + inventory</div>
+            </a>
         </div>
     </section>
 
-    <!-- MARKETS (collapsed) -->
+    <!-- ALSO -->
     <section>
         <div class="section-head">
             <h2>Also</h2>
@@ -631,7 +1008,7 @@
             <summary>
                 <span>Markets & personal</span>
                 <span>
-                    <span class="hint">Kalshi · optional surface</span>
+                    <span class="hint">Kalshi · optional</span>
                     <span class="chev">›</span>
                 </span>
             </summary>
@@ -647,11 +1024,11 @@
         </details>
     </section>
 
-    <!-- OPS (collapsed): Agents + Mini -->
+    <!-- OPS -->
     <section>
         <div class="section-head">
             <h2>Ops</h2>
-            <span class="section-note">Collapsed by default — open when something’s sick</span>
+            <span class="section-note">Collapsed — open when something’s sick</span>
         </div>
 
         <details class="ops">
@@ -683,7 +1060,6 @@
                         <div class="status-pill"><span class="dot"></span>On call</div>
                     </div>
                 </div>
-                <p style="font-size:0.78rem;color:#64748b;">Wrench / Scout / Pixie / Pepper crew wall removed. Agent run feed lives on the Mini API if you need it later.</p>
             </div>
         </details>
 
@@ -738,7 +1114,7 @@
     <footer class="page-footer">
         <img src="https://images.squarespace-cdn.com/content/v1/68fac8a3d20e8d72215ede75/6669040e-00b7-4113-a0c0-a29b3706227f/Asset+26.png?format=200w" alt="" class="footer-logo"><br>
         The Cooperative Agency · lance@thecoopbrla.com · thecoopbrla.com<br>
-        <span style="font-size:0.75rem;margin-top:0.85rem;display:block;opacity:0.5;">Operator home · not a museum</span>
+        <span style="font-size:0.75rem;margin-top:0.85rem;display:block;opacity:0.5;">Daily desk · what’s up · what needs work</span>
     </footer>
 </div>
 
