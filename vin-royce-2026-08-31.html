@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VIN / Royce — Aug 31 agenda — Coop Operator Hub</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #0f1115;
+            --card-bg: #1a1d23;
+            --accent-red: #c0392b;
+            --accent-soft: rgba(192, 57, 43, 0.12);
+            --text-main: #e2e8f0;
+            --text-dim: #94a3b8;
+            --border-color: #2d3748;
+            --success: #2ecc71;
+            --amber: #f59e0b;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: Inter, sans-serif;
+            background: var(--bg-color);
+            color: var(--text-main);
+            line-height: 1.55;
+            padding-bottom: 4rem;
+        }
+        a { color: inherit; text-decoration: none; }
+        .container { max-width: 820px; margin: 0 auto; padding: 0 1.25rem; }
+        header {
+            padding: 2rem 0 1.25rem;
+            border-bottom: 1px solid var(--border-color);
+            margin-bottom: 1.4rem;
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 1rem;
+        }
+        .kicker {
+            color: var(--accent-red);
+            font-weight: 700;
+            font-size: 0.82rem;
+            letter-spacing: 0.04em;
+        }
+        h1 {
+            font-size: 1.55rem;
+            font-weight: 800;
+            letter-spacing: -0.02em;
+            line-height: 1.15;
+            margin-top: 0.2rem;
+        }
+        .ver {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.72rem;
+            color: var(--text-dim);
+            text-align: right;
+        }
+        .back {
+            display: inline-block;
+            margin-bottom: 1rem;
+            font-size: 0.82rem;
+            font-weight: 600;
+            color: #f0b4ad;
+        }
+        .back:hover { text-decoration: underline; }
+        .meta {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.75rem;
+            margin-bottom: 1.35rem;
+        }
+        .mi {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 0.85rem 1rem;
+        }
+        .mi label {
+            display: block;
+            font-size: 0.68rem;
+            font-weight: 800;
+            letter-spacing: 0.07em;
+            text-transform: uppercase;
+            color: var(--text-dim);
+            margin-bottom: 0.25rem;
+        }
+        .mi strong { font-size: 0.92rem; }
+        .note {
+            font-size: 0.82rem;
+            color: var(--text-dim);
+            background: #12151b;
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 0.85rem 1rem;
+            margin-bottom: 1.4rem;
+        }
+        h2 {
+            font-size: 0.74rem;
+            font-weight: 800;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            color: var(--text-dim);
+            margin: 1.4rem 0 0.7rem;
+        }
+        .item {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 14px;
+            padding: 1rem 1.1rem 1.05rem;
+            margin-bottom: 0.75rem;
+        }
+        .item h3 {
+            font-size: 1.02rem;
+            font-weight: 750;
+            margin-bottom: 0.35rem;
+        }
+        .src {
+            font-size: 0.72rem;
+            color: #7c8798;
+            margin-bottom: 0.55rem;
+            font-family: 'JetBrains Mono', monospace;
+        }
+        ul { padding-left: 1.1rem; }
+        li { margin: 0.28rem 0; font-size: 0.92rem; }
+        .ask {
+            margin-top: 0.7rem;
+            padding-top: 0.65rem;
+            border-top: 1px solid #2d3748;
+            font-size: 0.9rem;
+        }
+        .ask strong { color: #f0b4ad; }
+        .pill {
+            display: inline-block;
+            font-size: 0.66rem;
+            font-weight: 800;
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+            padding: 0.18rem 0.48rem;
+            border-radius: 999px;
+            background: rgba(245, 158, 11, 0.16);
+            color: #fbbf24;
+            margin-right: 0.35rem;
+        }
+        .pill.floor { background: rgba(192, 57, 43, 0.14); color: #f0b4ad; }
+        .pill.weekly { background: rgba(59, 130, 246, 0.15); color: #60a5fa; }
+        footer {
+            margin-top: 2.5rem;
+            padding-top: 1.25rem;
+            border-top: 1px solid var(--border-color);
+            color: var(--text-dim);
+            font-size: 0.8rem;
+        }
+        @media (max-width: 640px) {
+            .meta { grid-template-columns: 1fr; }
+            header { flex-direction: column; }
+            .ver { text-align: left; }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <a class="back" href="./">← Operator Hub</a>
+    <header>
+        <div>
+            <div class="kicker">Today · 1:30–2:00 CDT · Teams</div>
+            <h1>VIN / Royce Lee</h1>
+        </div>
+        <div class="ver">Aug 31, 2026<br>v1 · floor notes + invite</div>
+    </header>
+
+    <div class="meta">
+        <div class="mi"><label>Calendar</label><strong>Brian Harris Update ca11254584</strong></div>
+        <div class="mi"><label>Who</label><strong>Royce Lee</strong> · invite also lists Gaige McGreevey, Matt Sears</div>
+        <div class="mi"><label>Stores</label><strong>BHBMW account call</strong> · floor issues this morning were ABR</div>
+        <div class="mi"><label>Timebox</label><strong>30 minutes</strong> · three asks, then if-time</div>
+    </div>
+
+    <p class="note">Built from this morning’s Plaud (showroom closeout + customer matching + ABR weekly AI tool), plus the 1:30 Cox invite. Mini cannot read Messages, so the SMS you sent Royce is not quoted here. The two floor items below are the ones you already said you’d take to him today. Paste the text if it had extra bullets and this page gets a v2.</p>
+
+    <h2>Must cover</h2>
+
+    <article class="item">
+        <span class="pill floor">This morning · ABR floor</span>
+        <h3>1. “End Showroom Visit” modal locks the UI</h3>
+        <div class="src">Plaud · 10:31 · 7m23s · End Showroom Visit</div>
+        <ul>
+            <li>From <strong>Showroom Visit Log</strong>, End Visit used to keep the lead / list live so reps could sequential-close and click into a profile.</li>
+            <li>Now: visit ends, screen freezes on that modal context. Left-side list is dead. Escape = hard refresh → dashboard → reload report → often re-search the customer.</li>
+            <li>Chrome pop-up / site settings were tried on the floor. No change. Not a blocker setting.</li>
+            <li>Pain: Saturday-scale closeout (~50 visits). Can’t bounce to delivery status / deal number without rebuilding the list.</li>
+        </ul>
+        <p class="ask"><strong>Ask Royce:</strong> treat as product/UI state, not browser. Restore sequential closeout + list/profile navigation without refresh. Workaround path if no hotfix. ETA. Ticket if he wants a 90s screen capture after the call.</p>
+    </article>
+
+    <article class="item">
+        <span class="pill floor">This morning · ABR floor</span>
+        <h3>2. Lead → credit app creates a new customer</h3>
+        <div class="src">Plaud · 10:28 · 52s · matching heuristics</div>
+        <ul>
+            <li>Customer already has leads. Credit app lands on another person / new record instead of merging.</li>
+            <li>You told the floor you’d ask Royce how match is set now.</li>
+            <li>Working theory (yours): three points — name, email, phone — threshold may be too strict.</li>
+        </ul>
+        <p class="ask"><strong>Ask Royce:</strong> current fields, weights, % threshold, tie-break. Last 30 days: dupes vs merges. Can we loosen false-negatives without wrong merges (review queue for borderline)?</p>
+    </article>
+
+    <article class="item">
+        <span class="pill weekly">ABR weekly · 10:03</span>
+        <h3>3. VIN AI feature — flip on + training</h3>
+        <div class="src">Plaud · Weekly Meeting · you, on the record</div>
+        <ul>
+            <li>Store is waiting on VIN to finish onboarding. Cancellation emails already sent. You described it as a feature switch, not a new-product onboard.</li>
+            <li>You committed to training with <strong>Royce</strong> and <strong>Jeff Ellerman</strong> so it doesn’t get overlooked once it’s built-in.</li>
+        </ul>
+        <p class="ask"><strong>Ask Royce:</strong> what’s left before they turn it on. Date. Who books Ellerman training. ABR first or all three rooftops he covers.</p>
+    </article>
+
+    <h2>If time</h2>
+    <article class="item">
+        <h3>Standing Cox threads — only if the call opens them</h3>
+        <ul>
+            <li>Weekly VIN lead/sales export into GM products (old open ask; don’t spend the 30 min here unless he brings data).</li>
+            <li>vAuto ABR trim / Google feed is a <em>vAuto Support</em> thread, not this VIN UI call — skip unless Royce raises Cox-wide.</li>
+        </ul>
+    </article>
+
+    <h2>Leave with</h2>
+    <article class="item">
+        <ul>
+            <li>Ticket or owner on the End Visit lock.</li>
+            <li>Match config in writing (or a screenshot of the settings).</li>
+            <li>AI feature: on-date + training hold.</li>
+        </ul>
+    </article>
+
+    <footer>
+        The Cooperative Agency · operator desk · not a customer page<br>
+        Unique: <code>vin-royce-2026-08-31-v1-floor-plus-invite</code>
+    </footer>
+</div>
+</body>
+</html>
