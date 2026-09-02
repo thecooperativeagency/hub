@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>SE GM Roster — Coop</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Newsreader:opsz,wght@6..72,400;6..72,600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:#0f1115; --card:#1a1d23; --ink:#e2e8f0; --dim:#94a3b8;
+  --line:#2d3748; --red:#c0392b; --ok:#2ecc71; --warn:#f59e0b;
+}
+* { box-sizing:border-box; margin:0; padding:0; }
+body { font-family:Inter,sans-serif; background:var(--bg); color:var(--ink); line-height:1.5; }
+.wrap { max-width:1120px; margin:0 auto; padding:28px 20px 80px; }
+.kicker { color:var(--red); font-size:12px; font-weight:700; letter-spacing:.16em; text-transform:uppercase; }
+h1 { font-family:Newsreader,Georgia,serif; font-weight:600; font-size:36px; letter-spacing:-.03em; margin:8px 0 6px; }
+.lede { color:var(--dim); max-width:62ch; margin-bottom:22px; }
+.stats { display:grid; grid-template-columns:repeat(4,1fr); gap:10px; margin:18px 0 28px; }
+.stat { background:var(--card); border:1px solid var(--line); border-radius:10px; padding:14px 16px; }
+.stat b { display:block; font-size:26px; font-variant-numeric:tabular-nums; }
+.stat span { color:var(--dim); font-size:12px; }
+h2 { font-size:15px; margin:28px 0 10px; letter-spacing:.02em; }
+p, li { color:var(--dim); font-size:14px; }
+ul { padding-left:18px; margin:8px 0 16px; }
+table { width:100%; border-collapse:collapse; font-size:13px; }
+th, td { text-align:left; padding:8px 10px; border-bottom:1px solid var(--line); vertical-align:top; }
+th { color:var(--dim); font-size:11px; letter-spacing:.08em; text-transform:uppercase; }
+tr:hover td { background:#151820; }
+td.yes { color:var(--ok); font-weight:600; }
+td.no { color:var(--dim); }
+a { color:#93c5fd; }
+.note { margin-top:28px; font-size:12px; color:#64748b; }
+.rev { font-family:ui-monospace,monospace; }
+@media (max-width:720px) { .stats { grid-template-columns:1fr 1fr; } }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="kicker">The Cooperative Agency · operator desk</div>
+  <h1>SE dealer GM roster</h1>
+  <p class="lede">Southeast region: FL, GA, LA, MS, AL, TX, AR. Public staff-page contacts only. Emails live in the private CSV, not on this page.</p>
+  <div class="stats">
+    <div class="stat"><b>125</b><span>rooftops in CSV</span></div>
+    <div class="stat"><b>108</b><span>named GMs</span></div>
+    <div class="stat"><b>56</b><span>published emails</span></div>
+    <div class="stat"><b>4</b><span>states · FL, LA, MS, TX</span></div>
+  </div>
+
+  <h2>Beehiiv</h2>
+  <ul>
+    <li><b>Do not dump this CSV into Beehiiv.</b> Beehiiv is a permissioned newsletter. Cold GM inboxes go in the roster, not the sending tool.</li>
+    <li>Beehiiv holds people who <i>opt in</i> (Issue 0 link, landing form, or a GM who asked to be on it).</li>
+    <li>Custom fields to create first: <span class="rev">store, brand, state, city, title</span>.</li>
+    <li>Import path later: Settings → Subscribers Import → map CSV columns to those fields. API create-subscription is the same payload once we have a publication ID.</li>
+    <li>Cold path stays 1:1 (known GMs + published mailto) until they subscribe. That keeps Beehiiv deliverability and the brand clean.</li>
+  </ul>
+
+  <h2>Roster (Audi, BMW, Cadillac, Chevrolet, Ford, Honda, Hyundai, Kia, Lexus, Mazda, Mercedes-Benz, Nissan, Porsche, Subaru, Toyota, Volkswagen)</h2>
+  <table>
+    <thead><tr><th>Store</th><th>City</th><th>St</th><th>Brand</th><th>GM</th><th>Title</th><th>Email pub</th><th>Source</th></tr></thead>
+    <tbody>
+    <tr><td>Audi Fort Lauderdale</td><td>Fort Lauderdale</td><td>FL</td><td>Audi</td><td>John Jones</td><td>General Manager</td><td class='yes'>yes</td><td><a href="https://www.audifortlauderdale.com/en/about-us/staff/" target="_blank" rel="noopener">staff</a></td></tr>
+<tr><td>Audi North Miami</td><td>North Miami</td><td>FL</td><td>Audi</td><td>Daniel Fox</td><td>General Manager</td><td class='yes'>yes</td><td><a href="https://www.audinorthmiami.com/en/about-us/" target="_blank" rel="noopener">staff</a></td></tr>
+<tr><td>BMW of Fort Lauderdale</td><td>Fort Lauderdale</td><td>FL</td><td>BMW</td><td>Keith Cordeiro</td><td>General Manager</td><td class='yes'>yes</td><td><a href="https://www.bmwoffortlauderdale.com/about-us/staff/" target="_blank" rel="noopener">staff</a></td></tr>
+<tr><td>George Moore Chevrolet</td><td>Jacksonville</td><td>FL</td><td>Chevrolet</td><td>Frank Reynolds</td><td>General Manager</td><td class='no'>no</td><td><a href="https://www.moorechevy.com/about-us/staff/" target="_blank" rel="noopener">staff</a></td></tr>
+<tr><td>Miami Lakes Chevrolet</td><td>Miami Lakes</td><td>FL</td><td>Chevrolet</td><td>Laz Veliz</td><td>General Manager</td><td class='no'>no</td><td><a href="https://www.miamilakeschevrolet.net/about-us/staff/" target="_blank" rel="noopener">staff</a></td></tr>
+<tr><td>Starling Chevrolet</td><td>Orlando</td><td>FL</td><td>Chevrolet</td><td>Melissa Messeguer</td><td>General Manager</td><td class='no'>no</td><td><a href="https://www.starlingchevy.com/about-us/staff/" target="_blank" rel="noopener">staff</a></td></tr>
+<tr><td>Coggin Ford</td><td>Jacksonville</td><td>FL</td><td>Ford</td><td>Jose Negron</td><td>General Manager</td><td class='no'>no</td><td><a href="https://www.cogginfordjacksonville.com/dealership/staff.htm" target="_blank" rel="noopener">staff</a></td></tr>
+<tr><td>Duval Ford</td><td>Jacksonville</td><td>FL</td><td>Ford</td><td>Will Law</td><td>General Manager</td><td class='yes'>yes</td><td><a href="https://www.duvalford.com/staff/" target="_blank" rel="noopener">staff</a></td></tr>
+<tr><td>Midway Ford</td><td>Miami</td><td>FL</td><td>Ford</td><td>Nestor Mena</td><td>General Manager</td><td class='yes'>yes</td><td><a href="https://www.midwaymiami.com/staff.aspx" target="_blank" rel="noopener">staff</a></td></tr>
+<tr><td>Elder Ford of Tampa</td><td>Tampa</td><td>FL</td><td>Ford</td><td>Dan Sills</td><td>General Manager</td><td class='no'>no</td><td><a href="https://www.elderfordoftampa.com/staff.aspx" target="_blank" rel="noopener">staff</a></td></tr>
+<tr><td>Honda of the Avenues</td><td>Jacksonville</td><td>FL</td><td>Honda</td><td>James Parziale</td><td>General Manager</td><td class='yes'>yes</td><td><a href="https://www.hondaoftheavenues.com/staff/" target="_blank" rel="noopener">staff</a></td></tr>
+<tr><td>Coggin Honda of Orlando</td><td>Orlando</td><td>FL</td><td>Honda</td><td>Mark Bedell</td><td>General Manager</td><td class='no'>no</td><td><a href="https://www.cogginhondaorlando.com/meet-our-staff.htm" target="_blank" rel="noopener">staff</a></td></tr>
+<tr><td>JM Lexus</td><td>Margate</td><td>FL</td><td>Lexus</td><td>Greg Zeigler</td><td>VP &amp; General Manager</td><td class='yes'>yes</td><td><a href="https://www.jmlexus.com/about-us/staff/" target="_blank" rel="noopener">staff</a></td></tr>
+<tr><td>Lexus of Kendall</td><td>Miami</td><td>FL</td><td>Lexus</td><td>Tom Gilbert</td><td>General Manager</td><td class='no'>no</td><td><a href="https://www.lexusofkendall.com/team/" target="_blank" rel="noopener">staff</a></td></tr>
+<tr><td>Lexus of North Miami</td><td>North Miami</td><td>FL</td><td>Lexus</td><td>Vladimir Keslin</td><td>General Manager</td><td class='no'>no</td><td><a href="https://www.lexusofnorthmiami.com/about-us/staff/" target="_blank" rel="noopener">staff</a></td></tr>
+<tr><td>Mercedes-Benz of Orlando</td><td>Maitland</td><td>FL</td><td>Mercedes-Benz</td><td>Walter Grundorf</td><td>General Manager</td><td class='no'>no</td><td><a href="https://www.mborlando.com/dealership/staff.htm" target="_blank" rel="noopener">staff</a></td></tr>
+<tr><td>Mercedes-Benz of North Palm Beach</td><td>North Palm Beach</td><td>FL</td><td>Mercedes-Benz</td><td>Paul Passarelli</td><td>General Manager</td><td class='no'>no</td><td><a href="https://www.mercedesbenznorthpalmbeach.com/about-us/staff/" target="_blank" rel="noopener">staff</a></td></tr>
+<tr><td>Mercedes-Benz of Palm Beach</td><td>West Palm Beach</td><td>FL</td><td>Mercedes-Benz</td><td>Peter Althoff</td><td>General Manager</td><td class='yes'>yes</td><td><a href="https://www.mercedespalmbeach.com/about-us/staff/" target="_blank" rel="noopener">staff</a></td></tr>
+<tr><td>Weston Nissan</td><td>Davie</td><td>FL</td><td>Nissan</td><td>Bill Castano</td><td>General Manager</td><td class='no'>no</td><td><a href="https://www.westonnissan.com/dealership/staff.htm" target="_blank" rel="noopener">staff</a></td></tr>
+<tr><td>Davis Nissan Jacksonville</td><td>Jacksonville</td><td>FL</td><td>Nissan</td><td>Angelo Fanelli</td><td>General Manager</td><td class='yes'>yes</td><td><a href="https://www.davisnissanjacksonville.com/about-us/staff/" target="_blank" rel="noopener">staff</a></td></tr>
+<tr><td>Courtesy Nissan of Tampa</td><td>Tampa</td><td>FL</td><td>Nissan</td><td>Aaron Smith</td><td>General Manager</td><td class='no'>no</td><td><a href="https://www.courtesynissanoftampa.com/dealership/staff.htm" target="_blank" rel="noopener">staff</a></td></tr>
+<tr><td>Porsche Jacksonville</td><td>Jacksonville</td><td>FL</td><td>Porsche</td><td>Aaron Mong</td><td>General Manager</td><td class='no'>no</td><td><a href="https://jacksonville.porsche.com/en/about-us/staff" target="_blank" rel="noopener">staff</a></td></tr>
+<tr><td>Porsche North Miami</td><td>North Miami</td><td>FL</td><td>Porsche</td><td>Daniel Rodriguez</td><td>General Manager</td><td class='yes'>yes</td><td><a href="https://www.porsche-northmiami.com/about-us/staff/" target="_blank" rel="noopener">staff</a></td></tr>
+<tr><td>Porsche Orlando</td><td>Orlando</td><td>FL</td><td>Porsche</td><td>Ben Ellis</td><td>General Manager</td><td class='no'>no</td><td><a href="https://orlando.porsche.com/en/about-us/staff" target="_blank" rel="noopener">staff</a></td></tr>
+<tr><td>Porsche Tampa</td><td>Tampa</td><td>FL</td><td>Porsche</td><td>Ed Ferrer</td><td>General Manager</td><td class='yes'>yes</td><td><a href="https://www.porschetampa.com/about-us/staff/" target="_blank" rel="noopener">staff</a></td></tr>
+<tr><td>Toyota of Coconut Creek</td><td>Coconut Creek</td><td>FL</td><td>Toyota</td><td>Mark Schols</td><td>General Manager</td><td class='no'>no</td><td><a href="https://www.toyotaofcoconutcreek.com/talk-to-the-gm/" target="_blank" rel="noopener">staff</a></td></tr>
+<tr><td>Ed Morse Delray Toyota</td><td>Delray Beach</td><td>FL</td><td>Toyota</td><td>Charles Pierce</td><td>General Manager</td><td class='yes'>yes</td><td><a href="https://www.delraytoyota.com/staff.aspx" target="_blank" rel="noopener">staff</a></td></tr>
+<tr><td>Toyota of Hollywood</td><td>Hollywood</td><td>FL</td><td>Toyota</td><td>Herbie Lopez</td><td>General Manager</td><td class='yes'>yes</td><td><a href="https://www.toyotaofhollywood.com/meet-the-team/" target="_blank" rel="noopener">staff</a></td></tr>
+<tr><td>Arlington Toyota</td><td>Jacksonville</td><td>FL</td><td>Toyota</td><td>Rick Doran</td><td>General Manager</td><td class='yes'>yes</td><td><a href="https://www.arlingtontoyota.com/meet-the-team/" target="_blank" rel="noopener">staff</a></td></tr>
+<tr><td>Butler Toyota of Jacksonville</td><td>Jacksonville</td><td>FL</td><td>Toyota</td><td>Mark Hammel</td><td>General Manager</td><td class='yes'>yes</td><td><a href="https://www.butlertoyotajacksonville.com/about-us/staff/" target="_blank" rel="noopener">staff</a></td></tr>
+<tr><td>Central Florida Toyota</td><td>Orlando</td><td>FL</td><td>Toyota</td><td>Tony Blankson</td><td>General Manager</td><td class='no'>no</td><td><a href="https://www.centralfloridatoyota.com/dealership/staff.htm" target="_blank" rel="noopener">staff</a></td></tr>
+<tr><td>Courtesy Toyota of Brandon</td><td>Tampa</td><td>FL</td><td>Toyota</td><td>Zackery Kelley</td><td>General Manager</td><td class='no'>no</td><td><a href="https://www.courtesytoyota.com/dealership/staff.htm" target="_blank" rel="noopener">staff</a></td></tr>
+<tr><td>Wesley Chapel Toyota</td><td>Wesley Chapel</td><td>FL</td><td>Toyota</td><td>Ray Desimone</td><td>General Manager</td><td class='yes'>yes</td><td><a href="https://www.wesleychapeltoyota.com/about-us/staff/" target="_blank" rel="noopener">staff</a></td></tr>
+<tr><td>Audi Baton Rouge</td><td>Baton Rouge</td><td>LA</td><td>Audi</td><td>Hedrick Wood</td><td>General Manager</td><td class='yes'>yes</td><td><a href="https://audibatonrouge.com/about" target="_blank" rel="noopener">staff</a></td></tr>
+<tr><td>Audi New Orleans</td><td>Metairie</td><td>LA</td><td>Audi</td><td>Nickolas Underwood</td><td>General Manager</td><td class='yes'>yes</td><td><a href="https://www.audineworleans.com/en/about-us/" target="_blank" rel="noopener">staff</a></td></tr>
+<tr><td>Brian Harris BMW</td><td>Baton Rouge</td><td>LA</td><td>BMW</td><td>Brett Bagley</td><td>General Manager</td><td class='yes'>yes</td><td><a href="https://brianharrisbmw.com/about" target="_blank" rel="noopener">staff</a></td></tr>
+<tr><td>Moss BMW</td><td>Lafayette</td><td>LA</td><td>BMW</td><td>Coury Moss</td><td>General Manager</td><td class='no'>no</td><td><a href="https://www.bmwoflafayettela.com/about-us/staff/" target="_blank" rel="noopener">staff</a></td></tr>
+<tr><td>Peake BMW</td><td>Metairie</td><td>LA</td><td>BMW</td><td>—</td><td>—</td><td class='no'>no</td><td><a href="https://peakebmw.com/about" target="_blank" rel="noopener">staff</a></td></tr>
+<tr><td>Gerry Lane Cadillac</td><td>Baton Rouge</td><td>LA</td><td>Cadillac</td><td>CJ Patton</td><td>General Manager</td><td class='no'>no</td><td><a href="https://www.gerrylanecadillac.com/staff.aspx" target="_blank" rel="noopener">staff</a></td></tr>
+<tr><td>Cadillac of New Orleans</td><td>Metairie</td><td>LA</td><td>Cadillac</td><td>Roberto Rocha</td><td>General Manager</td><td class='no'>no</td><td><a href="https://www.neworleanscadillac.com/staff.aspx" target="_blank" rel="noopener">staff</a></td></tr>
+<tr><td>Chevyland</td><td>Shreveport</td><td>LA</td><td>Chevrolet</td><td>—</td><td>—</td><td class='no'>no</td><td><a href="https://www.chevyland.com/about-us/staff/" target="_blank" rel="noopener">staff</a></td></tr>
+<tr><td>Lamarque Ford</td><td>Kenner</td><td>LA</td><td>Ford</td><td>Ray Hoffmann</td><td>General Manager</td><td class='yes'>yes</td><td><a href="https://www.lamarque.com/staff.htm" target="_blank" rel="noopener">staff</a></td></tr>
+<tr><td>Team Honda</td><td>Baton Rouge</td><td>LA</td><td>Honda</td><td>—</td><td>—</td><td class='no'>no</td><td><a href="https://www.teamhonda.com/" target="_blank" rel="noopener">staff</a></td></tr>
+<tr><td>Ascension Honda</td><td>Gonzales</td><td>LA</td><td>Honda</td><td>Eddie Boyd</td><td>Partner / General Manager</td><td class='yes'>yes</td><td><a href="https://www.ascensionhonda.com/about-us/staff/" target="_blank" rel="noopener">staff</a></td></tr>
+<tr><td>Royal Honda</td><td>Metairie</td><td>LA</td><td>Honda</td><td>Mike Neves</td><td>General Manager</td><td class='yes'>yes</td><td><a href="https://www.royalhonda.com/staff.aspx" target="_blank" rel="noopener">staff</a></td></tr>
+<tr><td>Premier Honda</td><td>New Orleans</td><td>LA</td><td>Honda</td><td>Thomas Melady</td><td>General Manager</td><td class='yes'>yes</td><td><a href="https://www.premierhonda.com/about-us/staff/" target="_blank" rel="noopener">staff</a></td></tr>
+<tr><td>Price LeBlanc Lexus</td><td>Baton Rouge</td><td>LA</td><td>Lexus</td><td>—</td><td>—</td><td class='no'>no</td><td><a href="https://www.priceleblanclexus.com/about-us/staff/" target="_blank" rel="noopener">staff</a></td></tr>
+<tr><td>Lexus of Shreveport Bossier City</td><td>Bossier City</td><td>LA</td><td>Lexus</td><td>Tommy Harvey</td><td>General Manager</td><td class='yes'>yes</td><td><a href="https://www.lexusofshreveport.com/about-us/staff/" target="_blank" rel="noopener">staff</a></td></tr>
+<tr><td>Lexus of New Orleans</td><td>Metairie</td><td>LA</td><td>Lexus</td><td>Chad Kent</td><td>General Manager</td><td class='yes'>yes</td><td><a href="https://www.lexusneworleans.com/about-us/staff/" target="_blank" rel="noopener">staff</a></td></tr>
+<tr><td>Mercedes-Benz of Baton Rouge</td><td>Baton Rouge</td><td>LA</td><td>Mercedes-Benz</td><td>Nick Pentas</td><td>General Manager/Co-Owner</td><td class='yes'>yes</td><td><a href="https://www.mbobr.com/about-us/staff/" target="_blank" rel="noopener">staff</a></td></tr>
+<tr><td>Mercedes-Benz of New Orleans</td><td>Metairie</td><td>LA</td><td>Mercedes-Benz</td><td>Jason Menesses</td><td>General Manager</td><td class='no'>no</td><td><a href="https://www.mbofno.com/staff/" target="_blank" rel="noopener">staff</a></td></tr>
+<tr><td>Price LeBlanc Nissan</td><td>Gonzales</td><td>LA</td><td>Nissan</td><td>Christopher Solomon</td><td>General Manager</td><td class='yes'>yes</td><td><a href="https://www.priceleblancnissan.com/about-us/staff/" target="_blank" rel="noopener">staff</a></td></tr>
+<tr><td>Orr Nissan Shreveport</td><td>Shreveport</td><td>LA</td><td>Nissan</td><td>Josh Knight</td><td>General Manager</td><td class='no'>no</td><td><a href="https://www.orrauto.com/meet-our-staff/" target="_blank" rel="noopener">staff</a></td></tr>
+<tr><td>Harris Porsche</td><td>Baton Rouge</td><td>LA</td><td>Porsche</td><td>Adam Terrebone</td><td>General Manager</td><td class='yes'>yes</td><td><a href="https://harris.porsche.com/en/about-us/staff" target="_blank" rel="noopener">staff</a></td></tr>
+<tr><td>Price LeBlanc Toyota</td><td>Baton Rouge</td><td>LA</td><td>Toyota</td><td>Ryan Ipson</td><td>General Manager</td><td class='yes'>yes</td><td><a href="https://www.priceleblanctoyota.com/about-us/staff/" target="_blank" rel="noopener">staff</a></td></tr>
+<tr><td>Team Toyota</td><td>Baton Rouge</td><td>LA</td><td>Toyota</td><td>—</td><td>—</td><td class='no'>no</td><td><a href="https://www.team-toyota.com/staff.aspx" target="_blank" rel="noopener">staff</a></td></tr>
+<tr><td>John Harvey Toyota</td><td>Bossier City</td><td>LA</td><td>Toyota</td><td>Tommy Harvey</td><td>General Manager</td><td class='yes'>yes</td><td><a href="https://www.johnharveytoyota.com/about-us/staff/" target="_blank" rel="noopener">staff</a></td></tr>
+<tr><td>Hampton Toyota</td><td>Lafayette</td><td>LA</td><td>Toyota</td><td>—</td><td>—</td><td class='no'>no</td><td><a href="https://www.hamptontoyota.com/meet-the-staff.htm" target="_blank" rel="noopener">staff</a></td></tr>
+<tr><td>Lakeside Toyota</td><td>Metairie</td><td>LA</td><td>Toyota</td><td>Troy Campise</td><td>General Manager</td><td class='no'>no</td><td><a href="https://www.lakesidetoyota.com/about-us/staff/" target="_blank" rel="noopener">staff</a></td></tr>
+<tr><td>Toyota of New Orleans</td><td>New Orleans</td><td>LA</td><td>Toyota</td><td>Godfrey Peters</td><td>General Manager</td><td class='yes'>yes</td><td><a href="https://www.toyotaofneworleans.com/about-us/staff/" target="_blank" rel="noopener">staff</a></td></tr>
+<tr><td>Price LeBlanc Toyota of Acadiana</td><td>Opelousas</td><td>LA</td><td>Toyota</td><td>—</td><td>—</td><td class='no'>no</td><td><a href="https://www.priceleblanctoyotaofacadiana.com/about-us/staff/" target="_blank" rel="noopener">staff</a></td></tr>
+<tr><td>Yokem Toyota</td><td>Shreveport</td><td>LA</td><td>Toyota</td><td>Leonard Washington</td><td>General Manager</td><td class='yes'>yes</td><td><a href="https://www.yokemtoyota.com/about-us/staff/" target="_blank" rel="noopener">staff</a></td></tr>
+<tr><td>Herrin-Gear Chevrolet</td><td>Jackson</td><td>MS</td><td>Chevrolet</td><td>Warren Smith</td><td>General Manager</td><td class='yes'>yes</td><td><a href="https://www.herrin-gearchevrolet.com/about-us/staff/" target="_blank" rel="noopener">staff</a></td></tr>
+<tr><td>Gray-Daniels Ford</td><td>Brandon</td><td>MS</td><td>Ford</td><td>Cliff Mitchell</td><td>General Manager &amp; Partner</td><td class='yes'>yes</td><td><a href="https://www.graydanielsford.com/about-us/staff/" target="_blank" rel="noopener">staff</a></td></tr>
+<tr><td>Pine Belt Honda</td><td>Hattiesburg</td><td>MS</td><td>Honda</td><td>Jennifer May</td><td>General Manager</td><td class='yes'>yes</td><td><a href="https://www.pinebelthonda.com/about-us/staff/" target="_blank" rel="noopener">staff</a></td></tr>
+<tr><td>Herrin-Gear Lexus</td><td>Jackson</td><td>MS</td><td>Lexus</td><td>Frank Diaz</td><td>General Manager</td><td class='yes'>yes</td><td><a href="https://www.herringearlexus.com/about-us/staff/" target="_blank" rel="noopener">staff</a></td></tr>
+<tr><td>Gray-Daniels Nissan North</td><td>Jackson</td><td>MS</td><td>Nissan</td><td>Derek Johnson</td><td>General Manager &amp; Partner</td><td class='no'>no</td><td><a href="https://www.graydanielsnissanofjackson.com/meet-the-team/" target="_blank" rel="noopener">staff</a></td></tr>
+<tr><td>Gray-Daniels Toyota</td><td>Brandon</td><td>MS</td><td>Toyota</td><td>Branden Parker</td><td>General Manager &amp; Partner</td><td class='no'>no</td><td><a href="https://www.graydanielstoyota.com/meet-the-team/" target="_blank" rel="noopener">staff</a></td></tr>
+<tr><td>J. Allen Toyota</td><td>Gulfport</td><td>MS</td><td>Toyota</td><td>Phillip Pogue</td><td>General Manager</td><td class='no'>no</td><td><a href="https://www.jallentoyota.com/staff" target="_blank" rel="noopener">staff</a></td></tr>
+<tr><td>Toyota of Hattiesburg</td><td>Hattiesburg</td><td>MS</td><td>Toyota</td><td>Alton Pierce</td><td>CEO/Dealer Principal</td><td class='no'>no</td><td><a href="https://www.toyotahattiesburg.com/meet-our-staff/" target="_blank" rel="noopener">staff</a></td></tr>
+<tr><td>Toyota of Jackson</td><td>Jackson</td><td>MS</td><td>Toyota</td><td>Nat Keating</td><td>General Manager</td><td class='yes'>yes</td><td><a href="https://www.toyotaofjackson.com/staff.aspx" target="_blank" rel="noopener">staff</a></td></tr>
+<tr><td>Group 1 Hyundai North Austin</td><td>Austin</td><td>TX</td><td>Hyundai</td><td>Paul Spence</td><td>General Manager</td><td class='no'>no</td><td><a href="https://www.group1hyundainorthaustin.com/about-us/staff/" target="_blank" rel="noopener">staff</a></td></tr>
+<tr><td>South Point Hyundai</td><td>Austin</td><td>TX</td><td>Hyundai</td><td>Jim Hayth</td><td>General Manager</td><td class='no'>no</td><td><a href="https://www.southpointhyundai.com/staff" target="_blank" rel="noopener">staff</a></td></tr>
+<tr><td>Group 1 Hyundai Southwest Houston</td><td>Houston</td><td>TX</td><td>Hyundai</td><td>Margarita Pochtovaya</td><td>General Manager</td><td class='no'>no</td><td><a href="https://www.group1hyundaisouthwesthouston.com/about-us/staff/" target="_blank" rel="noopener">staff</a></td></tr>
+<tr><td>Keating Hyundai</td><td>Houston</td><td>TX</td><td>Hyundai</td><td>DeMarco Guillory</td><td>General Manager</td><td class='no'>no</td><td><a href="https://www.keatinghyundai.com/meet-our-staff/" target="_blank" rel="noopener">staff</a></td></tr>
+<tr><td>Northwest Hyundai</td><td>Houston</td><td>TX</td><td>Hyundai</td><td>Gabriel Deluc</td><td>Managing Partner</td><td class='no'>no</td><td><a href="https://www.northwesthyundai.com/meet-our-staff/" target="_blank" rel="noopener">staff</a></td></tr>
+<tr><td>West Houston Hyundai</td><td>Houston</td><td>TX</td><td>Hyundai</td><td>Matthew Sheek</td><td>Operating Partner</td><td class='no'>no</td><td><a href="https://www.westhoustonhyundai.com/meet-our-staff/" target="_blank" rel="noopener">staff</a></td></tr>
+<tr><td>Huffines Hyundai McKinney</td><td>McKinney</td><td>TX</td><td>Hyundai</td><td>Anthony Reich</td><td>General Manager</td><td class='yes'>yes</td><td><a href="https://www.huffineshyundaimckinney.com/about-us/staff/" target="_blank" rel="noopener">staff</a></td></tr>
+<tr><td>Classic Kia of Carrollton</td><td>Carrollton</td><td>TX</td><td>Kia</td><td>Allen Glover</td><td>General Manager</td><td class='no'>no</td><td><a href="https://www.classickiacarrollton.com/employees" target="_blank" rel="noopener">staff</a></td></tr>
+<tr><td>Cowboy Kia</td><td>Conroe</td><td>TX</td><td>Kia</td><td>Mark Compton</td><td>General Manager</td><td class='no'>no</td><td><a href="https://www.cowboykia.com/about-us/staff/" target="_blank" rel="noopener">staff</a></td></tr>
+<tr><td>Huffines Kia Corinth</td><td>Corinth</td><td>TX</td><td>Kia</td><td>Robert Goodwin</td><td>General Manager</td><td class='yes'>yes</td><td><a href="https://www.huffineskiacorinth.com/employees" target="_blank" rel="noopener">staff</a></td></tr>
+<tr><td>Bayway Kia</td><td>Houston</td><td>TX</td><td>Kia</td><td>Lance Willis</td><td>General Manager</td><td class='yes'>yes</td><td><a href="https://www.baywaykia.com/staff.aspx" target="_blank" rel="noopener">staff</a></td></tr>
+<tr><td>Joe Myers Kia</td><td>Houston</td><td>TX</td><td>Kia</td><td>Ralph Samuel</td><td>General Manager / Managing Partner</td><td class='no'>no</td><td><a href="https://www.joemyerskia.com/dealership/staff.htm" target="_blank" rel="noopener">staff</a></td></tr>
+<tr><td>Westside Kia</td><td>Katy</td><td>TX</td><td>Kia</td><td>Caitlin Auffenberg</td><td>General Manager</td><td class='no'>no</td><td><a href="https://www.westsidekia.com/meet-our-staff.html" target="_blank" rel="noopener">staff</a></td></tr>
+<tr><td>Huffines Kia McKinney</td><td>McKinney</td><td>TX</td><td>Kia</td><td>Frank White</td><td>General Manager</td><td class='yes'>yes</td><td><a href="https://www.huffineskiamckinney.com/employees" target="_blank" rel="noopener">staff</a></td></tr>
+<tr><td>Group 1 Kia Tomball</td><td>Tomball</td><td>TX</td><td>Kia</td><td>Loab Burke</td><td>General Manager</td><td class='no'>no</td><td><a href="https://www.group1kiatomball.com/about-us/staff/" target="_blank" rel="noopener">staff</a></td></tr>
+<tr><td>Roger Beasley Mazda Central</td><td>Austin</td><td>TX</td><td>Mazda</td><td>Eric Smith</td><td>General Manager</td><td class='yes'>yes</td><td><a href="https://www.mazdacentral.com/staff" target="_blank" rel="noopener">staff</a></td></tr>
+<tr><td>Jeff Haas Mazda</td><td>Houston</td><td>TX</td><td>Mazda</td><td>Todd Crabtree</td><td>General Manager</td><td class='no'>no</td><td><a href="https://www.jeffhaasmazda.com/staff" target="_blank" rel="noopener">staff</a></td></tr>
+<tr><td>Joe Myers Mazda</td><td>Houston</td><td>TX</td><td>Mazda</td><td>Sean Samuel</td><td>General Manager</td><td class='no'>no</td><td><a href="https://www.joemyersmazda.com/dealership/staff.htm" target="_blank" rel="noopener">staff</a></td></tr>
+<tr><td>Russell &amp; Smith Mazda</td><td>Houston</td><td>TX</td><td>Mazda</td><td>Chad Frank</td><td>General Manager</td><td class='yes'>yes</td><td><a href="https://www.russellsmithmazda.com/staff.aspx" target="_blank" rel="noopener">staff</a></td></tr>
+<tr><td>Clay Cooley Nissan Duncanville</td><td>Dallas</td><td>TX</td><td>Nissan</td><td>Roland Lynn</td><td>General Manager</td><td class='yes'>yes</td><td><a href="https://www.claycooleynissan.com/staff" target="_blank" rel="noopener">staff</a></td></tr>
+<tr><td>Baker Nissan</td><td>Houston</td><td>TX</td><td>Nissan</td><td>Joey Bolton</td><td>General Manager</td><td class='yes'>yes</td><td><a href="https://bakernissan.com/about" target="_blank" rel="noopener">staff</a></td></tr>
+<tr><td>Central Houston Nissan</td><td>Houston</td><td>TX</td><td>Nissan</td><td>—</td><td>—</td><td class='no'>no</td><td><a href="Staff page has no GM title. Sales line only." target="_blank" rel="noopener">staff</a></td></tr>
+<tr><td>South Houston Nissan</td><td>Houston</td><td>TX</td><td>Nissan</td><td>Ricky Gomez</td><td>General Manager</td><td class='no'>no</td><td><a href="https://www.southhoustonnissan.com/dealership/staff.htm" target="_blank" rel="noopener">staff</a></td></tr>
+<tr><td>Tom Peacock Nissan</td><td>Houston</td><td>TX</td><td>Nissan</td><td>Joe Garcia</td><td>General Manager</td><td class='yes'>yes</td><td><a href="https://www.tompeacocknissan.com/about-us/staff/" target="_blank" rel="noopener">staff</a></td></tr>
+<tr><td>Cavender Nissan of Rockwall</td><td>Rockwall</td><td>TX</td><td>Nissan</td><td>Bryan Hall</td><td>General Manager</td><td class='yes'>yes</td><td><a href="https://www.cavendernissanrockwall.com/about-us/staff/" target="_blank" rel="noopener">staff</a></td></tr>
+<tr><td>Ancira Nissan</td><td>San Antonio</td><td>TX</td><td>Nissan</td><td>Anthony Corey</td><td>General Manager</td><td class='yes'>yes</td><td><a href="https://www.anciranissansa.com/about-us/staff/" target="_blank" rel="noopener">staff</a></td></tr>
+<tr><td>Benson&#x27;s Ingram Park Nissan</td><td>San Antonio</td><td>TX</td><td>Nissan</td><td>BJ Banamar</td><td>General Manager</td><td class='no'>no</td><td><a href="https://www.ingramparknissan.com/about-us/staff/" target="_blank" rel="noopener">staff</a></td></tr>
+<tr><td>South Park Nissan</td><td>San Antonio</td><td>TX</td><td>Nissan</td><td>Shawn Sprang</td><td>General Manager</td><td class='yes'>yes</td><td><a href="https://www.southparknissan.com/about/meet-our-team/" target="_blank" rel="noopener">staff</a></td></tr>
+<tr><td>Group 1 Nissan Southwest Houston</td><td>Stafford</td><td>TX</td><td>Nissan</td><td>Feras Maayah</td><td>General Manager</td><td class='yes'>yes</td><td><a href="https://www.group1nissansouthwesthouston.com/about-us/staff/" target="_blank" rel="noopener">staff</a></td></tr>
+<tr><td>Fred Haas Nissan</td><td>Tomball</td><td>TX</td><td>Nissan</td><td>John Hays</td><td>General Manager</td><td class='no'>no</td><td><a href="https://www.fredhaasnissan.com/staff" target="_blank" rel="noopener">staff</a></td></tr>
+<tr><td>SouthWest Nissan</td><td>Weatherford</td><td>TX</td><td>Nissan</td><td>Chris Bonnett</td><td>General Manager</td><td class='no'>no</td><td><a href="https://www.southwestnissantx.com/staff.aspx" target="_blank" rel="noopener">staff</a></td></tr>
+<tr><td>Austin Subaru</td><td>Austin</td><td>TX</td><td>Subaru</td><td>Eliel Ramirez</td><td>General Manager</td><td class='no'>no</td><td><a href="https://www.austinsubaru.com/about-us/staff/" target="_blank" rel="noopener">staff</a></td></tr>
+<tr><td>City Limits Subaru</td><td>Buda</td><td>TX</td><td>Subaru</td><td>Madison Hess</td><td>General Manager</td><td class='yes'>yes</td><td><a href="https://www.citylimitssubaru.com/about-us/meet-our-team/" target="_blank" rel="noopener">staff</a></td></tr>
+<tr><td>Subaru of Georgetown</td><td>Georgetown</td><td>TX</td><td>Subaru</td><td>Daniel Azel</td><td>General Manager</td><td class='no'>no</td><td><a href="https://www.subaruofgeorgetown.com/about-us/staff/" target="_blank" rel="noopener">staff</a></td></tr>
+<tr><td>Subaru of Clear Lake</td><td>Houston</td><td>TX</td><td>Subaru</td><td>Harvey Bishop</td><td>General Manager</td><td class='yes'>yes</td><td><a href="https://www.clearlakesubaru.com/staff" target="_blank" rel="noopener">staff</a></td></tr>
+<tr><td>Superior Subaru of Houston</td><td>Jersey Village</td><td>TX</td><td>Subaru</td><td>Monte Clair</td><td>General Manager</td><td class='no'>no</td><td><a href="https://www.superiorsubaruofhouston.com/dealership/staff.htm" target="_blank" rel="noopener">staff</a></td></tr>
+<tr><td>Gulf Coast Toyota</td><td>Angleton</td><td>TX</td><td>Toyota</td><td>—</td><td>—</td><td class='no'>no</td><td><a href="Not pulled yet." target="_blank" rel="noopener">staff</a></td></tr>
+<tr><td>Community Toyota</td><td>Baytown</td><td>TX</td><td>Toyota</td><td>David Smith</td><td>General Manager</td><td class='no'>no</td><td><a href="https://www.communitytoyota.com/meet-our-staff/" target="_blank" rel="noopener">staff</a></td></tr>
+<tr><td>Gullo Toyota of Conroe</td><td>Conroe</td><td>TX</td><td>Toyota</td><td>Shawn Mize</td><td>General Manager</td><td class='no'>no</td><td><a href="https://www.gullotoyota.com/about-us/staff/" target="_blank" rel="noopener">staff</a></td></tr>
+<tr><td>Classic Toyota Galveston</td><td>Galveston</td><td>TX</td><td>Toyota</td><td>—</td><td>—</td><td class='no'>no</td><td><a href="Not pulled yet." target="_blank" rel="noopener">staff</a></td></tr>
+<tr><td>AutoNation Toyota Gulf Freeway</td><td>Houston</td><td>TX</td><td>Toyota</td><td>—</td><td>—</td><td class='no'>no</td><td><a href="No staff/GM page. Corporate about only." target="_blank" rel="noopener">staff</a></td></tr>
+<tr><td>Don McGill Toyota</td><td>Houston</td><td>TX</td><td>Toyota</td><td>—</td><td>—</td><td class='no'>no</td><td><a href="No staff page (404)." target="_blank" rel="noopener">staff</a></td></tr>
+<tr><td>Fred Haas Toyota Country</td><td>Houston</td><td>TX</td><td>Toyota</td><td>Brad Dupuis</td><td>General Manager</td><td class='no'>no</td><td><a href="https://www.fredhaastoyotacountry.com/about-us/staff/" target="_blank" rel="noopener">staff</a></td></tr>
+<tr><td>Group 1 Toyota Southwest Houston</td><td>Houston</td><td>TX</td><td>Toyota</td><td>Keegan Savell</td><td>General Manager</td><td class='yes'>yes</td><td><a href="https://www.group1toyotasouthwesthouston.com/about-us/staff/" target="_blank" rel="noopener">staff</a></td></tr>
+<tr><td>Gulf States Toyota Inc</td><td>Houston</td><td>TX</td><td>Toyota</td><td>—</td><td>—</td><td class='no'>no</td><td><a href="Distributor / not a retail rooftop. Skip." target="_blank" rel="noopener">staff</a></td></tr>
+<tr><td>Joe Myers Toyota</td><td>Houston</td><td>TX</td><td>Toyota</td><td>Lance Lewis</td><td>General Manager / Managing Partner</td><td class='no'>no</td><td><a href="https://www.joemyerstoyota.com/dealership/staff.htm" target="_blank" rel="noopener">staff</a></td></tr>
+<tr><td>Mike Calvert Toyota</td><td>Houston</td><td>TX</td><td>Toyota</td><td>Mike Gorbet</td><td>General Manager</td><td class='yes'>yes</td><td><a href="https://www.mikecalverttoyota.com/staff.aspx" target="_blank" rel="noopener">staff</a></td></tr>
+<tr><td>Space City Toyota</td><td>Humble</td><td>TX</td><td>Toyota</td><td>—</td><td>—</td><td class='no'>no</td><td><a href="Staff URL 404." target="_blank" rel="noopener">staff</a></td></tr>
+<tr><td>Toyota of Katy</td><td>Katy</td><td>TX</td><td>Toyota</td><td>Michael Hartmann</td><td>General Manager</td><td class='no'>no</td><td><a href="https://www.toyotaofkaty.com/staff/" target="_blank" rel="noopener">staff</a></td></tr>
+<tr><td>Mac Haik Toyota</td><td>League City</td><td>TX</td><td>Toyota</td><td>—</td><td>—</td><td class='no'>no</td><td><a href="Not pulled yet." target="_blank" rel="noopener">staff</a></td></tr>
+<tr><td>Keating Toyota</td><td>Manvel</td><td>TX</td><td>Toyota</td><td>—</td><td>—</td><td class='no'>no</td><td><a href="Staff URL 404." target="_blank" rel="noopener">staff</a></td></tr>
+<tr><td>Group 1 Toyota Fort Bend</td><td>Richmond</td><td>TX</td><td>Toyota</td><td>—</td><td>—</td><td class='no'>no</td><td><a href="Not pulled yet." target="_blank" rel="noopener">staff</a></td></tr>
+<tr><td>Fred Haas Toyota World</td><td>Spring</td><td>TX</td><td>Toyota</td><td>Pat Goldwait</td><td>General Manager</td><td class='yes'>yes</td><td><a href="https://www.fredhaastoyota.com/about-us/staff/" target="_blank" rel="noopener">staff</a></td></tr>
+<tr><td>Group 1 Volkswagen Alamo Heights</td><td>San Antonio</td><td>TX</td><td>Volkswagen</td><td>Chris Cameron</td><td>General Manager</td><td class='yes'>yes</td><td><a href="https://www.group1volkswagenalamoheights.com/about-us/staff/" target="_blank" rel="noopener">staff</a></td></tr>
+    </tbody>
+  </table>
+  <p class="note">Built 2026-09-02 14:18 · <span class="rev">SE-GM-DESK-2026-09-02-A</span> · collectors still filling other states/brands · master CSV is private</p>
+</div>
+</body>
+</html>
