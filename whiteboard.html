@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex, nofollow">
+  <title>Whiteboard — Coop Operator Board</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #0b0d11;
+      --board: #12151b;
+      --card: #1a1d23;
+      --ink: #e2e8f0;
+      --dim: #94a3b8;
+      --mute: #64748b;
+      --line: #2d3748;
+      --red: #c0392b;
+      --green: #2ecc71;
+      --amber: #f59e0b;
+      --blue: #3b82f6;
+      --violet: #8b5cf6;
+      --teal: #14b8a6;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: Inter, system-ui, sans-serif;
+      background:
+        radial-gradient(1200px 600px at 10% -10%, rgba(192,57,43,.12), transparent 55%),
+        radial-gradient(900px 500px at 90% 0%, rgba(59,130,246,.08), transparent 50%),
+        var(--bg);
+      color: var(--ink);
+      min-height: 100vh;
+      line-height: 1.45;
+    }
+    a { color: inherit; text-decoration: none; }
+    .shell { max-width: 1280px; margin: 0 auto; padding: 1.25rem 1.15rem 3rem; }
+
+    .topbar {
+      display: flex; align-items: flex-start; justify-content: space-between; gap: 1rem;
+      padding-bottom: 1rem; border-bottom: 1px solid var(--line); margin-bottom: 1.15rem;
+    }
+    .brand { display: flex; gap: .9rem; align-items: center; }
+    .logo { height: 42px; width: auto; }
+    .brand h1 { font-size: 1.45rem; font-weight: 800; letter-spacing: -.02em; line-height: 1.1; }
+    .brand .sub { color: var(--red); font-weight: 600; font-size: .82rem; margin-top: .15rem; }
+    .meta { text-align: right; color: var(--dim); font-size: .78rem; }
+    .meta .mono { font-family: "JetBrains Mono", monospace; }
+    .nav { display: flex; gap: .55rem; flex-wrap: wrap; justify-content: flex-end; margin-top: .45rem; }
+    .nav a {
+      font-size: .72rem; font-weight: 700; letter-spacing: .04em; text-transform: uppercase;
+      padding: .35rem .65rem; border-radius: 999px; border: 1px solid var(--line); color: var(--dim);
+    }
+    .nav a:hover { border-color: var(--red); color: var(--ink); }
+
+    .legend {
+      display: flex; flex-wrap: wrap; gap: .5rem .75rem; align-items: center;
+      margin: 0 0 1rem; color: var(--mute); font-size: .75rem;
+    }
+    .swatch {
+      display: inline-flex; align-items: center; gap: .35rem;
+      padding: .2rem .55rem; border-radius: 999px; border: 1px solid var(--line); background: #151820;
+    }
+    .dot { width: 8px; height: 8px; border-radius: 50%; }
+
+    /* Whiteboard layout: day strip on top-left, then lanes */
+    .board {
+      display: grid;
+      grid-template-columns: 320px 1fr;
+      gap: 1rem;
+      align-items: start;
+    }
+    @media (max-width: 920px) {
+      .board { grid-template-columns: 1fr; }
+    }
+
+    .lane {
+      background: var(--board);
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      padding: 1rem;
+      position: relative;
+      overflow: hidden;
+    }
+    .lane::before {
+      content: "";
+      position: absolute; inset: 0;
+      background-image:
+        linear-gradient(rgba(255,255,255,.015) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,.015) 1px, transparent 1px);
+      background-size: 28px 28px;
+      pointer-events: none;
+    }
+    .lane > * { position: relative; z-index: 1; }
+
+    .lane-head {
+      display: flex; align-items: baseline; justify-content: space-between; gap: .75rem;
+      margin-bottom: .85rem;
+    }
+    .lane-head h2 {
+      font-size: .72rem; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; color: var(--dim);
+    }
+    .lane-head .hint { font-size: .72rem; color: var(--mute); }
+
+    .day-lane {
+      border-color: rgba(192,57,43,.45);
+      box-shadow: 0 0 0 1px rgba(192,57,43,.08), 0 12px 40px rgba(0,0,0,.25);
+      background: linear-gradient(180deg, #1a1214 0%, var(--board) 40%);
+    }
+    .day-lane .lane-head h2 { color: #fca5a5; }
+
+    .node {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: .85rem .9rem .8rem;
+      margin-bottom: .65rem;
+      transition: border-color .15s, transform .15s;
+    }
+    .node:last-child { margin-bottom: 0; }
+    .node:hover { border-color: rgba(192,57,43,.55); transform: translateY(-1px); }
+    .node-top { display: flex; justify-content: space-between; gap: .5rem; align-items: flex-start; }
+    .node-title { font-weight: 750; font-size: .95rem; letter-spacing: -.01em; line-height: 1.25; }
+    .node p { color: var(--dim); font-size: .78rem; margin-top: .35rem; }
+    .node-links { display: flex; flex-wrap: wrap; gap: .4rem; margin-top: .55rem; }
+    .node-links a {
+      font-size: .7rem; font-weight: 700; color: #93c5fd;
+      border-bottom: 1px solid rgba(147,197,253,.35);
+    }
+    .node-links a:hover { color: #fff; }
+
+    .badge {
+      display: inline-flex; align-items: center; flex-shrink: 0;
+      font-size: .62rem; font-weight: 800; letter-spacing: .06em; text-transform: uppercase;
+      padding: .22rem .45rem; border-radius: 999px; white-space: nowrap;
+    }
+    .b-now { background: rgba(192,57,43,.2); color: #fca5a5; }
+    .b-active { background: rgba(46,204,113,.15); color: #4ade80; }
+    .b-wait { background: rgba(245,158,11,.15); color: #fbbf24; }
+    .b-block { background: rgba(231,76,60,.18); color: #f87171; }
+    .b-tabled { background: rgba(100,116,139,.2); color: #94a3b8; }
+    .b-warm { background: rgba(139,92,246,.18); color: #c4b5fd; }
+    .b-owner { background: rgba(59,130,246,.15); color: #93c5fd; }
+
+    .map {
+      display: grid;
+      gap: 1rem;
+    }
+    .cluster {
+      border: 1px dashed rgba(148,163,184,.25);
+      border-radius: 14px;
+      padding: .85rem;
+      background: rgba(255,255,255,.015);
+    }
+    .cluster-title {
+      font-size: .7rem; font-weight: 800; letter-spacing: .08em; text-transform: uppercase;
+      color: var(--mute); margin-bottom: .65rem; display: flex; align-items: center; gap: .45rem;
+    }
+    .cluster-title .pipe {
+      height: 10px; width: 3px; border-radius: 2px; background: var(--blue);
+    }
+    .cluster.client .pipe { background: var(--teal); }
+    .cluster.product .pipe { background: var(--violet); }
+    .cluster.parked .pipe { background: var(--mute); }
+
+    .nodes-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: .65rem;
+    }
+    .nodes-grid .node { margin: 0; min-height: 100%; }
+
+    .connectors {
+      display: none; /* v1: visual clusters only; SVG connectors later */
+    }
+
+    .foot {
+      margin-top: 1.25rem; color: var(--mute); font-size: .72rem; text-align: center;
+    }
+    .foot code {
+      font-family: "JetBrains Mono", monospace; font-size: .68rem;
+      color: var(--dim); background: #151820; padding: .1rem .35rem; border-radius: 4px;
+    }
+  </style>
+</head>
+<body>
+  <div class="shell">
+    <div class="topbar">
+      <div class="brand">
+        <img class="logo" src="https://images.squarespace-cdn.com/content/v1/68fac8a3d20e8d72215ede75/6669040e-00b7-4113-a0c0-a29b3706227f/Asset+26.png?format=200w" alt="Coop">
+        <div>
+          <h1>Whiteboard</h1>
+          <div class="sub">Team board · projects in flight · day strip first</div>
+        </div>
+      </div>
+      <div class="meta">
+        <div class="mono" id="clock">—</div>
+        <div class="nav">
+          <a href="./">← Hub</a>
+          <a href="https://thecooperativeagency.github.io/vendor-briefs/" target="_blank" rel="noopener">Vendor briefs</a>
+          <a href="https://todoist.com/app" target="_blank" rel="noopener">Todoist</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="legend">
+      <span class="swatch"><span class="dot" style="background:#c0392b"></span> Day-to-day</span>
+      <span class="swatch"><span class="dot" style="background:#2ecc71"></span> Active</span>
+      <span class="swatch"><span class="dot" style="background:#f59e0b"></span> Waiting</span>
+      <span class="swatch"><span class="dot" style="background:#e74c3c"></span> Blocked</span>
+      <span class="swatch"><span class="dot" style="background:#8b5cf6"></span> Product / warm</span>
+      <span class="swatch"><span class="dot" style="background:#64748b"></span> Parked</span>
+      <span style="margin-left:auto;opacity:.8">v1 · mind-map clusters · update from Plaud / ops</span>
+    </div>
+
+    <div class="board">
+      <!-- TOP-LEFT: day to day -->
+      <aside class="lane day-lane" aria-label="Day to day">
+        <div class="lane-head">
+          <h2>Day to day</h2>
+          <span class="hint">Top-left · do / decide soon</span>
+        </div>
+
+        <div class="node">
+          <div class="node-top">
+            <div class="node-title">Rick · BMWJ recall option</div>
+            <span class="badge b-now">Today</span>
+          </div>
+          <p>J&amp;L Sep 9 brief: ~2.5–2.8k targets, ~$3.7–4k OOP after 50% reimb, 50–120 appts. Also tires + X5 Oct pullback + optional service special.</p>
+          <div class="node-links">
+            <a href="https://thecooperativeagency.github.io/vendor-briefs/meeting-notes/bmw-jackson-2026-09-09.html" target="_blank" rel="noopener">J&amp;L note →</a>
+            <a href="https://thecooperativeagency.github.io/vendor-briefs/bmw-of-jackson.html" target="_blank" rel="noopener">Vendor brief →</a>
+          </div>
+        </div>
+
+        <div class="node">
+          <div class="node-top">
+            <div class="node-title">VCA finalize w/ Gaige</div>
+            <span class="badge b-now">Fri 9/11</span>
+          </div>
+          <p>One more settings pass before turn-on so VCA actually works. Draft email for Lance while driving.</p>
+          <div class="node-links">
+            <a href="#cluster-vca">VCA cluster ↓</a>
+          </div>
+        </div>
+
+        <div class="node">
+          <div class="node-top">
+            <div class="node-title">Alexis · Focus CSVs (BMWJ)</div>
+            <span class="badge b-now">Ask</span>
+          </div>
+          <p>Leads + inventory exports out of Focus/ERA so Ada can feed BMWJ GM Weekly.</p>
+        </div>
+
+        <div class="node">
+          <div class="node-top">
+            <div class="node-title">Full Path contract</div>
+            <span class="badge b-owner">Lance</span>
+          </div>
+          <p>Sign and send back to Full Path rep.</p>
+        </div>
+
+        <div class="node">
+          <div class="node-top">
+            <div class="node-title">HP GM Weekly wire-up</div>
+            <span class="badge b-active">Active</span>
+          </div>
+          <p>Ada ↔ GA4 for Harris Porsche; correct VinSolutions CSVs; show Adam retention value beyond social/photos.</p>
+        </div>
+      </aside>
+
+      <!-- MAIN MAP -->
+      <main class="map" aria-label="Project map">
+        <section class="cluster client" id="cluster-vca">
+          <div class="cluster-title"><span class="pipe"></span> Client ops · VCA / CRM</div>
+          <div class="nodes-grid">
+            <div class="node">
+              <div class="node-top"><div class="node-title">VinSolutions VCA go-live</div><span class="badge b-active">Active</span></div>
+              <p>BH group path. After-hours off vs Podium until dark. Finalize settings with Gaige Fri 9/11. Target ~Sep 21 from prior recap.</p>
+            </div>
+            <div class="node">
+              <div class="node-top"><div class="node-title">Vendor briefs pack</div><span class="badge b-active">Live</span></div>
+              <p>Per-store GM briefs + meeting notes. Latest: BMWJ Sep 9 J&amp;L recall brief for Rick.</p>
+              <div class="node-links">
+                <a href="https://thecooperativeagency.github.io/vendor-briefs/" target="_blank" rel="noopener">Pack →</a>
+              </div>
+            </div>
+            <div class="node">
+              <div class="node-top"><div class="node-title">GM Weeklies</div><span class="badge b-active">Active</span></div>
+              <p>BHBMW / ABR live pattern. BMWJ needs Focus CSVs. HP needs GA4 + Vin CSVs for Adam retention.</p>
+              <div class="node-links">
+                <a href="https://thecooperativeagency.github.io/email-creative/manager-reports.html" target="_blank" rel="noopener">Manager reports →</a>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="cluster client">
+          <div class="cluster-title"><span class="pipe"></span> Rooftops · in motion</div>
+          <div class="nodes-grid">
+            <div class="node">
+              <div class="node-top"><div class="node-title">BMW of Jackson</div><span class="badge b-now">Trip</span></div>
+              <p>Rick sit-down · recall activation · CP service · Focus data · service offers nav live.</p>
+            </div>
+            <div class="node">
+              <div class="node-top"><div class="node-title">Harris Porsche retention</div><span class="badge b-wait">Pressure</span></div>
+              <p>Adam wants ground social/photos. Keep: vendor relations, Vin maint/training, GM weeklies, vendor brief, Driver’s Cut, BH group liaison / Stroll.</p>
+            </div>
+            <div class="node">
+              <div class="node-top"><div class="node-title">Stroll Magazine</div><span class="badge b-active">Active</span></div>
+              <p>October = X5 piece done. November = one piece from each of three brands.</p>
+            </div>
+            <div class="node">
+              <div class="node-top"><div class="node-title">Dealership newsletters</div><span class="badge b-active">Issue 01</span></div>
+              <p>S Line / Ultimate Driver / Driver’s Cut rooftop letters.</p>
+              <div class="node-links">
+                <a href="./#">Hub projects →</a>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="cluster product">
+          <div class="cluster-title"><span class="pipe"></span> Coop product · builds</div>
+          <div class="nodes-grid">
+            <div class="node">
+              <div class="node-top"><div class="node-title">This whiteboard</div><span class="badge b-active">v1</span></div>
+              <p>Hub top-left entry. Day strip + project clusters. Next: live status hooks, connectors, edit path.</p>
+            </div>
+            <div class="node">
+              <div class="node-top"><div class="node-title">CoopAcquire</div><span class="badge b-active">Live</span></div>
+              <p>SMS / appraisal opt-in. A2P per rooftop. Multi-tenant still open.</p>
+              <div class="node-links"><a href="https://acquire.thecoopbrla.com/" target="_blank" rel="noopener">App →</a></div>
+            </div>
+            <div class="node">
+              <div class="node-top"><div class="node-title">PostEngine → PostHopper</div><span class="badge b-warm">Warm</span></div>
+              <p>Internal PE is daily. SaaS rename / domain still open.</p>
+            </div>
+            <div class="node">
+              <div class="node-top"><div class="node-title">Cozy Spooks (KDP)</div><span class="badge b-block">Blocked</span></div>
+              <p>Jumbo book path idle pending Lance bank account finalize. Print QC + PDF + wrap next after unblock.</p>
+            </div>
+            <div class="node">
+              <div class="node-top"><div class="node-title">SE GM letter roster</div><span class="badge b-active">Collecting</span></div>
+              <p>B2B dealer-GM list FL–TX–AR from public staff pages.</p>
+              <div class="node-links"><a href="./gm-roster.html">Roster desk →</a></div>
+            </div>
+            <div class="node">
+              <div class="node-top"><div class="node-title">Annual Inventory</div><span class="badge b-active">Ongoing</span></div>
+              <p>BHBMW live; ABR/BMWJ wait on real feeds.</p>
+            </div>
+          </div>
+        </section>
+
+        <section class="cluster parked">
+          <div class="cluster-title"><span class="pipe"></span> Older / parked / polish</div>
+          <div class="nodes-grid">
+            <div class="node">
+              <div class="node-top"><div class="node-title">GA4 dashboards</div><span class="badge b-tabled">Tabled</span></div>
+              <p>Pull on demand — not a daily driver.</p>
+            </div>
+            <div class="node">
+              <div class="node-top"><div class="node-title">Ultimate Sales Notebook</div><span class="badge b-warm">Polish</span></div>
+              <p>Product package / ship decision.</p>
+            </div>
+            <div class="node">
+              <div class="node-top"><div class="node-title">Avec Tous Provisions</div><span class="badge b-warm">Polish</span></div>
+              <p>Spice relaunch + SQSP commerce path.</p>
+            </div>
+            <div class="node">
+              <div class="node-top"><div class="node-title">Store Ops Agent / Dealer Intel</div><span class="badge b-warm">Warm</span></div>
+              <p>Parked product ideas — not day strip.</p>
+            </div>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <p class="foot">
+      First iteration · seeded from Plaud 2026-09-10 (Jackson-bound) + hub projects ·
+      verify <code>coop-whiteboard-v1-2026-09-10</code>
+    </p>
+  </div>
+  <script>
+    (function () {
+      var el = document.getElementById('clock');
+      function tick() {
+        try {
+          el.textContent = new Date().toLocaleString('en-US', {
+            timeZone: 'America/Chicago', weekday: 'short', month: 'short', day: 'numeric',
+            hour: 'numeric', minute: '2-digit'
+          }) + ' CDT';
+        } catch (e) { el.textContent = new Date().toString(); }
+      }
+      tick(); setInterval(tick, 30000);
+    })();
+  </script>
+</body>
+</html>
