@@ -5,11 +5,26 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="robots" content="noindex, nofollow">
   <title>Whiteboard — Coop Operator Board</title>
+  <script>
+    (function () {
+      try {
+        var k = 'coop-whiteboard-theme';
+        var saved = localStorage.getItem(k);
+        var theme = (saved === 'light' || saved === 'dark')
+          ? saved
+          : (window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark');
+        document.documentElement.setAttribute('data-theme', theme);
+      } catch (e) {
+        document.documentElement.setAttribute('data-theme', 'dark');
+      }
+    })();
+  </script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
   <style>
     :root {
+      color-scheme: dark;
       --bg: #0b0d11;
       --board: #12151b;
       --card: #1a1d23;
@@ -23,17 +38,64 @@
       --blue: #3b82f6;
       --violet: #8b5cf6;
       --teal: #14b8a6;
+      --glow-red: rgba(192,57,43,.12);
+      --glow-blue: rgba(59,130,246,.08);
+      --swatch-bg: #151820;
+      --grid-line: rgba(255,255,255,.015);
+      --cluster-bg: rgba(255,255,255,.015);
+      --cluster-border: rgba(148,163,184,.25);
+      --day-lane-bg: linear-gradient(180deg, #1a1214 0%, var(--board) 40%);
+      --day-head: #fca5a5;
+      --link: #93c5fd;
+      --link-hover: #fff;
+      --node-hover: rgba(192,57,43,.55);
+      --shadow: rgba(0,0,0,.25);
+      --code-bg: #151820;
+      --theme-btn-bg: transparent;
+      --theme-btn-ink: var(--dim);
+    }
+    html[data-theme="light"] {
+      color-scheme: light;
+      --bg: #f4f1ea;
+      --board: #fffdf8;
+      --card: #ffffff;
+      --ink: #1a1f2c;
+      --dim: #4b5568;
+      --mute: #6b7280;
+      --line: #e5e0d6;
+      --red: #b91c1c;
+      --green: #15803d;
+      --amber: #b45309;
+      --blue: #1d4ed8;
+      --violet: #6d28d9;
+      --teal: #0f766e;
+      --glow-red: rgba(185,28,28,.08);
+      --glow-blue: rgba(29,78,216,.06);
+      --swatch-bg: #f8f5ef;
+      --grid-line: rgba(26,31,44,.04);
+      --cluster-bg: rgba(26,31,44,.02);
+      --cluster-border: rgba(100,116,139,.28);
+      --day-lane-bg: linear-gradient(180deg, #fff5f4 0%, var(--board) 42%);
+      --day-head: #b91c1c;
+      --link: #1d4ed8;
+      --link-hover: #0f172a;
+      --node-hover: rgba(185,28,28,.45);
+      --shadow: rgba(26,31,44,.08);
+      --code-bg: #efeae2;
+      --theme-btn-bg: #fff;
+      --theme-btn-ink: #1a1f2c;
     }
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
       font-family: Inter, system-ui, sans-serif;
       background:
-        radial-gradient(1200px 600px at 10% -10%, rgba(192,57,43,.12), transparent 55%),
-        radial-gradient(900px 500px at 90% 0%, rgba(59,130,246,.08), transparent 50%),
+        radial-gradient(1200px 600px at 10% -10%, var(--glow-red), transparent 55%),
+        radial-gradient(900px 500px at 90% 0%, var(--glow-blue), transparent 50%),
         var(--bg);
       color: var(--ink);
       min-height: 100vh;
       line-height: 1.45;
+      transition: background-color .2s ease, color .2s ease;
     }
     a { color: inherit; text-decoration: none; }
     .shell { max-width: 1280px; margin: 0 auto; padding: 1.25rem 1.15rem 3rem; }
@@ -49,11 +111,19 @@
     .meta { text-align: right; color: var(--dim); font-size: .78rem; }
     .meta .mono { font-family: "JetBrains Mono", monospace; }
     .nav { display: flex; gap: .55rem; flex-wrap: wrap; justify-content: flex-end; margin-top: .45rem; }
-    .nav a {
+    .nav a, .theme-toggle {
       font-size: .72rem; font-weight: 700; letter-spacing: .04em; text-transform: uppercase;
       padding: .35rem .65rem; border-radius: 999px; border: 1px solid var(--line); color: var(--dim);
+      background: var(--theme-btn-bg); cursor: pointer; font-family: inherit; line-height: 1;
     }
-    .nav a:hover { border-color: var(--red); color: var(--ink); }
+    .nav a:hover, .theme-toggle:hover { border-color: var(--red); color: var(--ink); }
+    .theme-toggle {
+      display: inline-flex; align-items: center; gap: .35rem; color: var(--theme-btn-ink);
+    }
+    .theme-toggle .icon { font-size: .85rem; line-height: 1; }
+    .theme-toggle .label-light { display: none; }
+    html[data-theme="light"] .theme-toggle .label-dark { display: none; }
+    html[data-theme="light"] .theme-toggle .label-light { display: inline; }
 
     .legend {
       display: flex; flex-wrap: wrap; gap: .5rem .75rem; align-items: center;
@@ -61,7 +131,7 @@
     }
     .swatch {
       display: inline-flex; align-items: center; gap: .35rem;
-      padding: .2rem .55rem; border-radius: 999px; border: 1px solid var(--line); background: #151820;
+      padding: .2rem .55rem; border-radius: 999px; border: 1px solid var(--line); background: var(--swatch-bg);
     }
     .dot { width: 8px; height: 8px; border-radius: 50%; }
 
@@ -88,8 +158,8 @@
       content: "";
       position: absolute; inset: 0;
       background-image:
-        linear-gradient(rgba(255,255,255,.015) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(255,255,255,.015) 1px, transparent 1px);
+        linear-gradient(var(--grid-line) 1px, transparent 1px),
+        linear-gradient(90deg, var(--grid-line) 1px, transparent 1px);
       background-size: 28px 28px;
       pointer-events: none;
     }
@@ -105,11 +175,11 @@
     .lane-head .hint { font-size: .72rem; color: var(--mute); }
 
     .day-lane {
-      border-color: rgba(192,57,43,.45);
-      box-shadow: 0 0 0 1px rgba(192,57,43,.08), 0 12px 40px rgba(0,0,0,.25);
-      background: linear-gradient(180deg, #1a1214 0%, var(--board) 40%);
+      border-color: color-mix(in srgb, var(--red) 45%, transparent);
+      box-shadow: 0 0 0 1px color-mix(in srgb, var(--red) 10%, transparent), 0 12px 40px var(--shadow);
+      background: var(--day-lane-bg);
     }
-    .day-lane .lane-head h2 { color: #fca5a5; }
+    .day-lane .lane-head h2 { color: var(--day-head); }
 
     .node {
       background: var(--card);
@@ -120,16 +190,16 @@
       transition: border-color .15s, transform .15s;
     }
     .node:last-child { margin-bottom: 0; }
-    .node:hover { border-color: rgba(192,57,43,.55); transform: translateY(-1px); }
+    .node:hover { border-color: var(--node-hover); transform: translateY(-1px); }
     .node-top { display: flex; justify-content: space-between; gap: .5rem; align-items: flex-start; }
     .node-title { font-weight: 750; font-size: .95rem; letter-spacing: -.01em; line-height: 1.25; }
     .node p { color: var(--dim); font-size: .78rem; margin-top: .35rem; }
     .node-links { display: flex; flex-wrap: wrap; gap: .4rem; margin-top: .55rem; }
     .node-links a {
-      font-size: .7rem; font-weight: 700; color: #93c5fd;
-      border-bottom: 1px solid rgba(147,197,253,.35);
+      font-size: .7rem; font-weight: 700; color: var(--link);
+      border-bottom: 1px solid color-mix(in srgb, var(--link) 35%, transparent);
     }
-    .node-links a:hover { color: #fff; }
+    .node-links a:hover { color: var(--link-hover); }
 
     .badge {
       display: inline-flex; align-items: center; flex-shrink: 0;
@@ -143,16 +213,23 @@
     .b-tabled { background: rgba(100,116,139,.2); color: #94a3b8; }
     .b-warm { background: rgba(139,92,246,.18); color: #c4b5fd; }
     .b-owner { background: rgba(59,130,246,.15); color: #93c5fd; }
+    html[data-theme="light"] .b-now { background: rgba(185,28,28,.12); color: #b91c1c; }
+    html[data-theme="light"] .b-active { background: rgba(21,128,61,.12); color: #15803d; }
+    html[data-theme="light"] .b-wait { background: rgba(180,83,9,.12); color: #b45309; }
+    html[data-theme="light"] .b-block { background: rgba(185,28,28,.12); color: #dc2626; }
+    html[data-theme="light"] .b-tabled { background: rgba(100,116,139,.14); color: #475569; }
+    html[data-theme="light"] .b-warm { background: rgba(109,40,217,.12); color: #6d28d9; }
+    html[data-theme="light"] .b-owner { background: rgba(29,78,216,.12); color: #1d4ed8; }
 
     .map {
       display: grid;
       gap: 1rem;
     }
     .cluster {
-      border: 1px dashed rgba(148,163,184,.25);
+      border: 1px dashed var(--cluster-border);
       border-radius: 14px;
       padding: .85rem;
-      background: rgba(255,255,255,.015);
+      background: var(--cluster-bg);
     }
     .cluster-title {
       font-size: .7rem; font-weight: 800; letter-spacing: .08em; text-transform: uppercase;
@@ -181,7 +258,7 @@
     }
     .foot code {
       font-family: "JetBrains Mono", monospace; font-size: .68rem;
-      color: var(--dim); background: #151820; padding: .1rem .35rem; border-radius: 4px;
+      color: var(--dim); background: var(--code-bg); padding: .1rem .35rem; border-radius: 4px;
     }
   </style>
 </head>
@@ -198,6 +275,14 @@
       <div class="meta">
         <div class="mono" id="clock">—</div>
         <div class="nav">
+          <button type="button" class="theme-toggle" id="theme-toggle" aria-label="Toggle dark and light mode" title="Toggle theme">
+            <span class="icon" aria-hidden="true">
+              <span class="label-dark">☀</span>
+              <span class="label-light">☾</span>
+            </span>
+            <span class="label-dark">Light</span>
+            <span class="label-light">Dark</span>
+          </button>
           <a href="./">← Hub</a>
           <a href="https://thecooperativeagency.github.io/vendor-briefs/" target="_blank" rel="noopener">Vendor briefs</a>
           <a href="https://todoist.com/app" target="_blank" rel="noopener">Todoist</a>
@@ -406,11 +491,41 @@
 
     <p class="foot">
       First iteration · seeded from Plaud 2026-09-10 (Jackson-bound) + hub projects ·
-      verify <code>coop-whiteboard-v1-2026-09-10c-qr-lander</code>
+      verify <code>coop-whiteboard-v1-2026-09-11a-theme-toggle</code>
     </p>
   </div>
   <script>
     (function () {
+      var KEY = 'coop-whiteboard-theme';
+      var root = document.documentElement;
+      var btn = document.getElementById('theme-toggle');
+      function current() {
+        return root.getAttribute('data-theme') === 'light' ? 'light' : 'dark';
+      }
+      function apply(theme) {
+        root.setAttribute('data-theme', theme);
+        try { localStorage.setItem(KEY, theme); } catch (e) {}
+        if (btn) {
+          btn.setAttribute('aria-pressed', theme === 'light' ? 'true' : 'false');
+          btn.setAttribute('aria-label', theme === 'light' ? 'Switch to dark mode' : 'Switch to light mode');
+        }
+      }
+      if (btn) {
+        btn.addEventListener('click', function () {
+          apply(current() === 'light' ? 'dark' : 'light');
+        });
+        apply(current());
+      }
+      try {
+        if (window.matchMedia) {
+          window.matchMedia('(prefers-color-scheme: light)').addEventListener('change', function (e) {
+            try {
+              if (!localStorage.getItem(KEY)) apply(e.matches ? 'light' : 'dark');
+            } catch (err) {}
+          });
+        }
+      } catch (e) {}
+
       var el = document.getElementById('clock');
       function tick() {
         try {
