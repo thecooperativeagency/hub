@@ -1,0 +1,586 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex, nofollow">
+  <title>Acquire Desk — Project Board</title>
+  <script>
+    (function () {
+      try {
+        var k = 'coop-whiteboard-theme';
+        var saved = localStorage.getItem(k);
+        var theme = (saved === 'light' || saved === 'dark')
+          ? saved
+          : (window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark');
+        document.documentElement.setAttribute('data-theme', theme);
+      } catch (e) {
+        document.documentElement.setAttribute('data-theme', 'dark');
+      }
+    })();
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      color-scheme: dark;
+      --bg: #0b0d11;
+      --board: #12151b;
+      --card: #1a1d23;
+      --ink: #e2e8f0;
+      --dim: #94a3b8;
+      --mute: #64748b;
+      --line: #2d3748;
+      --red: #e11d48;
+      --green: #22c55e;
+      --amber: #f59e0b;
+      --blue: #3b82f6;
+      --violet: #8b5cf6;
+      --teal: #14b8a6;
+      --glow-red: rgba(225,29,72,.14);
+      --glow-blue: rgba(59,130,246,.08);
+      --link: #93c5fd;
+      --shadow: rgba(0,0,0,.28);
+      --code-bg: #151820;
+    }
+    html[data-theme="light"] {
+      color-scheme: light;
+      --bg: #f4f1ea;
+      --board: #fffdf8;
+      --card: #ffffff;
+      --ink: #1a1f2c;
+      --dim: #4b5568;
+      --mute: #6b7280;
+      --line: #e5e0d6;
+      --red: #b91c1c;
+      --green: #15803d;
+      --amber: #b45309;
+      --blue: #1d4ed8;
+      --violet: #6d28d9;
+      --teal: #0f766e;
+      --glow-red: rgba(185,28,28,.08);
+      --glow-blue: rgba(29,78,216,.06);
+      --link: #1d4ed8;
+      --shadow: rgba(26,31,44,.08);
+      --code-bg: #efeae2;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: Inter, system-ui, sans-serif;
+      background:
+        radial-gradient(1100px 560px at 8% -12%, var(--glow-red), transparent 55%),
+        radial-gradient(900px 500px at 95% 0%, var(--glow-blue), transparent 50%),
+        var(--bg);
+      color: var(--ink);
+      min-height: 100vh;
+      line-height: 1.45;
+    }
+    a { color: inherit; text-decoration: none; }
+    .shell { max-width: 1380px; margin: 0 auto; padding: 1.15rem 1rem 3rem; }
+
+    .top {
+      display: flex; justify-content: space-between; gap: 1rem; flex-wrap: wrap;
+      align-items: flex-start; padding-bottom: 1rem; border-bottom: 1px solid var(--line); margin-bottom: 1rem;
+    }
+    .brand h1 { font-size: 1.55rem; font-weight: 800; letter-spacing: -.03em; line-height: 1.1; }
+    .brand .sub { color: var(--red); font-weight: 700; font-size: .88rem; margin-top: .25rem; }
+    .brand .one { color: var(--dim); font-size: .9rem; margin-top: .45rem; max-width: 42rem; }
+    .meta { text-align: right; color: var(--dim); font-size: .78rem; }
+    .meta .mono { font-family: "JetBrains Mono", monospace; }
+    .nav { display: flex; gap: .45rem; flex-wrap: wrap; justify-content: flex-end; margin-top: .45rem; }
+    .nav a, .nav button {
+      font-size: .72rem; font-weight: 700; letter-spacing: .04em; text-transform: uppercase;
+      padding: .35rem .65rem; border-radius: 999px; border: 1px solid var(--line); color: var(--dim);
+      background: transparent; cursor: pointer; font-family: inherit;
+    }
+    .nav a:hover, .nav button:hover { border-color: var(--red); color: var(--ink); }
+    .nav a.hot { background: rgba(225,29,72,.14); border-color: rgba(225,29,72,.4); color: #fda4af; }
+
+    .legend {
+      display: flex; flex-wrap: wrap; gap: .45rem .7rem; align-items: center;
+      margin: 0 0 1rem; color: var(--mute); font-size: .74rem;
+    }
+    .swatch {
+      display: inline-flex; align-items: center; gap: .35rem;
+      padding: .2rem .55rem; border-radius: 999px; border: 1px solid var(--line); background: var(--board);
+    }
+    .dot { width: 8px; height: 8px; border-radius: 50%; }
+
+    .board {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(220px, 1fr));
+      gap: .85rem;
+      align-items: start;
+    }
+    @media (max-width: 1100px) {
+      .board { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    }
+    @media (max-width: 640px) {
+      .board { grid-template-columns: 1fr; }
+    }
+
+    .col {
+      background: var(--board);
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      padding: .85rem;
+      min-height: 280px;
+      box-shadow: 0 10px 30px var(--shadow);
+    }
+    .col.now { border-color: rgba(34,197,94,.35); }
+    .col.next { border-color: rgba(245,158,11,.35); }
+    .col.road { border-color: rgba(59,130,246,.35); }
+    .col.you { border-color: rgba(225,29,72,.4); }
+    .col.hard { border-color: rgba(139,92,246,.4); }
+
+    .col-head {
+      display: flex; justify-content: space-between; gap: .5rem; align-items: baseline;
+      margin-bottom: .75rem; padding-bottom: .55rem; border-bottom: 1px solid var(--line);
+    }
+    .col-head h2 {
+      font-size: .72rem; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; color: var(--dim);
+    }
+    .col.now .col-head h2 { color: #4ade80; }
+    .col.next .col-head h2 { color: #fbbf24; }
+    .col.road .col-head h2 { color: #93c5fd; }
+    .col.you .col-head h2 { color: #fda4af; }
+    .col.hard .col-head h2 { color: #c4b5fd; }
+    .col-head .hint { font-size: .7rem; color: var(--mute); text-align: right; }
+
+    .card {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: .75rem .8rem .7rem;
+      margin-bottom: .55rem;
+    }
+    .card:last-child { margin-bottom: 0; }
+    .card-top { display: flex; justify-content: space-between; gap: .45rem; align-items: flex-start; }
+    .card-title { font-weight: 750; font-size: .92rem; letter-spacing: -.01em; line-height: 1.25; }
+    .card p { color: var(--dim); font-size: .78rem; margin-top: .35rem; }
+    .card ul { margin: .4rem 0 0 1rem; color: var(--dim); font-size: .78rem; }
+    .card li { margin: .2rem 0; }
+    .card-links { display: flex; flex-wrap: wrap; gap: .4rem; margin-top: .5rem; }
+    .card-links a {
+      font-size: .7rem; font-weight: 700; color: var(--link);
+      border-bottom: 1px solid color-mix(in srgb, var(--link) 40%, transparent);
+    }
+
+    .badge {
+      display: inline-flex; align-items: center; flex-shrink: 0;
+      font-size: .62rem; font-weight: 800; letter-spacing: .06em; text-transform: uppercase;
+      padding: .22rem .45rem; border-radius: 999px; white-space: nowrap;
+    }
+    .b-live { background: rgba(34,197,94,.15); color: #4ade80; }
+    .b-now { background: rgba(225,29,72,.18); color: #fda4af; }
+    .b-next { background: rgba(245,158,11,.15); color: #fbbf24; }
+    .b-phase { background: rgba(59,130,246,.15); color: #93c5fd; }
+    .b-you { background: rgba(225,29,72,.15); color: #fda4af; }
+    .b-hard { background: rgba(139,92,246,.18); color: #c4b5fd; }
+    .b-idea { background: rgba(100,116,139,.2); color: #94a3b8; }
+
+    .phase {
+      font-size: .68rem; font-weight: 800; letter-spacing: .08em; text-transform: uppercase;
+      color: var(--mute); margin: .85rem 0 .4rem;
+    }
+    .phase:first-of-type { margin-top: .15rem; }
+
+    .foot {
+      margin-top: 1.25rem; color: var(--mute); font-size: .72rem; text-align: center;
+    }
+    .foot code {
+      font-family: "JetBrains Mono", monospace; font-size: .68rem;
+      color: var(--dim); background: var(--code-bg); padding: .1rem .35rem; border-radius: 4px;
+    }
+  </style>
+</head>
+<body>
+  <div class="shell">
+    <div class="top">
+      <div class="brand">
+        <h1>Acquire Desk</h1>
+        <div class="sub">Killer app board · sales acquisition dashboard</div>
+        <p class="one">
+          One morning desk for managers: who to call, why they’re warm, who owns them, hand out lists —
+          then push work back into the CRM. BHBMW pilot first. Your sales eye steers product; Ada builds.
+        </p>
+      </div>
+      <div class="meta">
+        <div class="mono" id="clock">—</div>
+        <div>Project board · not ops clutter</div>
+        <div class="nav">
+          <a class="hot" href="https://acquire.thecoopbrla.com/desk/" target="_blank" rel="noopener">Open live desk →</a>
+          <a href="./">← Hub</a>
+          <a href="./whiteboard.html">Ops whiteboard</a>
+          <button type="button" id="themeBtn" aria-label="Toggle theme">Theme</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="legend">
+      <span class="swatch"><span class="dot" style="background:#22c55e"></span> Live now</span>
+      <span class="swatch"><span class="dot" style="background:#f59e0b"></span> Next</span>
+      <span class="swatch"><span class="dot" style="background:#3b82f6"></span> Roadmap</span>
+      <span class="swatch"><span class="dot" style="background:#e11d48"></span> Needs Lance</span>
+      <span class="swatch"><span class="dot" style="background:#8b5cf6"></span> Hard / later</span>
+      <span style="margin-left:auto;opacity:.85">Read left → right · short cards on purpose</span>
+    </div>
+
+    <div class="board">
+
+      <!-- LIVE -->
+      <section class="col now" aria-label="Live now">
+        <div class="col-head">
+          <h2>Live now</h2>
+          <span class="hint">Working today</span>
+        </div>
+
+        <div class="card">
+          <div class="card-top">
+            <div class="card-title">BHBMW desk is up</div>
+            <span class="badge b-live">Live</span>
+          </div>
+          <p>Morning board for Brian Harris BMW. Open, filter, call.</p>
+          <div class="card-links">
+            <a href="https://acquire.thecoopbrla.com/desk/" target="_blank" rel="noopener">Desk →</a>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-top">
+            <div class="card-title">Today’s service list</div>
+            <span class="badge b-live">Hero</span>
+          </div>
+          <ul>
+            <li>~40 appointments / day</li>
+            <li>Name + best phone</li>
+            <li>Car + VIN + advisor</li>
+            <li>Status (open / done)</li>
+          </ul>
+        </div>
+
+        <div class="card">
+          <div class="card-top">
+            <div class="card-title">CRM join (by VIN)</div>
+            <span class="badge b-live">On</span>
+          </div>
+          <ul>
+            <li>Salesperson from CRM</li>
+            <li>Lead status + hot flag</li>
+            <li>Trade info when present</li>
+            <li>Multi-hit tags = warmer</li>
+          </ul>
+        </div>
+
+        <div class="card">
+          <div class="card-top">
+            <div class="card-title">Hand off a list</div>
+            <span class="badge b-live">Mila-style</span>
+          </div>
+          <p>Filter → <strong>Download list (PDF)</strong> or CSV. Give it to a rep / manager.</p>
+        </div>
+
+        <div class="card">
+          <div class="card-top">
+            <div class="card-title">Feeds already flowing</div>
+            <span class="badge b-live">Data</span>
+          </div>
+          <ul>
+            <li>Service appts → Acquire mail</li>
+            <li>Today service list (daily)</li>
+            <li>Leads CSV (enrich only)</li>
+          </ul>
+        </div>
+      </section>
+
+      <!-- NEXT -->
+      <section class="col next" aria-label="Next">
+        <div class="col-head">
+          <h2>Next up</h2>
+          <span class="hint">Make it store-ready</span>
+        </div>
+
+        <div class="card">
+          <div class="card-top">
+            <div class="card-title">Logo + brand lockup</div>
+            <span class="badge b-you">Lance</span>
+          </div>
+          <p>You’re on the mark. Drop in → desk looks like a product, not a prototype.</p>
+        </div>
+
+        <div class="card">
+          <div class="card-top">
+            <div class="card-title">Lock the door</div>
+            <span class="badge b-next">Ada</span>
+          </div>
+          <p>Customer phones on this page. Gate it before managers get the link.</p>
+        </div>
+
+        <div class="card">
+          <div class="card-top">
+            <div class="card-title">Owner columns</div>
+            <span class="badge b-next">From meeting</span>
+          </div>
+          <p>Who owns today’s book: Shelter / Birthday / Cliff days — or by salesperson. Accountability, not just a dump.</p>
+        </div>
+
+        <div class="card">
+          <div class="card-top">
+            <div class="card-title">Better people lists from Vin</div>
+            <span class="badge b-you">Need export</span>
+          </div>
+          <p>Leads file has no name/phone. Need a real customer call export for cold + lost-touch panels.</p>
+        </div>
+
+        <div class="card">
+          <div class="card-top">
+            <div class="card-title">Your walkthrough</div>
+            <span class="badge b-you">Sales eye</span>
+          </div>
+          <p>You open desk with managers. Mark what’s missing, wrong, or dumb. That feedback is the product.</p>
+        </div>
+      </section>
+
+      <!-- ROADMAP -->
+      <section class="col road" aria-label="Roadmap">
+        <div class="col-head">
+          <h2>Roadmap</h2>
+          <span class="hint">Fully featured desk</span>
+        </div>
+
+        <div class="phase">Phase 2 · more lists</div>
+        <div class="card">
+          <div class="card-top">
+            <div class="card-title">Cold &amp; lost-touch</div>
+            <span class="badge b-phase">P2</span>
+          </div>
+          <p>People we worked, went quiet, still worth a call. Biggest miss today.</p>
+        </div>
+        <div class="card">
+          <div class="card-top">
+            <div class="card-title">Unsold trades / appraisals</div>
+            <span class="badge b-phase">P2</span>
+          </div>
+          <p>“Save a deal” panel — tried a trade, didn’t close.</p>
+        </div>
+        <div class="card">
+          <div class="card-top">
+            <div class="card-title">Open opps we’re working</div>
+            <span class="badge b-phase">P2</span>
+          </div>
+          <p>Active deals not sold yet — one place, not five lists.</p>
+        </div>
+
+        <div class="phase">Phase 3 · smarter rows</div>
+        <div class="card">
+          <div class="card-top">
+            <div class="card-title">Last car + money type</div>
+            <span class="badge b-phase">P3</span>
+          </div>
+          <p>X3? Lease / loan / cash / outside finance? Pitch ready before the call.</p>
+        </div>
+        <div class="card">
+          <div class="card-top">
+            <div class="card-title">Specials fit</div>
+            <span class="badge b-phase">P3</span>
+          </div>
+          <p>What offer hits this person right now (rate, pull-ahead, model).</p>
+        </div>
+        <div class="card">
+          <div class="card-top">
+            <div class="card-title">AMP / click warmth</div>
+            <span class="badge b-phase">P3</span>
+          </div>
+          <p>In service this week <em>and</em> clicked us = gold.</p>
+        </div>
+        <div class="card">
+          <div class="card-top">
+            <div class="card-title">PMA / equity book</div>
+            <span class="badge b-phase">P3</span>
+          </div>
+          <p>Service-tool style: in-market equity, sold here or not.</p>
+        </div>
+
+        <div class="phase">Phase 4 · multi-store product</div>
+        <div class="card">
+          <div class="card-top">
+            <div class="card-title">ABR · HP · next rooftops</div>
+            <span class="badge b-phase">P4</span>
+          </div>
+          <p>Same desk, per-store login. This is the wide product.</p>
+        </div>
+        <div class="card">
+          <div class="card-top">
+            <div class="card-title">Acquire SMS on the row</div>
+            <span class="badge b-phase">P4</span>
+          </div>
+          <p>Text / appraisal opt-in from the person card (today’s SMS wedge becomes a button).</p>
+        </div>
+      </section>
+
+      <!-- LANCE -->
+      <section class="col you" aria-label="Needs Lance">
+        <div class="col-head">
+          <h2>Needs your eye</h2>
+          <span class="hint">You decide / ship data</span>
+        </div>
+
+        <div class="card">
+          <div class="card-top">
+            <div class="card-title">Name the product</div>
+            <span class="badge b-you">Brand</span>
+          </div>
+          <p>Working name: <strong>Acquire Desk</strong>. Keep, or we lock a bolder mark with the logo.</p>
+        </div>
+
+        <div class="card">
+          <div class="card-top">
+            <div class="card-title">Who is pilot user #1?</div>
+            <span class="badge b-you">People</span>
+          </div>
+          <p>Darrell? Luke? Mila? Finance rotation? We build ownership around real names.</p>
+        </div>
+
+        <div class="card">
+          <div class="card-top">
+            <div class="card-title">Vin exports to schedule</div>
+            <span class="badge b-you">Data</span>
+          </div>
+          <ul>
+            <li>Customers w/ name + cell + SP</li>
+            <li>Open / unsold opps</li>
+            <li>Appraisals / trades tried</li>
+            <li>Sold history + lease/loan/cash if Vin has it</li>
+          </ul>
+          <p>Send to same Acquire mail box as service.</p>
+        </div>
+
+        <div class="card">
+          <div class="card-top">
+            <div class="card-title">What “good” looks like Mon AM</div>
+            <span class="badge b-you">Process</span>
+          </div>
+          <p>Your call: open desk → filter → 20 calls → PDF to floor. Write the ritual; we encode it.</p>
+        </div>
+
+        <div class="card">
+          <div class="card-top">
+            <div class="card-title">Meeting ideas parked here</div>
+            <span class="badge b-idea">From 9/14</span>
+          </div>
+          <ul>
+            <li>All service (not loaner-only)</li>
+            <li>One page vs TSD/CRM/VON chaos</li>
+            <li>Multi-list = hot</li>
+            <li>Finance can work service too</li>
+            <li>Ahead of Bill/Terrence “you missed them”</li>
+          </ul>
+        </div>
+      </section>
+
+      <!-- HARD -->
+      <section class="col hard" aria-label="Hard path">
+        <div class="col-head">
+          <h2>Hard path</h2>
+          <span class="hint">Worth it · not day one</span>
+        </div>
+
+        <div class="card">
+          <div class="card-top">
+            <div class="card-title">Push work back into CRM</div>
+            <span class="badge b-hard">Hard</span>
+          </div>
+          <p><strong>This is the killer loop.</strong> Desk isn’t only a call sheet — it writes activity back so Vin shows the work.</p>
+        </div>
+
+        <div class="card">
+          <div class="card-top">
+            <div class="card-title">What “export to CRM” means</div>
+            <span class="badge b-hard">Define</span>
+          </div>
+          <ul>
+            <li>Log a call / attempt</li>
+            <li>Assign or reassign SP</li>
+            <li>Set follow-up task</li>
+            <li>Tag source = Acquire Desk</li>
+            <li>Maybe create opp from service row</li>
+          </ul>
+        </div>
+
+        <div class="card">
+          <div class="card-top">
+            <div class="card-title">Why it’s hard</div>
+            <span class="badge b-hard">Reality</span>
+          </div>
+          <ul>
+            <li>Vin write access is gated</li>
+            <li>Permissions + audit trail</li>
+            <li>Don’t double-message customers</li>
+            <li>Must match the right person / lead</li>
+            <li>Managers must trust it</li>
+          </ul>
+        </div>
+
+        <div class="card">
+          <div class="card-top">
+            <div class="card-title">Sane path (when we start)</div>
+            <span class="badge b-hard">Plan</span>
+          </div>
+          <ul>
+            <li>v1: one-click “copy activity note”</li>
+            <li>v2: CSV/task pack managers import</li>
+            <li>v3: real API / partner write-back</li>
+          </ul>
+          <p>We don’t fake CRM write until Vin path is real.</p>
+        </div>
+
+        <div class="card">
+          <div class="card-top">
+            <div class="card-title">Also hard (later)</div>
+            <span class="badge b-idea">Later</span>
+          </div>
+          <ul>
+            <li>Live DMS finance type</li>
+            <li>Full TSD / phone truth</li>
+            <li>Auto specials engine</li>
+            <li>Multi-CRM (Focus etc.)</li>
+          </ul>
+        </div>
+      </section>
+
+    </div>
+
+    <p class="foot">
+      Exclusive project board · CoopAcquire Sales Acquisition ·
+      verify <code>acquire-desk-board-2026-09-14a</code> ·
+      live desk <code>acquire.thecoopbrla.com/desk</code>
+    </p>
+  </div>
+
+  <script>
+    (function () {
+      var el = document.getElementById('clock');
+      function tick() {
+        try {
+          el.textContent = new Date().toLocaleString('en-US', {
+            timeZone: 'America/Chicago', weekday: 'short', month: 'short', day: 'numeric',
+            hour: 'numeric', minute: '2-digit'
+          }) + ' CDT';
+        } catch (e) { el.textContent = new Date().toString(); }
+      }
+      tick(); setInterval(tick, 30000);
+
+      var btn = document.getElementById('themeBtn');
+      if (btn) {
+        btn.addEventListener('click', function () {
+          var cur = document.documentElement.getAttribute('data-theme') === 'light' ? 'light' : 'dark';
+          var next = cur === 'light' ? 'dark' : 'light';
+          document.documentElement.setAttribute('data-theme', next);
+          try { localStorage.setItem('coop-whiteboard-theme', next); } catch (e) {}
+        });
+      }
+    })();
+  </script>
+</body>
+</html>
