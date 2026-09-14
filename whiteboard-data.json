@@ -1,0 +1,306 @@
+{
+  "version": 2,
+  "verify": "coop-whiteboard-v2-2026-09-12a-interactive",
+  "updatedAt": "2026-09-13T01:30:29Z",
+  "updatedBy": "ship",
+  "activeBoardId": "ops",
+  "boards": [
+    {
+      "id": "ops",
+      "name": "Ops board",
+      "columns": [
+        {
+          "id": "day",
+          "title": "Day to day",
+          "hint": "Top-left · do / decide soon",
+          "kind": "day",
+          "cards": [
+            {
+              "id": "c_78f237aa6c",
+              "title": "Rick · BMWJ recall option",
+              "body": "J&L Sep 9 brief: ~2.5–2.8k targets, ~$3.7–4k OOP after 50% reimb, 50–120 appts. Also tires + X5 Oct pullback + optional service special.",
+              "badge": "Today",
+              "badgeClass": "b-now",
+              "links": [
+                {
+                  "label": "J&L note →",
+                  "href": "https://thecooperativeagency.github.io/vendor-briefs/meeting-notes/bmw-jackson-2026-09-09.html"
+                },
+                {
+                  "label": "Vendor brief →",
+                  "href": "https://thecooperativeagency.github.io/vendor-briefs/bmw-of-jackson.html"
+                }
+              ]
+            },
+            {
+              "id": "c_5cd46fe657",
+              "title": "VCA finalize w/ Gaige",
+              "body": "One more settings pass before turn-on so VCA actually works. See Gaige / VIN talk list for agenda items.",
+              "badge": "Fri 9/11",
+              "badgeClass": "b-now",
+              "links": []
+            },
+            {
+              "id": "c_df1a44b442",
+              "title": "Gaige / VIN talk list",
+              "body": "ABR partner leads auto-response — rewrite so high-funnel Audi partner leads get a better-fit auto reply (not generic). From Todoist. Also: VCA settings finalize.",
+              "badge": "Agenda",
+              "badgeClass": "b-wait",
+              "links": []
+            },
+            {
+              "id": "c_428433862f",
+              "title": "Alexis · Focus CSVs (BMWJ)",
+              "body": "Leads + inventory exports out of Focus/ERA so Ada can feed BMWJ GM Weekly.",
+              "badge": "Ask",
+              "badgeClass": "b-now",
+              "links": []
+            },
+            {
+              "id": "c_e6fc9810c1",
+              "title": "Full Path contract",
+              "body": "Sign and send back to Full Path rep.",
+              "badge": "Lance",
+              "badgeClass": "b-owner",
+              "links": []
+            },
+            {
+              "id": "c_57d27a8a5b",
+              "title": "HP GM Weekly wire-up",
+              "body": "Ada ↔ GA4 for Harris Porsche; correct VinSolutions CSVs; show Adam retention value beyond social/photos.",
+              "badge": "Active",
+              "badgeClass": "b-active",
+              "links": []
+            }
+          ]
+        },
+        {
+          "id": "vca",
+          "title": "Client ops · VCA / CRM",
+          "hint": "Reorder to prioritize",
+          "kind": "client",
+          "cards": [
+            {
+              "id": "c_e26b7dbc6e",
+              "title": "VinSolutions VCA go-live",
+              "body": "BH group path. After-hours off vs Podium until dark. Finalize settings with Gaige Fri 9/11. Target ~Sep 21 from prior recap.",
+              "badge": "Active",
+              "badgeClass": "b-active",
+              "links": []
+            },
+            {
+              "id": "c_020ed88fb6",
+              "title": "Talk to Gaige (VIN / VCA)",
+              "body": "Running list for the VinSolutions guy:\n• ABR partner-leads auto-response — better-fit reply for high-funnel Audi partner leads (not generic). Todoist: 6h42cpC38g5Q5Fgr\n• VCA settings finalize — Fri 9/11 pass so turn-on actually works",
+              "badge": "Agenda",
+              "badgeClass": "b-wait",
+              "links": []
+            },
+            {
+              "id": "c_e1b5a6b64e",
+              "title": "Vendor briefs pack",
+              "body": "Per-store GM briefs + meeting notes. Latest: BMWJ Sep 9 J&L recall brief for Rick.",
+              "badge": "Live",
+              "badgeClass": "b-active",
+              "links": [
+                {
+                  "label": "Pack →",
+                  "href": "https://thecooperativeagency.github.io/vendor-briefs/"
+                }
+              ]
+            },
+            {
+              "id": "c_ef7117bbfe",
+              "title": "GM Weeklies",
+              "body": "BHBMW / ABR live pattern. BMWJ needs Focus CSVs. HP needs GA4 + Vin CSVs for Adam retention.",
+              "badge": "Active",
+              "badgeClass": "b-active",
+              "links": [
+                {
+                  "label": "Manager reports →",
+                  "href": "https://thecooperativeagency.github.io/email-creative/manager-reports.html"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "rooftops",
+          "title": "Rooftops · in motion",
+          "hint": "",
+          "kind": "client",
+          "cards": [
+            {
+              "id": "c_a1b21d5d73",
+              "title": "BMW of Jackson",
+              "body": "Rick sit-down · recall activation · CP service · Focus data · service offers nav live.",
+              "badge": "Trip",
+              "badgeClass": "b-now",
+              "links": []
+            },
+            {
+              "id": "c_733e956088",
+              "title": "Harris Porsche retention",
+              "body": "Adam wants ground social/photos. Keep: vendor relations, Vin maint/training, GM weeklies, vendor brief, Driver’s Cut, BH group liaison / Stroll.",
+              "badge": "Pressure",
+              "badgeClass": "b-wait",
+              "links": []
+            },
+            {
+              "id": "c_bc84a35c92",
+              "title": "Stroll Magazine",
+              "body": "October = X5 piece done. November = one piece from each of three brands.",
+              "badge": "Active",
+              "badgeClass": "b-active",
+              "links": []
+            },
+            {
+              "id": "c_4404464a16",
+              "title": "Dealership newsletters",
+              "body": "S Line / Ultimate Driver / Driver’s Cut rooftop letters.",
+              "badge": "Issue 01",
+              "badgeClass": "b-active",
+              "links": [
+                {
+                  "label": "Hub projects →",
+                  "href": "./#"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "product",
+          "title": "Coop product · builds",
+          "hint": "",
+          "kind": "product",
+          "cards": [
+            {
+              "id": "c_32052f653b",
+              "title": "This whiteboard",
+              "body": "Interactive multi-board. Drag cards/columns, type notes, new boards, local auto-save + export JSON for Ada.",
+              "badge": "v2",
+              "badgeClass": "b-active",
+              "links": []
+            },
+            {
+              "id": "c_7235f86b5c",
+              "title": "Acquire Desk",
+              "body": "Sales acquisition dashboard. BHBMW pilot live. Project board = now / next / roadmap / your eye / CRM write-back.",
+              "badge": "Killer app",
+              "badgeClass": "b-now",
+              "links": [
+                {
+                  "label": "Project board →",
+                  "href": "./acquire-desk-board.html"
+                },
+                {
+                  "label": "Live desk →",
+                  "href": "https://acquire.thecoopbrla.com/desk/"
+                },
+                {
+                  "label": "SMS opt-in →",
+                  "href": "https://acquire.thecoopbrla.com/"
+                }
+              ]
+            },
+            {
+              "id": "c_ba82f76d25",
+              "title": "PostEngine → PostHopper",
+              "body": "Internal PE is daily. SaaS rename / domain still open.",
+              "badge": "Warm",
+              "badgeClass": "b-warm",
+              "links": []
+            },
+            {
+              "id": "c_d6f7a8dfa5",
+              "title": "Cozy Spooks (KDP)",
+              "body": "Jumbo book path idle pending Lance bank account finalize. Print QC + PDF + wrap next after unblock.",
+              "badge": "Blocked",
+              "badgeClass": "b-block",
+              "links": []
+            },
+            {
+              "id": "c_be08c1d18d",
+              "title": "SE GM letter roster",
+              "body": "B2B dealer-GM list FL–TX–AR from public staff pages.",
+              "badge": "Collecting",
+              "badgeClass": "b-active",
+              "links": [
+                {
+                  "label": "Roster desk →",
+                  "href": "./gm-roster.html"
+                }
+              ]
+            },
+            {
+              "id": "c_6f542d3062",
+              "title": "Annual Inventory",
+              "body": "BHBMW live; ABR/BMWJ wait on real feeds.",
+              "badge": "Ongoing",
+              "badgeClass": "b-active",
+              "links": []
+            },
+            {
+              "id": "c_d9399c9281",
+              "title": "QR service lander product",
+              "body": "Productize oil/visor sticker QR → brand lander. Beat serviceappointment.com (Herrin-Gear collage). ABR pilot live. Sell brand-true lander + sticker kit. Setup ~$2–3.5k + refresh; stickers pass-through.",
+              "badge": "Warm",
+              "badgeClass": "b-warm",
+              "links": [
+                {
+                  "label": "ABR pilot →",
+                  "href": "https://thecooperativeagency.github.io/seo-pages/Audi%20Baton%20Rouge/abr-service-sticker-lander.html"
+                },
+                {
+                  "label": "Competitor →",
+                  "href": "https://serviceappointment.com/"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "parked",
+          "title": "Older / parked / polish",
+          "hint": "",
+          "kind": "parked",
+          "cards": [
+            {
+              "id": "c_32261c6d67",
+              "title": "GA4 dashboards",
+              "body": "Pull on demand — not a daily driver.",
+              "badge": "Tabled",
+              "badgeClass": "b-tabled",
+              "links": []
+            },
+            {
+              "id": "c_8d40c6c005",
+              "title": "Ultimate Sales Notebook",
+              "body": "Product package / ship decision.",
+              "badge": "Polish",
+              "badgeClass": "b-warm",
+              "links": []
+            },
+            {
+              "id": "c_db61427693",
+              "title": "Avec Tous Provisions",
+              "body": "Spice relaunch + SQSP commerce path.",
+              "badge": "Polish",
+              "badgeClass": "b-warm",
+              "links": []
+            },
+            {
+              "id": "c_31405019d8",
+              "title": "Store Ops Agent / Dealer Intel",
+              "body": "Parked product ideas — not day strip.",
+              "badge": "Warm",
+              "badgeClass": "b-warm",
+              "links": []
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
