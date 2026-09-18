@@ -36,6 +36,7 @@
       --node-hover: rgba(192,57,43,.55); --shadow: rgba(0,0,0,.25);
       --code-bg: #151820; --theme-btn-bg: transparent; --theme-btn-ink: var(--dim);
       --drop: rgba(59,130,246,.22); --toolbar: #151820;
+      --modal-bg: rgba(0,0,0,.55); --panel: #151820;
     }
     html[data-theme="light"] {
       color-scheme: light;
@@ -50,6 +51,7 @@
       --node-hover: rgba(185,28,28,.45); --shadow: rgba(26,31,44,.08);
       --code-bg: #efeae2; --theme-btn-bg: #fff; --theme-btn-ink: #1a1f2c;
       --drop: rgba(29,78,216,.14); --toolbar: #fff;
+      --modal-bg: rgba(26,31,44,.35); --panel: #fff;
     }
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
@@ -61,7 +63,7 @@
       color: var(--ink); min-height: 100vh; line-height: 1.45;
     }
     a { color: inherit; text-decoration: none; }
-    button, select, input { font: inherit; }
+    button, select, input, textarea { font: inherit; }
     .shell { max-width: 1480px; margin: 0 auto; padding: 1rem 1rem 3rem; }
 
     .topbar {
@@ -75,13 +77,13 @@
     .meta { text-align: right; color: var(--dim); font-size: .75rem; }
     .meta .mono { font-family: "JetBrains Mono", monospace; }
     .nav { display: flex; gap: .45rem; flex-wrap: wrap; justify-content: flex-end; margin-top: .4rem; }
-    .nav a, .nav button, .theme-toggle {
+    .nav a, .nav button, .theme-toggle, .toolbar button {
       font-size: .7rem; font-weight: 700; letter-spacing: .04em; text-transform: uppercase;
       padding: .32rem .6rem; border-radius: 999px; border: 1px solid var(--line); color: var(--dim);
       background: var(--theme-btn-bg); cursor: pointer; line-height: 1;
     }
-    .nav a:hover, .nav button:hover, .theme-toggle:hover { border-color: var(--red); color: var(--ink); }
-    .nav button.primary { border-color: color-mix(in srgb, var(--red) 50%, var(--line)); color: var(--ink); }
+    .nav a:hover, .nav button:hover, .theme-toggle:hover, .toolbar button:hover { border-color: var(--red); color: var(--ink); }
+    .nav button.primary, .toolbar button.primary { border-color: color-mix(in srgb, var(--red) 50%, var(--line)); color: var(--ink); }
     .theme-toggle { display: inline-flex; align-items: center; gap: .3rem; color: var(--theme-btn-ink); }
     html[data-theme="light"] .theme-toggle .label-dark { display: none; }
     html[data-theme="light"] .theme-toggle .label-light { display: inline; }
@@ -158,6 +160,8 @@
       border-radius: 7px; width: 26px; height: 26px; cursor: pointer; font-size: .85rem; line-height: 1;
     }
     .icon-btn:hover { color: var(--ink); border-color: var(--red); }
+    .icon-btn.resolve { color: var(--green); border-color: color-mix(in srgb, var(--green) 40%, var(--line)); }
+    .icon-btn.resolve:hover { color: var(--ink); border-color: var(--green); background: color-mix(in srgb, var(--green) 12%, transparent); }
 
     .cards { display: flex; flex-direction: column; gap: .55rem; min-height: 28px; }
     .card {
@@ -191,6 +195,7 @@
     .b-tabled { background: rgba(100,116,139,.2); color: #94a3b8; }
     .b-warm { background: rgba(139,92,246,.18); color: #c4b5fd; }
     .b-owner { background: rgba(59,130,246,.15); color: #93c5fd; }
+    .b-done { background: rgba(46,204,113,.18); color: #4ade80; }
     html[data-theme="light"] .b-now { background: rgba(185,28,28,.12); color: #b91c1c; }
     html[data-theme="light"] .b-active { background: rgba(21,128,61,.12); color: #15803d; }
     html[data-theme="light"] .b-wait { background: rgba(180,83,9,.12); color: #b45309; }
@@ -198,6 +203,7 @@
     html[data-theme="light"] .b-tabled { background: rgba(100,116,139,.14); color: #475569; }
     html[data-theme="light"] .b-warm { background: rgba(109,40,217,.12); color: #6d28d9; }
     html[data-theme="light"] .b-owner { background: rgba(29,78,216,.12); color: #1d4ed8; }
+    html[data-theme="light"] .b-done { background: rgba(21,128,61,.12); color: #15803d; }
 
     .card-links { display: flex; flex-wrap: wrap; gap: .35rem; margin-top: .45rem; }
     .card-links a {
@@ -208,7 +214,7 @@
     .card-foot {
       display: flex; justify-content: space-between; align-items: center; gap: .5rem; margin-top: .35rem;
     }
-    .ghost { opacity: .35; border-style: dashed; }
+    .card-foot-actions { display: flex; gap: .25rem; margin-left: auto; }
 
     .foot {
       margin-top: 1.15rem; color: var(--mute); font-size: .72rem; text-align: center;
@@ -218,6 +224,103 @@
       color: var(--dim); background: var(--code-bg); padding: .1rem .35rem; border-radius: 4px;
     }
     .hidden-file { display: none; }
+
+    /* Resolve modal */
+    .modal-backdrop {
+      position: fixed; inset: 0; background: var(--modal-bg); z-index: 80;
+      display: flex; align-items: center; justify-content: center; padding: 1rem;
+    }
+    .modal-backdrop[hidden] { display: none !important; }
+    .modal {
+      width: min(520px, 100%);
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      box-shadow: 0 24px 80px var(--shadow);
+      padding: 1rem 1.05rem 1rem;
+    }
+    .modal h2 {
+      font-size: 1rem; font-weight: 800; letter-spacing: -.01em; margin-bottom: .25rem;
+    }
+    .modal .meta-line {
+      color: var(--mute); font-size: .72rem; margin-bottom: .75rem;
+    }
+    .modal .context {
+      color: var(--dim); font-size: .78rem; background: var(--card);
+      border: 1px solid var(--line); border-radius: 10px; padding: .65rem .75rem; margin-bottom: .75rem;
+      max-height: 7.5rem; overflow: auto; white-space: pre-wrap;
+    }
+    .modal label {
+      display: block; font-size: .68rem; font-weight: 800; letter-spacing: .05em;
+      text-transform: uppercase; color: var(--mute); margin-bottom: .35rem;
+    }
+    .modal textarea {
+      width: 100%; min-height: 6.5rem; resize: vertical;
+      background: var(--card); color: var(--ink); border: 1px solid var(--line);
+      border-radius: 10px; padding: .7rem .75rem; outline: none; line-height: 1.4;
+    }
+    .modal textarea:focus { border-color: color-mix(in srgb, var(--green) 55%, var(--line)); box-shadow: 0 0 0 3px color-mix(in srgb, var(--green) 18%, transparent); }
+    .modal-actions {
+      display: flex; gap: .45rem; justify-content: flex-end; margin-top: .85rem; flex-wrap: wrap;
+    }
+    .modal-actions button {
+      font-size: .72rem; font-weight: 800; letter-spacing: .04em; text-transform: uppercase;
+      padding: .45rem .75rem; border-radius: 999px; border: 1px solid var(--line);
+      background: transparent; color: var(--dim); cursor: pointer;
+    }
+    .modal-actions button:hover { color: var(--ink); border-color: var(--red); }
+    .modal-actions button.ok {
+      background: color-mix(in srgb, var(--green) 18%, transparent);
+      border-color: color-mix(in srgb, var(--green) 45%, var(--line));
+      color: var(--ink);
+    }
+    .modal-actions button.ok:hover { border-color: var(--green); }
+
+    /* Resolved drawer */
+    .drawer-backdrop {
+      position: fixed; inset: 0; background: var(--modal-bg); z-index: 70;
+    }
+    .drawer-backdrop[hidden] { display: none !important; }
+    .drawer {
+      position: fixed; top: 0; right: 0; height: 100%; width: min(420px, 100%);
+      background: var(--panel); border-left: 1px solid var(--line);
+      box-shadow: -12px 0 40px var(--shadow); z-index: 71;
+      display: flex; flex-direction: column; padding: 1rem;
+    }
+    .drawer[hidden] { display: none !important; }
+    .drawer-head {
+      display: flex; align-items: flex-start; justify-content: space-between; gap: .75rem;
+      margin-bottom: .75rem; padding-bottom: .65rem; border-bottom: 1px solid var(--line);
+    }
+    .drawer-head h2 { font-size: 1.05rem; font-weight: 800; }
+    .drawer-head p { color: var(--mute); font-size: .72rem; margin-top: .2rem; }
+    .drawer-list { overflow: auto; flex: 1; display: flex; flex-direction: column; gap: .55rem; }
+    .resolved-empty { color: var(--mute); font-size: .8rem; padding: 1rem .25rem; }
+    .resolved-item {
+      border: 1px solid var(--line); border-radius: 12px; background: var(--card);
+      padding: .7rem .75rem;
+    }
+    .resolved-item h3 { font-size: .86rem; font-weight: 750; line-height: 1.25; }
+    .resolved-item .when { color: var(--mute); font-size: .68rem; font-family: "JetBrains Mono", monospace; margin: .2rem 0 .4rem; }
+    .resolved-item .answer {
+      color: var(--ink); font-size: .78rem; background: color-mix(in srgb, var(--green) 10%, transparent);
+      border: 1px solid color-mix(in srgb, var(--green) 25%, var(--line));
+      border-radius: 8px; padding: .5rem .6rem; white-space: pre-wrap;
+    }
+    .resolved-item .was { color: var(--dim); font-size: .72rem; margin-top: .4rem; white-space: pre-wrap; }
+    .resolved-item .row-actions { display: flex; gap: .3rem; margin-top: .5rem; }
+    .resolved-item .row-actions button {
+      font-size: .65rem; font-weight: 800; letter-spacing: .04em; text-transform: uppercase;
+      padding: .28rem .5rem; border-radius: 999px; border: 1px solid var(--line);
+      background: transparent; color: var(--dim); cursor: pointer;
+    }
+    .resolved-item .row-actions button:hover { color: var(--ink); border-color: var(--red); }
+    .count-pill {
+      display: inline-flex; align-items: center; justify-content: center;
+      min-width: 1.15rem; height: 1.15rem; padding: 0 .28rem; margin-left: .25rem;
+      border-radius: 999px; background: color-mix(in srgb, var(--green) 22%, transparent);
+      color: var(--ink); font-size: .62rem; font-weight: 800;
+    }
   </style>
 </head>
 <body>
@@ -227,7 +330,7 @@
         <img class="logo" src="https://images.squarespace-cdn.com/content/v1/68fac8a3d20e8d72215ede75/6669040e-00b7-4113-a0c0-a29b3706227f/Asset+26.png?format=200w" alt="Coop">
         <div>
           <h1>Whiteboard</h1>
-          <div class="sub" id="board-sub">Interactive · drag · edit · multi-board</div>
+          <div class="sub" id="board-sub">Interactive · drag · edit · resolve</div>
         </div>
       </div>
       <div class="meta">
@@ -249,6 +352,7 @@
       <input id="board-name" type="text" spellcheck="true" placeholder="Board name" aria-label="Board name">
       <button type="button" id="btn-new-board">New board</button>
       <button type="button" id="btn-add-col">+ Column</button>
+      <button type="button" id="btn-resolved">Resolved<span class="count-pill" id="resolved-count" hidden>0</span></button>
       <button type="button" id="btn-export" class="primary">Export JSON</button>
       <button type="button" id="btn-import">Import</button>
       <button type="button" id="btn-reset">Reset seed</button>
@@ -256,27 +360,55 @@
       <span class="status" id="save-status">local</span>
     </div>
 
-    <p class="hint-line">Drag cards between columns · click text to edit / fix spelling · Export JSON and send me the file when you want Ada-sync. Edits auto-save in this browser.</p>
+    <p class="hint-line">Drag cards · edit text · <strong>✓</strong> = write the answer, save it, and clear the card off the board. Export JSON when you want Ada-sync. Edits auto-save here.</p>
 
     <div class="legend">
       <span class="swatch"><span class="dot" style="background:#c0392b"></span> Day</span>
-      <span class="swatch"><span class="dot" style="background:#2ecc71"></span> Active</span>
+      <span class="swatch"><span class="dot" style="background:#2ecc71"></span> Active / Done</span>
       <span class="swatch"><span class="dot" style="background:#f59e0b"></span> Waiting</span>
       <span class="swatch"><span class="dot" style="background:#e74c3c"></span> Blocked</span>
       <span class="swatch"><span class="dot" style="background:#8b5cf6"></span> Warm / product</span>
       <span class="swatch"><span class="dot" style="background:#64748b"></span> Parked</span>
-      <span style="margin-left:auto;opacity:.85">v2 interactive</span>
+      <span style="margin-left:auto;opacity:.85">v2 resolve</span>
     </div>
 
     <div class="board" id="board-root" aria-label="Whiteboard"></div>
 
     <p class="foot">
-      Interactive ops board · drag / edit / multi-board · verify <code>coop-whiteboard-v2-2026-09-18a-interactive</code>
+      Interactive ops board · drag / edit / resolve · verify <code>coop-whiteboard-v2-2026-09-18b-resolve</code>
     </p>
   </div>
 
+  <!-- Resolve answer modal -->
+  <div class="modal-backdrop" id="resolve-modal" hidden>
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="resolve-title">
+      <h2 id="resolve-title">Quick answer</h2>
+      <div class="meta-line" id="resolve-meta">Save the decision and remove this card from the board.</div>
+      <div class="context" id="resolve-context"></div>
+      <label for="resolve-answer">What was decided?</label>
+      <textarea id="resolve-answer" spellcheck="true" placeholder="e.g. Rick decided not to do this."></textarea>
+      <div class="modal-actions">
+        <button type="button" id="resolve-cancel">Cancel</button>
+        <button type="button" class="ok" id="resolve-save">Save &amp; remove</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Resolved log drawer -->
+  <div class="drawer-backdrop" id="resolved-backdrop" hidden></div>
+  <aside class="drawer" id="resolved-drawer" hidden aria-label="Resolved decisions">
+    <div class="drawer-head">
+      <div>
+        <h2>Resolved</h2>
+        <p>Answers you saved when clearing cards. Restore puts a card back.</p>
+      </div>
+      <button type="button" class="icon-btn" id="resolved-close" title="Close">×</button>
+    </div>
+    <div class="drawer-list" id="resolved-list"></div>
+  </aside>
+
   <script>
-  window.WHITEBOARD_SEED = {"version": 2, "verify": "coop-whiteboard-v2-2026-09-18a-interactive", "updatedAt": "2026-09-18T15:44:06Z", "updatedBy": "ship", "activeBoardId": "ops", "boards": [{"id": "ops", "name": "Ops board", "columns": [{"id": "day", "title": "Day to day", "hint": "Top-left · do / decide soon", "kind": "day", "cards": [{"id": "c_vca_close", "title": "VCA close-out → Sep 21", "body": "Tue settings call done. Still open: escalated vAuto–HomeNet–Vin feed/pricing map + NCI/phone gaps. Reconnect Gaige/Jeff before cutover. Don’t treat as full parity yet.", "badge": "You", "badgeClass": "b-now", "links": []}, {"id": "c_svc_desk", "title": "Service acquisition desk (BHBMW)", "body": "9/14 promise: morning board of same-day service appts (phone + SP + specials fit) + PDF lists. Past due on Ada. Live desk already has service mode — finish the wedge managers actually open.", "badge": "Overdue", "badgeClass": "b-block", "links": [{"label": "Acquire board →", "href": "./acquire-desk-board.html"}, {"label": "Live desk →", "href": "https://acquire.thecoopbrla.com/desk/"}]}, {"id": "c_royce", "title": "Royce · ABR vAuto trim map", "body": "From Tue inventory-syndication tape: call Royce on ABR model/trim auto-pop. Same thread as HP photo/cost map HomeNet→vAuto→Vin + multi-store MSRP drift.", "badge": "Lance", "badgeClass": "b-owner", "links": []}, {"id": "c_cpo_x7", "title": "BHBMW · CPO X7 spotlight", "body": "Nine 2024 CPO X7s (low miles, marked down). Feature page like new-X5 + next email. White ~7k-mi unit called out. Ada builds when you say go.", "badge": "Ready", "badgeClass": "b-now", "links": []}, {"id": "c_rick", "title": "Rick · BMWJ recall option", "body": "J&L Sep 9 brief live: ~2.5–2.8k targets, ~$3.7–4k OOP after 50% reimb, 50–120 appts. Go/no-go + tires / X5 Oct pullback / optional service special.", "badge": "Decide", "badgeClass": "b-now", "links": [{"label": "J&L note →", "href": "https://thecooperativeagency.github.io/vendor-briefs/meeting-notes/bmw-jackson-2026-09-09.html"}, {"label": "Vendor brief →", "href": "https://thecooperativeagency.github.io/vendor-briefs/bmw-of-jackson.html"}]}, {"id": "c_carl", "title": "Carl Call Review (ABR)", "body": "Retrain salesperson ID on call review (new staff). Was Tue AM — confirm done or still open.", "badge": "Check", "badgeClass": "b-wait", "links": []}, {"id": "c_gaige_day", "title": "Gaige / VIN open loops", "body": "After Tue: feed/pricing ticket + ABR partner-leads auto-response (high-funnel, not generic). Close before Sep 21.", "badge": "Post-call", "badgeClass": "b-wait", "links": []}, {"id": "c_alexis", "title": "Alexis · Focus CSVs (BMWJ)", "body": "Still blocking BMWJ GM Weekly. Leads + inventory out of Focus/ERA.", "badge": "Ask", "badgeClass": "b-now", "links": []}, {"id": "c_fullpath", "title": "Full Path contract", "body": "Sign and send back to Full Path rep.", "badge": "Lance", "badgeClass": "b-owner", "links": []}, {"id": "c_hp_gmw", "title": "HP GM Weekly wire-up", "body": "GA4 + correct Vin CSVs for Adam retention — value beyond social/photos. Pressure stays on HP card.", "badge": "Active", "badgeClass": "b-active", "links": []}, {"id": "c_q7q9_day", "title": "ABR · all-new Q7 + Q9", "body": "Hub landing → Q7 + Q9 feature pages · Q9-led email. Lease-only + specials separate. Gated on your HQ image pack — don’t ship weak plates. Chad printout = talking points. Units mid–late Nov. Dec invite = later phase.", "badge": "Images", "badgeClass": "b-wait", "links": []}]}, {"id": "vca", "title": "Client ops · VCA / CRM", "hint": "Reorder to prioritize", "kind": "client", "cards": [{"id": "c_vca_live", "title": "VinSolutions VCA go-live", "body": "BH group path. After-hours off vs Podium until dark. Tue settings call done. Open: escalated feed/pricing map ticket + NCI/phone gaps. Target reconnect + clean cutover ~Sep 21.", "badge": "Active", "badgeClass": "b-active", "links": []}, {"id": "c_gaige", "title": "Talk to Gaige (VIN / VCA)", "body": "Post–Tue 9/15 call — still on the list:\n• Feed / pricing map ticket — vAuto–HomeNet–VinSolutions escalated; close before Sep 21\n• ABR partner-leads auto-response — better-fit reply for high-funnel Audi partner leads (not generic). Trace: 6h42cpC38g5Q5Fgr\n• NCI / phone gaps — don’t call cutover “full parity” until closed with Gaige/Jeff", "badge": "Open", "badgeClass": "b-wait", "links": []}, {"id": "c_briefs", "title": "Vendor briefs pack", "body": "Per-store GM briefs + meeting notes. Latest: BMWJ Sep 9 J&L recall brief for Rick.", "badge": "Live", "badgeClass": "b-active", "links": [{"label": "Pack →", "href": "https://thecooperativeagency.github.io/vendor-briefs/"}]}, {"id": "c_gmw", "title": "GM Weeklies", "body": "BHBMW / ABR live pattern. BMWJ needs Focus CSVs. HP needs GA4 + Vin CSVs for Adam retention.", "badge": "Active", "badgeClass": "b-active", "links": [{"label": "Manager reports →", "href": "https://thecooperativeagency.github.io/email-creative/manager-reports.html"}]}]}, {"id": "rooftops", "title": "Rooftops · in motion", "hint": "", "kind": "client", "cards": [{"id": "c_bmwj", "title": "BMW of Jackson", "body": "Rick sit-down · recall activation · CP service · Focus data · service offers nav live.", "badge": "Trip", "badgeClass": "b-now", "links": []}, {"id": "c_q7q9", "title": "ABR · all-new Q7 + Q9 launch", "body": "Deliverables: (1) shared hub landing, (2) Q7 feature page, (3) Q9 feature page, (4) Q9-led email. Pattern: Q3/Q5 all-new energy; don’t overwrite live Q3/Q5 URLs. Gate: high-quality images only — wait on Lance pack. Dec private viewing later.", "badge": "Images", "badgeClass": "b-wait", "links": []}, {"id": "c_hp", "title": "Harris Porsche retention", "body": "Adam wants ground social/photos. Keep: vendor relations, Vin maint/training, GM weeklies, vendor brief, Driver’s Cut, BH group liaison / Stroll.", "badge": "Pressure", "badgeClass": "b-wait", "links": []}, {"id": "c_stroll", "title": "Stroll Magazine", "body": "October = X5 piece done + ABR Q7/Q9 new body styles in play. November = one piece from each of three brands.", "badge": "Active", "badgeClass": "b-active", "links": []}, {"id": "c_newsletters", "title": "Dealership newsletters", "body": "S Line / Ultimate Driver / Driver’s Cut rooftop letters.", "badge": "Issue 01", "badgeClass": "b-active", "links": []}]}, {"id": "product", "title": "Coop product · builds", "hint": "", "kind": "product", "cards": [{"id": "c_wb", "title": "This whiteboard", "body": "Interactive multi-board. Drag cards/columns, type notes, fix spelling, new boards, local auto-save + export JSON for Ada.", "badge": "v2", "badgeClass": "b-active", "links": []}, {"id": "c_acquire", "title": "Acquire Desk", "body": "BHBMW board live + multi-user gate + beta invites out (Charles/Luke/Brett/Darrell/Carly). HP CRM workable; ABR still feed-blocked. Overdue: service morning wedge (appts + lists + PDF). Product path locked: email → fetch → rebuild (not live CRM click).", "badge": "In build", "badgeClass": "b-now", "links": [{"label": "Project board →", "href": "./acquire-desk-board.html"}, {"label": "Live desk →", "href": "https://acquire.thecoopbrla.com/desk/"}, {"label": "SMS opt-in →", "href": "https://acquire.thecoopbrla.com/"}]}, {"id": "c_pe", "title": "PostEngine → PostHopper", "body": "Internal PE is daily. SaaS rename / domain still open.", "badge": "Warm", "badgeClass": "b-warm", "links": []}, {"id": "c_cozy", "title": "Cozy Spooks (KDP)", "body": "Jumbo book path idle pending Lance bank account finalize. Print QC + PDF + wrap next after unblock.", "badge": "Blocked", "badgeClass": "b-block", "links": []}, {"id": "c_roster", "title": "SE GM letter roster", "body": "B2B dealer-GM list FL–TX–AR from public staff pages.", "badge": "Collecting", "badgeClass": "b-active", "links": [{"label": "Roster desk →", "href": "./gm-roster.html"}]}, {"id": "c_inv", "title": "Annual Inventory", "body": "BHBMW live; ABR/BMWJ wait on real feeds.", "badge": "Ongoing", "badgeClass": "b-active", "links": []}, {"id": "c_qr", "title": "QR service lander product", "body": "Productize oil/visor sticker QR → brand lander. Beat serviceappointment.com. ABR pilot live. Sell brand-true lander + sticker kit. Setup ~$2–3.5k + refresh; stickers pass-through.", "badge": "Warm", "badgeClass": "b-warm", "links": [{"label": "ABR pilot →", "href": "https://thecooperativeagency.github.io/seo-pages/Audi%20Baton%20Rouge/abr-service-sticker-lander.html"}, {"label": "Competitor →", "href": "https://serviceappointment.com/"}]}]}, {"id": "parked", "title": "Older / parked / polish", "hint": "", "kind": "parked", "cards": [{"id": "c_ga4", "title": "GA4 dashboards", "body": "Pull on demand — not a daily driver.", "badge": "Tabled", "badgeClass": "b-tabled", "links": []}, {"id": "c_usn", "title": "Ultimate Sales Notebook", "body": "Product package / ship decision.", "badge": "Polish", "badgeClass": "b-warm", "links": []}, {"id": "c_atp", "title": "Avec Tous Provisions", "body": "Spice relaunch + SQSP commerce path.", "badge": "Polish", "badgeClass": "b-warm", "links": []}, {"id": "c_storeops", "title": "Store Ops Agent / Dealer Intel", "body": "Parked product ideas — not day strip.", "badge": "Warm", "badgeClass": "b-warm", "links": []}]}]}]};
+  window.WHITEBOARD_SEED = {"version":2,"verify":"coop-whiteboard-v2-2026-09-18b-resolve","updatedAt":"2026-09-18T16:49:58Z","updatedBy":"ship","activeBoardId":"ops","boards":[{"id":"ops","name":"Ops board","columns":[{"id":"day","title":"Day to day","hint":"Top-left · do / decide soon","kind":"day","cards":[{"id":"c_vca_close","title":"VCA close-out → Sep 21","body":"Tue settings call done. Still open: escalated vAuto–HomeNet–Vin feed/pricing map + NCI/phone gaps. Reconnect Gaige/Jeff before cutover. Don’t treat as full parity yet.","badge":"You","badgeClass":"b-now","links":[]},{"id":"c_svc_desk","title":"Service acquisition desk (BHBMW)","body":"9/14 promise: morning board of same-day service appts (phone + SP + specials fit) + PDF lists. Past due on Ada. Live desk already has service mode — finish the wedge managers actually open.","badge":"Overdue","badgeClass":"b-block","links":[{"label":"Acquire board →","href":"./acquire-desk-board.html"},{"label":"Live desk →","href":"https://acquire.thecoopbrla.com/desk/"}]},{"id":"c_royce","title":"Royce · ABR vAuto trim map","body":"From Tue inventory-syndication tape: call Royce on ABR model/trim auto-pop. Same thread as HP photo/cost map HomeNet→vAuto→Vin + multi-store MSRP drift.","badge":"Lance","badgeClass":"b-owner","links":[]},{"id":"c_cpo_x7","title":"BHBMW · CPO X7 spotlight","body":"Nine 2024 CPO X7s (low miles, marked down). Feature page like new-X5 + next email. White ~7k-mi unit called out. Ada builds when you say go.","badge":"Ready","badgeClass":"b-now","links":[]},{"id":"c_rick","title":"Rick · BMWJ recall option","body":"J&L Sep 9 brief live: ~2.5–2.8k targets, ~$3.7–4k OOP after 50% reimb, 50–120 appts. Go/no-go + tires / X5 Oct pullback / optional service special.","badge":"Decide","badgeClass":"b-now","links":[{"label":"J&L note →","href":"https://thecooperativeagency.github.io/vendor-briefs/meeting-notes/bmw-jackson-2026-09-09.html"},{"label":"Vendor brief →","href":"https://thecooperativeagency.github.io/vendor-briefs/bmw-of-jackson.html"}]},{"id":"c_carl","title":"Carl Call Review (ABR)","body":"Retrain salesperson ID on call review (new staff). Was Tue AM — confirm done or still open.","badge":"Check","badgeClass":"b-wait","links":[]},{"id":"c_gaige_day","title":"Gaige / VIN open loops","body":"After Tue: feed/pricing ticket + ABR partner-leads auto-response (high-funnel, not generic). Close before Sep 21.","badge":"Post-call","badgeClass":"b-wait","links":[]},{"id":"c_alexis","title":"Alexis · Focus CSVs (BMWJ)","body":"Still blocking BMWJ GM Weekly. Leads + inventory out of Focus/ERA.","badge":"Ask","badgeClass":"b-now","links":[]},{"id":"c_fullpath","title":"Full Path contract","body":"Sign and send back to Full Path rep.","badge":"Lance","badgeClass":"b-owner","links":[]},{"id":"c_hp_gmw","title":"HP GM Weekly wire-up","body":"GA4 + correct Vin CSVs for Adam retention — value beyond social/photos. Pressure stays on HP card.","badge":"Active","badgeClass":"b-active","links":[]},{"id":"c_q7q9_day","title":"ABR · all-new Q7 + Q9","body":"Hub landing → Q7 + Q9 feature pages · Q9-led email. Lease-only + specials separate. Gated on your HQ image pack — don’t ship weak plates. Chad printout = talking points. Units mid–late Nov. Dec invite = later phase.","badge":"Images","badgeClass":"b-wait","links":[]}]},{"id":"vca","title":"Client ops · VCA / CRM","hint":"Reorder to prioritize","kind":"client","cards":[{"id":"c_vca_live","title":"VinSolutions VCA go-live","body":"BH group path. After-hours off vs Podium until dark. Tue settings call done. Open: escalated feed/pricing map ticket + NCI/phone gaps. Target reconnect + clean cutover ~Sep 21.","badge":"Active","badgeClass":"b-active","links":[]},{"id":"c_gaige","title":"Talk to Gaige (VIN / VCA)","body":"Post–Tue 9/15 call — still on the list:\n• Feed / pricing map ticket — vAuto–HomeNet–VinSolutions escalated; close before Sep 21\n• ABR partner-leads auto-response — better-fit reply for high-funnel Audi partner leads (not generic). Trace: 6h42cpC38g5Q5Fgr\n• NCI / phone gaps — don’t call cutover “full parity” until closed with Gaige/Jeff","badge":"Open","badgeClass":"b-wait","links":[]},{"id":"c_briefs","title":"Vendor briefs pack","body":"Per-store GM briefs + meeting notes. Latest: BMWJ Sep 9 J&L recall brief for Rick.","badge":"Live","badgeClass":"b-active","links":[{"label":"Pack →","href":"https://thecooperativeagency.github.io/vendor-briefs/"}]},{"id":"c_gmw","title":"GM Weeklies","body":"BHBMW / ABR live pattern. BMWJ needs Focus CSVs. HP needs GA4 + Vin CSVs for Adam retention.","badge":"Active","badgeClass":"b-active","links":[{"label":"Manager reports →","href":"https://thecooperativeagency.github.io/email-creative/manager-reports.html"}]}]},{"id":"rooftops","title":"Rooftops · in motion","hint":"","kind":"client","cards":[{"id":"c_bmwj","title":"BMW of Jackson","body":"Rick sit-down · recall activation · CP service · Focus data · service offers nav live.","badge":"Trip","badgeClass":"b-now","links":[]},{"id":"c_q7q9","title":"ABR · all-new Q7 + Q9 launch","body":"Deliverables: (1) shared hub landing, (2) Q7 feature page, (3) Q9 feature page, (4) Q9-led email. Pattern: Q3/Q5 all-new energy; don’t overwrite live Q3/Q5 URLs. Gate: high-quality images only — wait on Lance pack. Dec private viewing later.","badge":"Images","badgeClass":"b-wait","links":[]},{"id":"c_hp","title":"Harris Porsche retention","body":"Adam wants ground social/photos. Keep: vendor relations, Vin maint/training, GM weeklies, vendor brief, Driver’s Cut, BH group liaison / Stroll.","badge":"Pressure","badgeClass":"b-wait","links":[]},{"id":"c_stroll","title":"Stroll Magazine","body":"October = X5 piece done + ABR Q7/Q9 new body styles in play. November = one piece from each of three brands.","badge":"Active","badgeClass":"b-active","links":[]},{"id":"c_newsletters","title":"Dealership newsletters","body":"S Line / Ultimate Driver / Driver’s Cut rooftop letters.","badge":"Issue 01","badgeClass":"b-active","links":[]}]},{"id":"product","title":"Coop product · builds","hint":"","kind":"product","cards":[{"id":"c_wb","title":"This whiteboard","body":"Interactive multi-board. Drag cards/columns, type notes, fix spelling, new boards, local auto-save + export JSON for Ada.","badge":"v2","badgeClass":"b-active","links":[]},{"id":"c_acquire","title":"Acquire Desk","body":"BHBMW board live + multi-user gate + beta invites out (Charles/Luke/Brett/Darrell/Carly). HP CRM workable; ABR still feed-blocked. Overdue: service morning wedge (appts + lists + PDF). Product path locked: email → fetch → rebuild (not live CRM click).","badge":"In build","badgeClass":"b-now","links":[{"label":"Project board →","href":"./acquire-desk-board.html"},{"label":"Live desk →","href":"https://acquire.thecoopbrla.com/desk/"},{"label":"SMS opt-in →","href":"https://acquire.thecoopbrla.com/"}]},{"id":"c_pe","title":"PostEngine → PostHopper","body":"Internal PE is daily. SaaS rename / domain still open.","badge":"Warm","badgeClass":"b-warm","links":[]},{"id":"c_cozy","title":"Cozy Spooks (KDP)","body":"Jumbo book path idle pending Lance bank account finalize. Print QC + PDF + wrap next after unblock.","badge":"Blocked","badgeClass":"b-block","links":[]},{"id":"c_roster","title":"SE GM letter roster","body":"B2B dealer-GM list FL–TX–AR from public staff pages.","badge":"Collecting","badgeClass":"b-active","links":[{"label":"Roster desk →","href":"./gm-roster.html"}]},{"id":"c_inv","title":"Annual Inventory","body":"BHBMW live; ABR/BMWJ wait on real feeds.","badge":"Ongoing","badgeClass":"b-active","links":[]},{"id":"c_qr","title":"QR service lander product","body":"Productize oil/visor sticker QR → brand lander. Beat serviceappointment.com. ABR pilot live. Sell brand-true lander + sticker kit. Setup ~$2–3.5k + refresh; stickers pass-through.","badge":"Warm","badgeClass":"b-warm","links":[{"label":"ABR pilot →","href":"https://thecooperativeagency.github.io/seo-pages/Audi%20Baton%20Rouge/abr-service-sticker-lander.html"},{"label":"Competitor →","href":"https://serviceappointment.com/"}]}]},{"id":"parked","title":"Older / parked / polish","hint":"","kind":"parked","cards":[{"id":"c_ga4","title":"GA4 dashboards","body":"Pull on demand — not a daily driver.","badge":"Tabled","badgeClass":"b-tabled","links":[]},{"id":"c_usn","title":"Ultimate Sales Notebook","body":"Product package / ship decision.","badge":"Polish","badgeClass":"b-warm","links":[]},{"id":"c_atp","title":"Avec Tous Provisions","body":"Spice relaunch + SQSP commerce path.","badge":"Polish","badgeClass":"b-warm","links":[]},{"id":"c_storeops","title":"Store Ops Agent / Dealer Intel","body":"Parked product ideas — not day strip.","badge":"Warm","badgeClass":"b-warm","links":[]}]}]}],"resolved":[]};
   </script>
   <script>
   (function () {
@@ -285,6 +417,7 @@
     var state = null;
     var drag = { type: null, boardId: null, colId: null, cardId: null, fromIndex: -1 };
     var saveTimer = null;
+    var pendingResolve = null; // { colId, card }
 
     var el = {
       root: document.getElementById('board-root'),
@@ -293,7 +426,15 @@
       status: document.getElementById('save-status'),
       sub: document.getElementById('board-sub'),
       clock: document.getElementById('clock'),
-      importFile: document.getElementById('import-file')
+      importFile: document.getElementById('import-file'),
+      resolveModal: document.getElementById('resolve-modal'),
+      resolveMeta: document.getElementById('resolve-meta'),
+      resolveContext: document.getElementById('resolve-context'),
+      resolveAnswer: document.getElementById('resolve-answer'),
+      resolveCount: document.getElementById('resolved-count'),
+      resolvedBackdrop: document.getElementById('resolved-backdrop'),
+      resolvedDrawer: document.getElementById('resolved-drawer'),
+      resolvedList: document.getElementById('resolved-list')
     };
 
     function uid(prefix) {
@@ -305,6 +446,7 @@
     }
     function badgeClassFromText(t) {
       t = (t || '').toLowerCase();
+      if (/done|resolved|closed|decided|no-go|pass/.test(t)) return 'b-done';
       if (/overdue|block|blocked|fail/.test(t)) return 'b-block';
       if (/wait|image|check|open|pressure|post/.test(t)) return 'b-wait';
       if (/tabled|park/.test(t)) return 'b-tabled';
@@ -322,6 +464,7 @@
       setStatus('dirty', 'unsaved…');
       clearTimeout(saveTimer);
       saveTimer = setTimeout(persist, 250);
+      updateResolvedCount();
     }
     function persist() {
       try {
@@ -352,6 +495,7 @@
       if (!data.activeBoardId || !data.boards.some(function (b) { return b.id === data.activeBoardId; })) {
         data.activeBoardId = data.boards[0].id;
       }
+      if (!Array.isArray(data.resolved)) data.resolved = [];
       data.boards.forEach(function (b) {
         if (!b.columns) b.columns = [];
         b.columns.forEach(function (c) {
@@ -365,6 +509,17 @@
       return data;
     }
 
+    function updateResolvedCount() {
+      var n = (state && state.resolved) ? state.resolved.length : 0;
+      if (!el.resolveCount) return;
+      if (n > 0) {
+        el.resolveCount.hidden = false;
+        el.resolveCount.textContent = String(n);
+      } else {
+        el.resolveCount.hidden = true;
+      }
+    }
+
     function renderBoardSelect() {
       el.select.innerHTML = '';
       state.boards.forEach(function (b) {
@@ -376,7 +531,180 @@
       });
       var board = activeBoard();
       el.name.value = board.name || '';
-      el.sub.textContent = (board.name || 'Board') + ' · drag · edit · multi-board';
+      el.sub.textContent = (board.name || 'Board') + ' · drag · edit · resolve';
+    }
+
+    function openResolve(colId, card) {
+      pendingResolve = { colId: colId, card: card };
+      el.resolveMeta.textContent = (card.title || 'Card') + ' · save answer + remove from board';
+      var ctx = [];
+      if (card.badge) ctx.push('[' + card.badge + ']');
+      if (card.body) ctx.push(card.body);
+      el.resolveContext.textContent = ctx.join(' ') || '(no notes on card)';
+      el.resolveAnswer.value = '';
+      el.resolveModal.hidden = false;
+      setTimeout(function () { el.resolveAnswer.focus(); }, 30);
+    }
+
+    function closeResolve() {
+      pendingResolve = null;
+      el.resolveModal.hidden = true;
+      el.resolveAnswer.value = '';
+    }
+
+    function commitResolve() {
+      if (!pendingResolve) return;
+      var answer = (el.resolveAnswer.value || '').trim();
+      if (!answer) {
+        el.resolveAnswer.focus();
+        el.resolveAnswer.placeholder = 'Type the decision first — e.g. Rick decided not to do this.';
+        return;
+      }
+      var board = activeBoard();
+      var col = board.columns.find(function (c) { return c.id === pendingResolve.colId; });
+      var card = pendingResolve.card;
+      if (!col) { closeResolve(); return; }
+
+      var entry = {
+        id: uid('r'),
+        resolvedAt: new Date().toISOString(),
+        boardId: board.id,
+        boardName: board.name || '',
+        colId: col.id,
+        colTitle: col.title || '',
+        cardId: card.id,
+        title: card.title || '',
+        body: card.body || '',
+        badge: card.badge || '',
+        badgeClass: card.badgeClass || '',
+        links: clone(card.links || []),
+        decision: answer
+      };
+      state.resolved.unshift(entry);
+      col.cards = col.cards.filter(function (c) { return c.id !== card.id; });
+      closeResolve();
+      scheduleSave();
+      render();
+      setStatus('saved', 'resolved · removed');
+    }
+
+    function openResolvedDrawer() {
+      renderResolvedList();
+      el.resolvedBackdrop.hidden = false;
+      el.resolvedDrawer.hidden = false;
+    }
+    function closeResolvedDrawer() {
+      el.resolvedBackdrop.hidden = true;
+      el.resolvedDrawer.hidden = true;
+    }
+
+    function formatWhen(iso) {
+      try {
+        return new Date(iso).toLocaleString('en-US', {
+          timeZone: 'America/Chicago', month: 'short', day: 'numeric',
+          hour: 'numeric', minute: '2-digit'
+        });
+      } catch (e) { return iso || ''; }
+    }
+
+    function renderResolvedList() {
+      el.resolvedList.innerHTML = '';
+      var items = state.resolved || [];
+      if (!items.length) {
+        var empty = document.createElement('div');
+        empty.className = 'resolved-empty';
+        empty.textContent = 'No resolved cards yet. Hit ✓ on a card, write the answer, Save & remove.';
+        el.resolvedList.appendChild(empty);
+        return;
+      }
+      items.forEach(function (item) {
+        var node = document.createElement('article');
+        node.className = 'resolved-item';
+
+        var h = document.createElement('h3');
+        h.textContent = item.title || '(untitled)';
+        node.appendChild(h);
+
+        var when = document.createElement('div');
+        when.className = 'when';
+        when.textContent = formatWhen(item.resolvedAt) + (item.colTitle ? ' · ' + item.colTitle : '') + (item.boardName ? ' · ' + item.boardName : '');
+        node.appendChild(when);
+
+        var answer = document.createElement('div');
+        answer.className = 'answer';
+        answer.textContent = item.decision || '';
+        node.appendChild(answer);
+
+        if (item.body) {
+          var was = document.createElement('div');
+          was.className = 'was';
+          was.textContent = item.body;
+          node.appendChild(was);
+        }
+
+        var actions = document.createElement('div');
+        actions.className = 'row-actions';
+
+        var restore = document.createElement('button');
+        restore.type = 'button';
+        restore.textContent = 'Restore';
+        restore.addEventListener('click', function () {
+          restoreResolved(item.id);
+        });
+
+        var purge = document.createElement('button');
+        purge.type = 'button';
+        purge.textContent = 'Delete forever';
+        purge.addEventListener('click', function () {
+          if (!confirm('Permanently delete this resolved note?')) return;
+          state.resolved = state.resolved.filter(function (r) { return r.id !== item.id; });
+          scheduleSave();
+          renderResolvedList();
+        });
+
+        actions.appendChild(restore);
+        actions.appendChild(purge);
+        node.appendChild(actions);
+        el.resolvedList.appendChild(node);
+      });
+    }
+
+    function restoreResolved(resolvedId) {
+      var idx = state.resolved.findIndex(function (r) { return r.id === resolvedId; });
+      if (idx < 0) return;
+      var item = state.resolved[idx];
+      var board = state.boards.find(function (b) { return b.id === item.boardId; }) || activeBoard();
+      var col = null;
+      if (board) {
+        col = board.columns.find(function (c) { return c.id === item.colId; })
+          || board.columns.find(function (c) { return c.kind === 'day' || c.id === 'day'; })
+          || board.columns[0];
+      }
+      if (!board || !col) {
+        alert('Could not find a column to restore into.');
+        return;
+      }
+      var card = {
+        id: item.cardId || uid('c'),
+        title: item.title || '',
+        body: item.body || '',
+        badge: item.badge || 'Open',
+        badgeClass: item.badgeClass || badgeClassFromText(item.badge || 'Open'),
+        links: clone(item.links || [])
+      };
+      // avoid duplicate ids if card somehow still exists
+      var exists = false;
+      board.columns.forEach(function (c) {
+        if (c.cards.some(function (x) { return x.id === card.id; })) exists = true;
+      });
+      if (exists) card.id = uid('c');
+      col.cards.unshift(card);
+      state.resolved.splice(idx, 1);
+      state.activeBoardId = board.id;
+      scheduleSave();
+      render();
+      renderResolvedList();
+      setStatus('saved', 'restored to board');
     }
 
     function cardEl(card, colId) {
@@ -450,14 +778,28 @@
 
       var foot = document.createElement('div');
       foot.className = 'card-foot';
+      var actions = document.createElement('div');
+      actions.className = 'card-foot-actions';
+
+      var resolveBtn = document.createElement('button');
+      resolveBtn.type = 'button';
+      resolveBtn.className = 'icon-btn resolve';
+      resolveBtn.title = 'Write answer, save, and remove from board';
+      resolveBtn.setAttribute('aria-label', 'Resolve card');
+      resolveBtn.textContent = '✓';
+      resolveBtn.addEventListener('click', function (e) {
+        e.stopPropagation();
+        openResolve(colId, card);
+      });
+
       var del = document.createElement('button');
       del.type = 'button';
       del.className = 'icon-btn';
-      del.title = 'Delete card';
+      del.title = 'Delete card (no answer saved)';
       del.textContent = '×';
       del.addEventListener('click', function (e) {
         e.stopPropagation();
-        if (!confirm('Delete this card?')) return;
+        if (!confirm('Delete this card without saving an answer?')) return;
         var board = activeBoard();
         var col = board.columns.find(function (c) { return c.id === colId; });
         if (!col) return;
@@ -465,7 +807,10 @@
         scheduleSave();
         render();
       });
-      foot.appendChild(del);
+
+      actions.appendChild(resolveBtn);
+      actions.appendChild(del);
+      foot.appendChild(actions);
       node.appendChild(foot);
 
       node.addEventListener('dragstart', function (e) {
@@ -480,7 +825,6 @@
         drag = { type: null };
       });
 
-      // drop relative to card
       node.addEventListener('dragover', function (e) {
         if (drag.type !== 'card') return;
         e.preventDefault();
@@ -611,7 +955,6 @@
         var bi = toCol.cards.findIndex(function (c) { return c.id === beforeCardId; });
         if (bi >= 0) insertAt = bi;
       }
-      // if moving within same col and index shifted
       toCol.cards.splice(insertAt, 0, from.card);
       scheduleSave();
       render();
@@ -633,6 +976,7 @@
     function render() {
       var board = activeBoard();
       renderBoardSelect();
+      updateResolvedCount();
       el.root.innerHTML = '';
 
       var dayCols = board.columns.filter(function (c) { return c.kind === 'day' || c.id === 'day'; });
@@ -641,7 +985,6 @@
       var dayWrap = document.createElement('div');
       dayWrap.className = 'day-wrap';
       if (!dayCols.length && board.columns.length) {
-        // no explicit day col — put first col left
         dayCols = [board.columns[0]];
         otherCols = board.columns.slice(1);
       }
@@ -710,7 +1053,7 @@
     }
 
     function resetSeed() {
-      if (!confirm('Reset this browser board to the shipped seed? Your local edits will be cleared.')) return;
+      if (!confirm('Reset this browser board to the shipped seed? Your local edits and resolved log will be cleared.')) return;
       localStorage.removeItem(LS_KEY);
       state = normalize(window.WHITEBOARD_SEED);
       persist();
@@ -755,26 +1098,68 @@
     document.getElementById('btn-export').addEventListener('click', exportJson);
     document.getElementById('btn-import').addEventListener('click', function () { el.importFile.click(); });
     document.getElementById('btn-reset').addEventListener('click', resetSeed);
+    document.getElementById('btn-resolved').addEventListener('click', openResolvedDrawer);
+    document.getElementById('resolved-close').addEventListener('click', closeResolvedDrawer);
+    el.resolvedBackdrop.addEventListener('click', closeResolvedDrawer);
+    document.getElementById('resolve-cancel').addEventListener('click', closeResolve);
+    document.getElementById('resolve-save').addEventListener('click', commitResolve);
+    el.resolveModal.addEventListener('click', function (e) {
+      if (e.target === el.resolveModal) closeResolve();
+    });
+    el.resolveAnswer.addEventListener('keydown', function (e) {
+      if ((e.metaKey || e.ctrlKey) && e.key === 'Enter') {
+        e.preventDefault();
+        commitResolve();
+      }
+      if (e.key === 'Escape') closeResolve();
+    });
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape') {
+        if (!el.resolveModal.hidden) closeResolve();
+        else if (!el.resolvedDrawer.hidden) closeResolvedDrawer();
+      }
+    });
     el.importFile.addEventListener('change', function () {
       if (el.importFile.files && el.importFile.files[0]) importJsonFile(el.importFile.files[0]);
       el.importFile.value = '';
     });
 
     // boot: local > fetch json > embedded seed
+    // Prefer newer shipped seed when local is older / missing resolve feature.
+    function seedIsNewer(local, seed) {
+      try {
+        if (!local || !local.updatedAt) return true;
+        if (!seed || !seed.updatedAt) return false;
+        return Date.parse(seed.updatedAt) > Date.parse(local.updatedAt);
+      } catch (e) { return false; }
+    }
+    function mergeResolved(local, seed) {
+      // Keep local board edits; always ensure resolved array exists.
+      var out = normalize(local);
+      if (!Array.isArray(out.resolved)) out.resolved = [];
+      // If local has no resolve UI history and seed has empty resolved, fine.
+      // If seed is newer AND local has zero boards drift check: keep local content.
+      out.verify = (seed && seed.verify) || out.verify;
+      return out;
+    }
+
     function boot(data) {
       state = normalize(data);
       render();
       setStatus('saved', 'ready');
     }
+
+    var seed = window.WHITEBOARD_SEED;
     var local = loadLocal();
     if (local) {
-      boot(local);
+      // Keep local edits (cards/positions) so Lance doesn’t lose work; feature code is in the page.
+      boot(mergeResolved(local, seed));
       setStatus('saved', 'from local');
     } else {
       fetch('./whiteboard-data.json', { cache: 'no-store' })
         .then(function (r) { return r.ok ? r.json() : Promise.reject(); })
         .then(function (j) { boot(j); setStatus('saved', 'from seed json'); })
-        .catch(function () { boot(window.WHITEBOARD_SEED); setStatus('saved', 'from embed'); });
+        .catch(function () { boot(seed); setStatus('saved', 'from embed'); });
     }
   })();
   </script>

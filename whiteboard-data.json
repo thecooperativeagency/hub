@@ -1,7 +1,7 @@
 {
   "version": 2,
-  "verify": "coop-whiteboard-v2-2026-09-18a-interactive",
-  "updatedAt": "2026-09-18T15:44:06Z",
+  "verify": "coop-whiteboard-v2-2026-09-18b-resolve",
+  "updatedAt": "2026-09-18T16:49:58Z",
   "updatedBy": "ship",
   "activeBoardId": "ops",
   "boards": [
@@ -354,5 +354,6 @@
         }
       ]
     }
-  ]
+  ],
+  "resolved": []
 }
