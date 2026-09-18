@@ -1,7 +1,7 @@
 {
   "version": 2,
-  "verify": "coop-whiteboard-v2-2026-09-12a-interactive",
-  "updatedAt": "2026-09-13T01:30:29Z",
+  "verify": "coop-whiteboard-v2-2026-09-18a-interactive",
+  "updatedAt": "2026-09-18T15:44:06Z",
   "updatedBy": "ship",
   "activeBoardId": "ops",
   "boards": [
@@ -16,10 +16,51 @@
           "kind": "day",
           "cards": [
             {
-              "id": "c_78f237aa6c",
+              "id": "c_vca_close",
+              "title": "VCA close-out → Sep 21",
+              "body": "Tue settings call done. Still open: escalated vAuto–HomeNet–Vin feed/pricing map + NCI/phone gaps. Reconnect Gaige/Jeff before cutover. Don’t treat as full parity yet.",
+              "badge": "You",
+              "badgeClass": "b-now",
+              "links": []
+            },
+            {
+              "id": "c_svc_desk",
+              "title": "Service acquisition desk (BHBMW)",
+              "body": "9/14 promise: morning board of same-day service appts (phone + SP + specials fit) + PDF lists. Past due on Ada. Live desk already has service mode — finish the wedge managers actually open.",
+              "badge": "Overdue",
+              "badgeClass": "b-block",
+              "links": [
+                {
+                  "label": "Acquire board →",
+                  "href": "./acquire-desk-board.html"
+                },
+                {
+                  "label": "Live desk →",
+                  "href": "https://acquire.thecoopbrla.com/desk/"
+                }
+              ]
+            },
+            {
+              "id": "c_royce",
+              "title": "Royce · ABR vAuto trim map",
+              "body": "From Tue inventory-syndication tape: call Royce on ABR model/trim auto-pop. Same thread as HP photo/cost map HomeNet→vAuto→Vin + multi-store MSRP drift.",
+              "badge": "Lance",
+              "badgeClass": "b-owner",
+              "links": []
+            },
+            {
+              "id": "c_cpo_x7",
+              "title": "BHBMW · CPO X7 spotlight",
+              "body": "Nine 2024 CPO X7s (low miles, marked down). Feature page like new-X5 + next email. White ~7k-mi unit called out. Ada builds when you say go.",
+              "badge": "Ready",
+              "badgeClass": "b-now",
+              "links": []
+            },
+            {
+              "id": "c_rick",
               "title": "Rick · BMWJ recall option",
-              "body": "J&L Sep 9 brief: ~2.5–2.8k targets, ~$3.7–4k OOP after 50% reimb, 50–120 appts. Also tires + X5 Oct pullback + optional service special.",
-              "badge": "Today",
+              "body": "J&L Sep 9 brief live: ~2.5–2.8k targets, ~$3.7–4k OOP after 50% reimb, 50–120 appts. Go/no-go + tires / X5 Oct pullback / optional service special.",
+              "badge": "Decide",
               "badgeClass": "b-now",
               "links": [
                 {
@@ -33,31 +74,31 @@
               ]
             },
             {
-              "id": "c_5cd46fe657",
-              "title": "VCA finalize w/ Gaige",
-              "body": "One more settings pass before turn-on so VCA actually works. See Gaige / VIN talk list for agenda items.",
-              "badge": "Fri 9/11",
-              "badgeClass": "b-now",
-              "links": []
-            },
-            {
-              "id": "c_df1a44b442",
-              "title": "Gaige / VIN talk list",
-              "body": "ABR partner leads auto-response — rewrite so high-funnel Audi partner leads get a better-fit auto reply (not generic). From Todoist. Also: VCA settings finalize.",
-              "badge": "Agenda",
+              "id": "c_carl",
+              "title": "Carl Call Review (ABR)",
+              "body": "Retrain salesperson ID on call review (new staff). Was Tue AM — confirm done or still open.",
+              "badge": "Check",
               "badgeClass": "b-wait",
               "links": []
             },
             {
-              "id": "c_428433862f",
+              "id": "c_gaige_day",
+              "title": "Gaige / VIN open loops",
+              "body": "After Tue: feed/pricing ticket + ABR partner-leads auto-response (high-funnel, not generic). Close before Sep 21.",
+              "badge": "Post-call",
+              "badgeClass": "b-wait",
+              "links": []
+            },
+            {
+              "id": "c_alexis",
               "title": "Alexis · Focus CSVs (BMWJ)",
-              "body": "Leads + inventory exports out of Focus/ERA so Ada can feed BMWJ GM Weekly.",
+              "body": "Still blocking BMWJ GM Weekly. Leads + inventory out of Focus/ERA.",
               "badge": "Ask",
               "badgeClass": "b-now",
               "links": []
             },
             {
-              "id": "c_e6fc9810c1",
+              "id": "c_fullpath",
               "title": "Full Path contract",
               "body": "Sign and send back to Full Path rep.",
               "badge": "Lance",
@@ -65,11 +106,19 @@
               "links": []
             },
             {
-              "id": "c_57d27a8a5b",
+              "id": "c_hp_gmw",
               "title": "HP GM Weekly wire-up",
-              "body": "Ada ↔ GA4 for Harris Porsche; correct VinSolutions CSVs; show Adam retention value beyond social/photos.",
+              "body": "GA4 + correct Vin CSVs for Adam retention — value beyond social/photos. Pressure stays on HP card.",
               "badge": "Active",
               "badgeClass": "b-active",
+              "links": []
+            },
+            {
+              "id": "c_q7q9_day",
+              "title": "ABR · all-new Q7 + Q9",
+              "body": "Hub landing → Q7 + Q9 feature pages · Q9-led email. Lease-only + specials separate. Gated on your HQ image pack — don’t ship weak plates. Chad printout = talking points. Units mid–late Nov. Dec invite = later phase.",
+              "badge": "Images",
+              "badgeClass": "b-wait",
               "links": []
             }
           ]
@@ -81,23 +130,23 @@
           "kind": "client",
           "cards": [
             {
-              "id": "c_e26b7dbc6e",
+              "id": "c_vca_live",
               "title": "VinSolutions VCA go-live",
-              "body": "BH group path. After-hours off vs Podium until dark. Finalize settings with Gaige Fri 9/11. Target ~Sep 21 from prior recap.",
+              "body": "BH group path. After-hours off vs Podium until dark. Tue settings call done. Open: escalated feed/pricing map ticket + NCI/phone gaps. Target reconnect + clean cutover ~Sep 21.",
               "badge": "Active",
               "badgeClass": "b-active",
               "links": []
             },
             {
-              "id": "c_020ed88fb6",
+              "id": "c_gaige",
               "title": "Talk to Gaige (VIN / VCA)",
-              "body": "Running list for the VinSolutions guy:\n• ABR partner-leads auto-response — better-fit reply for high-funnel Audi partner leads (not generic). Todoist: 6h42cpC38g5Q5Fgr\n• VCA settings finalize — Fri 9/11 pass so turn-on actually works",
-              "badge": "Agenda",
+              "body": "Post–Tue 9/15 call — still on the list:\n• Feed / pricing map ticket — vAuto–HomeNet–VinSolutions escalated; close before Sep 21\n• ABR partner-leads auto-response — better-fit reply for high-funnel Audi partner leads (not generic). Trace: 6h42cpC38g5Q5Fgr\n• NCI / phone gaps — don’t call cutover “full parity” until closed with Gaige/Jeff",
+              "badge": "Open",
               "badgeClass": "b-wait",
               "links": []
             },
             {
-              "id": "c_e1b5a6b64e",
+              "id": "c_briefs",
               "title": "Vendor briefs pack",
               "body": "Per-store GM briefs + meeting notes. Latest: BMWJ Sep 9 J&L recall brief for Rick.",
               "badge": "Live",
@@ -110,7 +159,7 @@
               ]
             },
             {
-              "id": "c_ef7117bbfe",
+              "id": "c_gmw",
               "title": "GM Weeklies",
               "body": "BHBMW / ABR live pattern. BMWJ needs Focus CSVs. HP needs GA4 + Vin CSVs for Adam retention.",
               "badge": "Active",
@@ -131,7 +180,7 @@
           "kind": "client",
           "cards": [
             {
-              "id": "c_a1b21d5d73",
+              "id": "c_bmwj",
               "title": "BMW of Jackson",
               "body": "Rick sit-down · recall activation · CP service · Focus data · service offers nav live.",
               "badge": "Trip",
@@ -139,7 +188,15 @@
               "links": []
             },
             {
-              "id": "c_733e956088",
+              "id": "c_q7q9",
+              "title": "ABR · all-new Q7 + Q9 launch",
+              "body": "Deliverables: (1) shared hub landing, (2) Q7 feature page, (3) Q9 feature page, (4) Q9-led email. Pattern: Q3/Q5 all-new energy; don’t overwrite live Q3/Q5 URLs. Gate: high-quality images only — wait on Lance pack. Dec private viewing later.",
+              "badge": "Images",
+              "badgeClass": "b-wait",
+              "links": []
+            },
+            {
+              "id": "c_hp",
               "title": "Harris Porsche retention",
               "body": "Adam wants ground social/photos. Keep: vendor relations, Vin maint/training, GM weeklies, vendor brief, Driver’s Cut, BH group liaison / Stroll.",
               "badge": "Pressure",
@@ -147,25 +204,20 @@
               "links": []
             },
             {
-              "id": "c_bc84a35c92",
+              "id": "c_stroll",
               "title": "Stroll Magazine",
-              "body": "October = X5 piece done. November = one piece from each of three brands.",
+              "body": "October = X5 piece done + ABR Q7/Q9 new body styles in play. November = one piece from each of three brands.",
               "badge": "Active",
               "badgeClass": "b-active",
               "links": []
             },
             {
-              "id": "c_4404464a16",
+              "id": "c_newsletters",
               "title": "Dealership newsletters",
               "body": "S Line / Ultimate Driver / Driver’s Cut rooftop letters.",
               "badge": "Issue 01",
               "badgeClass": "b-active",
-              "links": [
-                {
-                  "label": "Hub projects →",
-                  "href": "./#"
-                }
-              ]
+              "links": []
             }
           ]
         },
@@ -176,18 +228,18 @@
           "kind": "product",
           "cards": [
             {
-              "id": "c_32052f653b",
+              "id": "c_wb",
               "title": "This whiteboard",
-              "body": "Interactive multi-board. Drag cards/columns, type notes, new boards, local auto-save + export JSON for Ada.",
+              "body": "Interactive multi-board. Drag cards/columns, type notes, fix spelling, new boards, local auto-save + export JSON for Ada.",
               "badge": "v2",
               "badgeClass": "b-active",
               "links": []
             },
             {
-              "id": "c_7235f86b5c",
+              "id": "c_acquire",
               "title": "Acquire Desk",
-              "body": "Sales acquisition dashboard. BHBMW pilot live. Project board = now / next / roadmap / your eye / CRM write-back.",
-              "badge": "Killer app",
+              "body": "BHBMW board live + multi-user gate + beta invites out (Charles/Luke/Brett/Darrell/Carly). HP CRM workable; ABR still feed-blocked. Overdue: service morning wedge (appts + lists + PDF). Product path locked: email → fetch → rebuild (not live CRM click).",
+              "badge": "In build",
               "badgeClass": "b-now",
               "links": [
                 {
@@ -205,7 +257,7 @@
               ]
             },
             {
-              "id": "c_ba82f76d25",
+              "id": "c_pe",
               "title": "PostEngine → PostHopper",
               "body": "Internal PE is daily. SaaS rename / domain still open.",
               "badge": "Warm",
@@ -213,7 +265,7 @@
               "links": []
             },
             {
-              "id": "c_d6f7a8dfa5",
+              "id": "c_cozy",
               "title": "Cozy Spooks (KDP)",
               "body": "Jumbo book path idle pending Lance bank account finalize. Print QC + PDF + wrap next after unblock.",
               "badge": "Blocked",
@@ -221,7 +273,7 @@
               "links": []
             },
             {
-              "id": "c_be08c1d18d",
+              "id": "c_roster",
               "title": "SE GM letter roster",
               "body": "B2B dealer-GM list FL–TX–AR from public staff pages.",
               "badge": "Collecting",
@@ -234,7 +286,7 @@
               ]
             },
             {
-              "id": "c_6f542d3062",
+              "id": "c_inv",
               "title": "Annual Inventory",
               "body": "BHBMW live; ABR/BMWJ wait on real feeds.",
               "badge": "Ongoing",
@@ -242,9 +294,9 @@
               "links": []
             },
             {
-              "id": "c_d9399c9281",
+              "id": "c_qr",
               "title": "QR service lander product",
-              "body": "Productize oil/visor sticker QR → brand lander. Beat serviceappointment.com (Herrin-Gear collage). ABR pilot live. Sell brand-true lander + sticker kit. Setup ~$2–3.5k + refresh; stickers pass-through.",
+              "body": "Productize oil/visor sticker QR → brand lander. Beat serviceappointment.com. ABR pilot live. Sell brand-true lander + sticker kit. Setup ~$2–3.5k + refresh; stickers pass-through.",
               "badge": "Warm",
               "badgeClass": "b-warm",
               "links": [
@@ -267,7 +319,7 @@
           "kind": "parked",
           "cards": [
             {
-              "id": "c_32261c6d67",
+              "id": "c_ga4",
               "title": "GA4 dashboards",
               "body": "Pull on demand — not a daily driver.",
               "badge": "Tabled",
@@ -275,7 +327,7 @@
               "links": []
             },
             {
-              "id": "c_8d40c6c005",
+              "id": "c_usn",
               "title": "Ultimate Sales Notebook",
               "body": "Product package / ship decision.",
               "badge": "Polish",
@@ -283,7 +335,7 @@
               "links": []
             },
             {
-              "id": "c_db61427693",
+              "id": "c_atp",
               "title": "Avec Tous Provisions",
               "body": "Spice relaunch + SQSP commerce path.",
               "badge": "Polish",
@@ -291,7 +343,7 @@
               "links": []
             },
             {
-              "id": "c_31405019d8",
+              "id": "c_storeops",
               "title": "Store Ops Agent / Dealer Intel",
               "body": "Parked product ideas — not day strip.",
               "badge": "Warm",
