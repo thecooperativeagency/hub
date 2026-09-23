@@ -420,7 +420,7 @@
     <div class="board" id="board-root" aria-label="Whiteboard"></div>
 
     <p class="foot">
-      Interactive ops board · drag / edit / resolve · SuperGrok meter · verify <code>coop-whiteboard-v2-2026-09-23-grok-burn</code>
+      Interactive ops board · drag / edit / resolve · live sync · verify <code>coop-whiteboard-v2-2026-09-23-live-sync</code>
     </p>
   </div>
 
@@ -459,6 +459,8 @@
   (function () {
     var LS_KEY = 'coop-whiteboard-state-v2';
     var THEME_KEY = 'coop-whiteboard-theme';
+    var TOKEN_KEY = 'coop-whiteboard-save-token';
+    var SYNC_URL = '/api/whiteboard';
     var state = null;
     var drag = { type: null, boardId: null, colId: null, cardId: null, fromIndex: -1 };
     var saveTimer = null;
@@ -516,10 +518,47 @@
         state.updatedAt = new Date().toISOString();
         state.updatedBy = 'browser';
         localStorage.setItem(LS_KEY, JSON.stringify(state));
-        setStatus('saved', 'saved · ' + new Date().toLocaleTimeString());
+        setStatus('saved', 'saved local · ' + new Date().toLocaleTimeString());
+        syncLive();
       } catch (e) {
         setStatus('dirty', 'save failed');
       }
+    }
+    function saveToken() {
+      try { return (localStorage.getItem(TOKEN_KEY) || '').trim(); } catch (e) { return ''; }
+    }
+    function askToken() {
+      var cur = saveToken();
+      var next = window.prompt('Whiteboard sync key (Ada can see this board). Paste once — stored only in this browser.', cur || '');
+      if (next == null) return cur;
+      next = String(next).trim();
+      try {
+        if (next) localStorage.setItem(TOKEN_KEY, next);
+        else localStorage.removeItem(TOKEN_KEY);
+      } catch (e) {}
+      return next;
+    }
+    function syncLive() {
+      var token = saveToken();
+      if (!token) {
+        setStatus('dirty', 'local only · need sync key');
+        return;
+      }
+      fetch(SYNC_URL, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
+        body: JSON.stringify(state)
+      }).then(function (r) {
+        if (r.status === 401) {
+          localStorage.removeItem(TOKEN_KEY);
+          setStatus('dirty', 'sync key rejected');
+          return;
+        }
+        if (!r.ok) throw new Error('sync ' + r.status);
+        setStatus('saved', 'synced · ' + new Date().toLocaleTimeString());
+      }).catch(function () {
+        setStatus('dirty', 'local saved · sync failed');
+      });
     }
     function loadLocal() {
       try {
@@ -1250,16 +1289,37 @@
 
     var seed = window.WHITEBOARD_SEED;
     var local = loadLocal();
-    if (local) {
-      // Keep local edits (cards/positions) so Lance doesn’t lose work; feature code is in the page.
-      boot(mergeResolved(local, seed));
-      setStatus('saved', 'from local');
-    } else {
-      fetch('./whiteboard-data.json', { cache: 'no-store' })
-        .then(function (r) { return r.ok ? r.json() : Promise.reject(); })
-        .then(function (j) { boot(j); setStatus('saved', 'from seed json'); })
-        .catch(function () { boot(seed); setStatus('saved', 'from embed'); });
-    }
+    function ts(x) { return (x && x.updatedAt) ? Date.parse(x.updatedAt) || 0 : 0; }
+    fetch(SYNC_URL, { cache: 'no-store' })
+      .then(function (r) { return r.ok ? r.json() : Promise.reject(); })
+      .then(function (live) {
+        if (local && ts(local) > ts(live)) {
+          boot(mergeResolved(local, seed));
+          setStatus('saved', 'from local (newer)');
+          syncLive();
+        } else {
+          boot(mergeResolved(live, seed));
+          setStatus('saved', 'from live');
+          try { localStorage.setItem(LS_KEY, JSON.stringify(state)); } catch (e) {}
+        }
+      })
+      .catch(function () {
+        if (local) {
+          boot(mergeResolved(local, seed));
+          setStatus('saved', 'from local');
+        } else {
+          fetch('./whiteboard-data.json', { cache: 'no-store' })
+            .then(function (r) { return r.ok ? r.json() : Promise.reject(); })
+            .then(function (j) { boot(j); setStatus('saved', 'from seed json'); })
+            .catch(function () { boot(seed); setStatus('saved', 'from embed'); });
+        }
+      });
+    document.addEventListener('keydown', function (e) {
+      if ((e.metaKey || e.ctrlKey) && e.shiftKey && (e.key === 'k' || e.key === 'K')) {
+        e.preventDefault();
+        askToken();
+      }
+    });
   })();
   </script>
 </body>
