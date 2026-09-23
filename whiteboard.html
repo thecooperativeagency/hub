@@ -76,6 +76,43 @@
     .brand .sub { color: var(--red); font-weight: 600; font-size: .8rem; margin-top: .12rem; }
     .meta { text-align: right; color: var(--dim); font-size: .75rem; }
     .meta .mono { font-family: "JetBrains Mono", monospace; }
+    .burn-meter {
+      margin-top: .55rem; text-align: left; min-width: 220px; max-width: 280px;
+      margin-left: auto; padding: .45rem .55rem .5rem;
+      border: 1px solid var(--line); border-radius: 10px; background: var(--swatch-bg);
+    }
+    .burn-meter .bm-head {
+      display: flex; justify-content: space-between; align-items: baseline; gap: .5rem;
+      font-size: .62rem; font-weight: 700; letter-spacing: .04em; text-transform: uppercase;
+      color: var(--mute); margin-bottom: .28rem;
+    }
+    .burn-meter .bm-head strong { color: var(--ink); font-size: .78rem; letter-spacing: 0; text-transform: none; font-weight: 800; }
+    .burn-meter .bm-track {
+      position: relative; height: 8px; border-radius: 999px; background: color-mix(in srgb, var(--line) 80%, transparent);
+      overflow: hidden;
+    }
+    .burn-meter .bm-fill {
+      height: 100%; border-radius: 999px; width: 0%;
+      background: linear-gradient(90deg, var(--green), color-mix(in srgb, var(--green) 60%, var(--amber)));
+      transition: width .35s ease;
+    }
+    .burn-meter[data-level="steady"] .bm-fill { background: linear-gradient(90deg, var(--teal), var(--amber)); }
+    .burn-meter[data-level="elevated"] .bm-fill { background: linear-gradient(90deg, var(--amber), color-mix(in srgb, var(--amber) 50%, var(--red))); }
+    .burn-meter[data-level="hot"] .bm-fill { background: linear-gradient(90deg, var(--red), #f87171); }
+    .burn-meter .bm-pace {
+      position: absolute; top: -2px; bottom: -2px; width: 2px; background: var(--ink); opacity: .75;
+      border-radius: 1px; transform: translateX(-1px);
+    }
+    .burn-meter .bm-foot {
+      margin-top: .32rem; font-family: "JetBrains Mono", monospace; font-size: .62rem;
+      color: var(--dim); line-height: 1.35;
+    }
+    .burn-meter .bm-foot .ok { color: var(--green); }
+    .burn-meter .bm-foot .steady { color: var(--teal); }
+    .burn-meter .bm-foot .elevated { color: var(--amber); }
+    .burn-meter .bm-foot .hot { color: var(--red); font-weight: 700; }
+    .burn-meter.is-loading { opacity: .55; }
+    .burn-meter.is-err .bm-foot { color: var(--mute); }
     .nav { display: flex; gap: .45rem; flex-wrap: wrap; justify-content: flex-end; margin-top: .4rem; }
     .nav a, .nav button, .theme-toggle, .toolbar button {
       font-size: .7rem; font-weight: 700; letter-spacing: .04em; text-transform: uppercase;
@@ -335,6 +372,14 @@
       </div>
       <div class="meta">
         <div class="mono" id="clock">—</div>
+        <div class="burn-meter is-loading" id="burn-meter" data-level="ok" aria-label="SuperGrok Heavy weekly usage">
+          <div class="bm-head"><span>SuperGrok Heavy</span><strong id="bm-used">—</strong></div>
+          <div class="bm-track" aria-hidden="true">
+            <div class="bm-fill" id="bm-fill"></div>
+            <div class="bm-pace" id="bm-pace" hidden></div>
+          </div>
+          <div class="bm-foot" id="bm-foot">loading burn…</div>
+        </div>
         <div class="nav">
           <button type="button" class="theme-toggle" id="theme-toggle" aria-label="Toggle theme">
             <span class="label-dark">☀ Light</span>
@@ -375,7 +420,7 @@
     <div class="board" id="board-root" aria-label="Whiteboard"></div>
 
     <p class="foot">
-      Interactive ops board · drag / edit / resolve · verify <code>coop-whiteboard-v2-2026-09-18b-resolve</code>
+      Interactive ops board · drag / edit / resolve · SuperGrok meter · verify <code>coop-whiteboard-v2-2026-09-23-grok-burn</code>
     </p>
   </div>
 
@@ -1080,6 +1125,60 @@
         } catch (e) { el.clock.textContent = new Date().toString(); }
       }
       tick(); setInterval(tick, 30000);
+    })();
+
+    // SuperGrok Heavy weekly burn meter (JSON written by Hermes cron)
+    (function loadBurnMeter() {
+      var root = document.getElementById('burn-meter');
+      var usedEl = document.getElementById('bm-used');
+      var fill = document.getElementById('bm-fill');
+      var pace = document.getElementById('bm-pace');
+      var foot = document.getElementById('bm-foot');
+      if (!root || !usedEl || !fill || !pace || !foot) return;
+
+      function clamp(n) {
+        n = Number(n);
+        if (!isFinite(n) || n < 0) return 0;
+        if (n > 100) return 100;
+        return n;
+      }
+
+      function paint(d) {
+        var used = clamp(d.usedPercent);
+        var pacePct = d.pacePercent != null ? clamp(d.pacePercent) : null;
+        var level = d.statusLevel || 'ok';
+        root.dataset.level = level;
+        root.classList.remove('is-loading', 'is-err');
+        usedEl.textContent = Math.round(used) + '%';
+        fill.style.width = used + '%';
+        if (pacePct != null) {
+          pace.hidden = false;
+          pace.style.left = pacePct + '%';
+        } else {
+          pace.hidden = true;
+        }
+        var bits = [];
+        if (pacePct != null) bits.push('pace ~' + Math.round(pacePct) + '% @ reset');
+        if (d.resetLabel) bits.push('reset ' + d.resetLabel.replace(/ CT$/, ''));
+        if (d.remainingHours != null) bits.push('~' + Math.round(d.remainingHours) + 'h left');
+        var status = d.status || level;
+        foot.innerHTML = '<span class="' + level + '">' + status + '</span>' +
+          (bits.length ? '<br>' + bits.join(' · ') : '');
+        root.title = (d.plan || 'SuperGrok') + ' · updated ' + (d.updatedAt || '');
+      }
+
+      fetch('./supergrok-burn.json?_=' + Date.now(), { cache: 'no-store' })
+        .then(function (r) {
+          if (!r.ok) throw new Error('HTTP ' + r.status);
+          return r.json();
+        })
+        .then(paint)
+        .catch(function () {
+          root.classList.remove('is-loading');
+          root.classList.add('is-err');
+          usedEl.textContent = '—';
+          foot.textContent = 'burn meter offline';
+        });
     })();
 
     // events
