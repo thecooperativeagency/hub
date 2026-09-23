@@ -71,7 +71,10 @@
       padding-bottom: .85rem; border-bottom: 1px solid var(--line); margin-bottom: .85rem;
     }
     .brand { display: flex; gap: .85rem; align-items: center; }
-    .logo { height: 40px; width: auto; }
+    .logo { height: 40px; width: auto; display: block; }
+    .logo-on-light { display: none; }
+    html[data-theme="light"] .logo-on-dark { display: none; }
+    html[data-theme="light"] .logo-on-light { display: block; }
     .brand h1 { font-size: 1.35rem; font-weight: 800; letter-spacing: -.02em; line-height: 1.1; }
     .brand .sub { color: var(--red); font-weight: 600; font-size: .8rem; margin-top: .12rem; }
     .meta { text-align: right; color: var(--dim); font-size: .75rem; }
@@ -364,7 +367,8 @@
   <div class="shell">
     <div class="topbar">
       <div class="brand">
-        <img class="logo" src="https://images.squarespace-cdn.com/content/v1/68fac8a3d20e8d72215ede75/6669040e-00b7-4113-a0c0-a29b3706227f/Asset+26.png?format=200w" alt="Coop">
+        <img class="logo logo-on-dark" src="assets/brand/logo-wordmark-white.png" alt="The Cooperative Agency">
+        <img class="logo logo-on-light" src="assets/brand/logo-wordmark-on-light.png" alt="The Cooperative Agency">
         <div>
           <h1>Whiteboard</h1>
           <div class="sub" id="board-sub">Interactive · drag · edit · resolve</div>
@@ -420,7 +424,7 @@
     <div class="board" id="board-root" aria-label="Whiteboard"></div>
 
     <p class="foot">
-      Interactive ops board · drag / edit / resolve · live sync · verify <code>coop-whiteboard-v2-2026-09-23-live-sync</code>
+      Interactive ops board · drag / edit / resolve · live sync · verify <code>coop-whiteboard-v2-2026-09-23-logo-theme</code>
     </p>
   </div>
 
