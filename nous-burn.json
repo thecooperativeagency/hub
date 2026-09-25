@@ -1,47 +1,47 @@
 {
-  "memberSpendUsd": 31.3,
+  "memberSpendUsd": 33.54,
   "models": [
     {
-      "estUsd": 43.25,
+      "estUsd": 45.09,
       "id": "google/gemini-3.5-flash",
       "name": "Gemini Flash",
-      "percent": 68.7,
-      "usd": 21.5
+      "percent": 69.6,
+      "usd": 23.34
     },
     {
       "estUsd": 13.99,
       "id": "anthropic/claude-opus-4.8",
       "name": "Opus 4.8",
-      "percent": 22.2,
-      "usd": 6.95
+      "percent": 21.6,
+      "usd": 7.24
     },
     {
       "estUsd": 3.3,
       "id": "anthropic/claude-sonnet-4.6",
       "name": "Sonnet 4.6",
-      "percent": 5.2,
-      "usd": 1.63
+      "percent": 5.1,
+      "usd": 1.71
     },
     {
       "estUsd": 2.42,
       "id": "other",
       "name": "Other",
-      "percent": 3.8,
-      "usd": 1.19
+      "percent": 3.7,
+      "usd": 1.24
     }
   ],
   "modelsSource": "hermes Mini telemetry mix, scaled to portal member spend",
   "monthlyCreditsUsd": 110.0,
   "plan": "Super",
   "purchasedRemainingUsd": 21.89,
-  "remainingUsd": 154.07,
+  "remainingUsd": 151.82,
   "resetAt": "2026-10-02T22:11:26+00:00",
   "resetLabel": "Fri Oct 2 5:11PM CT",
   "source": "portal /api/oauth/account + local session_model_usage",
   "status": "Comfortable headroom",
   "statusLevel": "ok",
-  "subscriptionRemainingUsd": 132.18,
-  "updatedAt": "2026-09-25T02:23:32.313760+00:00",
-  "usedPercent": 16.9,
+  "subscriptionRemainingUsd": 129.93,
+  "updatedAt": "2026-09-25T13:10:51.581760+00:00",
+  "usedPercent": 18.1,
   "verify": "coop-nous-burn-v1"
 }
