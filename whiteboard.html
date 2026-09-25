@@ -79,10 +79,27 @@
     .brand .sub { color: var(--red); font-weight: 600; font-size: .8rem; margin-top: .12rem; }
     .meta { text-align: right; color: var(--dim); font-size: .75rem; }
     .meta .mono { font-family: "JetBrains Mono", monospace; }
-    .burn-stack {
-      margin-top: .55rem; margin-left: auto; min-width: 220px; max-width: 280px;
-      display: flex; flex-direction: column; gap: .4rem;
+    .burn-panel {
+      margin-top: .4rem; margin-left: auto; max-width: 280px;
+      display: flex; flex-direction: column; align-items: flex-end; gap: .4rem;
     }
+    .burn-toggle {
+      display: inline-flex; align-items: center; gap: .45rem;
+      font-size: .65rem; font-weight: 700; letter-spacing: .03em; text-transform: uppercase;
+      padding: .28rem .55rem; border-radius: 999px; border: 1px solid var(--line);
+      background: var(--theme-btn-bg); color: var(--mute); cursor: pointer; line-height: 1;
+    }
+    .burn-toggle .sum {
+      font-family: "JetBrains Mono", monospace; color: var(--ink);
+      letter-spacing: 0; text-transform: none; font-weight: 800;
+    }
+    .burn-toggle .chev { font-size: .7rem; opacity: .7; transition: transform .15s ease; }
+    .burn-panel.is-open .burn-toggle .chev { transform: rotate(180deg); }
+    .burn-stack {
+      display: none; width: 100%; min-width: 220px;
+      flex-direction: column; gap: .4rem;
+    }
+    .burn-panel.is-open .burn-stack { display: flex; }
     .burn-meter {
       text-align: left; padding: .45rem .55rem .5rem;
       border: 1px solid var(--line); border-radius: 10px; background: var(--swatch-bg);
@@ -394,7 +411,13 @@
       </div>
       <div class="meta">
         <div class="mono" id="clock">—</div>
-        <div class="burn-stack">
+        <div class="burn-panel" id="burn-panel">
+        <button type="button" class="burn-toggle" id="burn-toggle" aria-expanded="false" aria-controls="burn-stack">
+          <span>Usage</span>
+          <span class="sum" id="burn-sum">Grok — · Nous —</span>
+          <span class="chev" aria-hidden="true">▾</span>
+        </button>
+        <div class="burn-stack" id="burn-stack">
         <div class="burn-meter is-loading" id="burn-meter" data-level="ok" aria-label="SuperGrok Heavy weekly usage">
           <div class="bm-head"><span>SuperGrok Heavy</span><strong id="bm-used">—</strong></div>
           <div class="bm-track" aria-hidden="true">
@@ -410,6 +433,7 @@
             <div class="bm-stack" id="nm-stack"></div>
           </div>
           <div class="bm-foot" id="nm-foot">loading nous…</div>
+        </div>
         </div>
         </div>
         <div class="nav">
@@ -452,7 +476,7 @@
     <div class="board" id="board-root" aria-label="Whiteboard"></div>
 
     <p class="foot">
-      Interactive ops board · drag / edit / resolve · live sync · verify <code>coop-whiteboard-v2-2026-09-24-nous-meter</code>
+      Interactive ops board · drag / edit / resolve · live sync · verify <code>coop-whiteboard-v2-2026-09-24-usage-collapse</code>
     </p>
   </div>
 
@@ -1198,6 +1222,32 @@
       tick(); setInterval(tick, 30000);
     })();
 
+    function updateBurnSum() {
+      var sum = document.getElementById('burn-sum');
+      var grok = document.getElementById('bm-used');
+      var nous = document.getElementById('nm-used');
+      if (!sum) return;
+      sum.textContent = 'Grok ' + ((grok && grok.textContent) || '—') + ' · Nous ' + ((nous && nous.textContent) || '—');
+    }
+
+    (function burnPanel() {
+      var panel = document.getElementById('burn-panel');
+      var btn = document.getElementById('burn-toggle');
+      if (!panel || !btn) return;
+      var KEY = 'coop-whiteboard-usage-open';
+      function setOpen(v) {
+        panel.classList.toggle('is-open', !!v);
+        btn.setAttribute('aria-expanded', v ? 'true' : 'false');
+        try { localStorage.setItem(KEY, v ? '1' : '0'); } catch (e) {}
+      }
+      var saved = null;
+      try { saved = localStorage.getItem(KEY); } catch (e) {}
+      setOpen(saved === '1');
+      btn.addEventListener('click', function () {
+        setOpen(!panel.classList.contains('is-open'));
+      });
+    })();
+
     // SuperGrok Heavy weekly burn meter (JSON written by Hermes cron)
     (function loadBurnMeter() {
       var root = document.getElementById('burn-meter');
@@ -1236,6 +1286,7 @@
         foot.innerHTML = '<span class="' + level + '">' + status + '</span>' +
           (bits.length ? '<br>' + bits.join(' · ') : '');
         root.title = (d.plan || 'SuperGrok') + ' · updated ' + (d.updatedAt || '');
+        updateBurnSum();
       }
 
       fetch('./supergrok-burn.json?_=' + Date.now(), { cache: 'no-store' })
@@ -1249,6 +1300,7 @@
           root.classList.add('is-err');
           usedEl.textContent = '—';
           foot.textContent = 'burn meter offline';
+          updateBurnSum();
         });
     })();
 
@@ -1301,6 +1353,7 @@
           (mix ? '<br>' + mix : '') +
           (bits.length ? '<br>' + bits.join(' · ') : '');
         root.title = 'Nous ' + (d.plan || '') + ' · updated ' + (d.updatedAt || '');
+        updateBurnSum();
       }
 
       fetch('./nous-burn.json?_=' + Date.now(), { cache: 'no-store' })
@@ -1314,6 +1367,7 @@
           root.classList.add('is-err');
           usedEl.textContent = '—';
           foot.textContent = 'nous meter offline';
+          updateBurnSum();
         });
     })();
 
