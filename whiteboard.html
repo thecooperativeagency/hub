@@ -79,9 +79,12 @@
     .brand .sub { color: var(--red); font-weight: 600; font-size: .8rem; margin-top: .12rem; }
     .meta { text-align: right; color: var(--dim); font-size: .75rem; }
     .meta .mono { font-family: "JetBrains Mono", monospace; }
+    .burn-stack {
+      margin-top: .55rem; margin-left: auto; min-width: 220px; max-width: 280px;
+      display: flex; flex-direction: column; gap: .4rem;
+    }
     .burn-meter {
-      margin-top: .55rem; text-align: left; min-width: 220px; max-width: 280px;
-      margin-left: auto; padding: .45rem .55rem .5rem;
+      text-align: left; padding: .45rem .55rem .5rem;
       border: 1px solid var(--line); border-radius: 10px; background: var(--swatch-bg);
     }
     .burn-meter .bm-head {
@@ -99,6 +102,21 @@
       background: linear-gradient(90deg, var(--green), color-mix(in srgb, var(--green) 60%, var(--amber)));
       transition: width .35s ease;
     }
+    .burn-meter .bm-stack {
+      display: none; height: 100%; width: 100%;
+    }
+    .burn-meter.has-mix .bm-fill { display: none; }
+    .burn-meter.has-mix .bm-stack { display: flex; }
+    .burn-meter .bm-seg {
+      height: 100%; min-width: 2px;
+    }
+    .burn-meter .bm-seg:first-child { border-radius: 999px 0 0 999px; }
+    .burn-meter .bm-seg:last-child { border-radius: 0 999px 999px 0; }
+    .burn-meter .bm-seg:only-child { border-radius: 999px; }
+    .burn-meter .bm-seg[data-i="0"] { background: var(--teal); }
+    .burn-meter .bm-seg[data-i="1"] { background: var(--amber); }
+    .burn-meter .bm-seg[data-i="2"] { background: var(--violet); }
+    .burn-meter .bm-seg[data-i="3"] { background: var(--blue); }
     .burn-meter[data-level="steady"] .bm-fill { background: linear-gradient(90deg, var(--teal), var(--amber)); }
     .burn-meter[data-level="elevated"] .bm-fill { background: linear-gradient(90deg, var(--amber), color-mix(in srgb, var(--amber) 50%, var(--red))); }
     .burn-meter[data-level="hot"] .bm-fill { background: linear-gradient(90deg, var(--red), #f87171); }
@@ -376,6 +394,7 @@
       </div>
       <div class="meta">
         <div class="mono" id="clock">—</div>
+        <div class="burn-stack">
         <div class="burn-meter is-loading" id="burn-meter" data-level="ok" aria-label="SuperGrok Heavy weekly usage">
           <div class="bm-head"><span>SuperGrok Heavy</span><strong id="bm-used">—</strong></div>
           <div class="bm-track" aria-hidden="true">
@@ -383,6 +402,15 @@
             <div class="bm-pace" id="bm-pace" hidden></div>
           </div>
           <div class="bm-foot" id="bm-foot">loading burn…</div>
+        </div>
+        <div class="burn-meter is-loading" id="nous-meter" data-level="ok" aria-label="Nous Portal model spend">
+          <div class="bm-head"><span>Nous</span><strong id="nm-used">—</strong></div>
+          <div class="bm-track" aria-hidden="true">
+            <div class="bm-fill" id="nm-fill"></div>
+            <div class="bm-stack" id="nm-stack"></div>
+          </div>
+          <div class="bm-foot" id="nm-foot">loading nous…</div>
+        </div>
         </div>
         <div class="nav">
           <button type="button" class="theme-toggle" id="theme-toggle" aria-label="Toggle theme">
@@ -424,7 +452,7 @@
     <div class="board" id="board-root" aria-label="Whiteboard"></div>
 
     <p class="foot">
-      Interactive ops board · drag / edit / resolve · live sync · verify <code>coop-whiteboard-v2-2026-09-23-logo-theme</code>
+      Interactive ops board · drag / edit / resolve · live sync · verify <code>coop-whiteboard-v2-2026-09-24-nous-meter</code>
     </p>
   </div>
 
@@ -1221,6 +1249,71 @@
           root.classList.add('is-err');
           usedEl.textContent = '—';
           foot.textContent = 'burn meter offline';
+        });
+    })();
+
+    // Nous Portal spend + model mix (JSON written by Hermes cron)
+    (function loadNousMeter() {
+      var root = document.getElementById('nous-meter');
+      var usedEl = document.getElementById('nm-used');
+      var fill = document.getElementById('nm-fill');
+      var stack = document.getElementById('nm-stack');
+      var foot = document.getElementById('nm-foot');
+      if (!root || !usedEl || !fill || !stack || !foot) return;
+
+      function money(n) {
+        n = Number(n);
+        if (!isFinite(n)) return '—';
+        if (Math.abs(n) >= 10) return '$' + Math.round(n);
+        var t = Math.round(n * 10) / 10;
+        return t % 1 === 0 ? '$' + t.toFixed(0) : '$' + t.toFixed(1);
+      }
+
+      function paint(d) {
+        var level = d.statusLevel || 'ok';
+        var models = Array.isArray(d.models) ? d.models : [];
+        root.dataset.level = level;
+        root.classList.remove('is-loading', 'is-err');
+        usedEl.textContent = d.memberSpendUsd != null ? money(d.memberSpendUsd) : '—';
+        fill.style.width = (d.usedPercent != null ? Math.min(100, Math.max(0, Number(d.usedPercent))) : 0) + '%';
+        stack.innerHTML = '';
+        if (models.length) {
+          root.classList.add('has-mix');
+          models.forEach(function (m, i) {
+            var seg = document.createElement('div');
+            seg.className = 'bm-seg';
+            seg.dataset.i = String(i);
+            seg.style.width = Math.max(2, Number(m.percent) || 0) + '%';
+            seg.title = (m.name || '?') + ' ' + money(m.usd);
+            stack.appendChild(seg);
+          });
+        } else {
+          root.classList.remove('has-mix');
+        }
+        var mix = models.slice(0, 3).map(function (m) {
+          return (m.name || '?') + ' ' + money(m.usd);
+        }).join(' · ');
+        var bits = [];
+        if (d.remainingUsd != null) bits.push(money(d.remainingUsd) + ' left');
+        if (d.resetLabel) bits.push('renews ' + String(d.resetLabel).replace(/ CT$/, ''));
+        var status = d.status || level;
+        foot.innerHTML = '<span class="' + level + '">' + (d.plan ? d.plan + ' · ' : '') + status + '</span>' +
+          (mix ? '<br>' + mix : '') +
+          (bits.length ? '<br>' + bits.join(' · ') : '');
+        root.title = 'Nous ' + (d.plan || '') + ' · updated ' + (d.updatedAt || '');
+      }
+
+      fetch('./nous-burn.json?_=' + Date.now(), { cache: 'no-store' })
+        .then(function (r) {
+          if (!r.ok) throw new Error('HTTP ' + r.status);
+          return r.json();
+        })
+        .then(paint)
+        .catch(function () {
+          root.classList.remove('is-loading');
+          root.classList.add('is-err');
+          usedEl.textContent = '—';
+          foot.textContent = 'nous meter offline';
         });
     })();
 
