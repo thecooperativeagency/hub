@@ -79,6 +79,24 @@
     .brand .sub { color: var(--red); font-weight: 600; font-size: .8rem; margin-top: .12rem; }
     .meta { text-align: right; color: var(--dim); font-size: .75rem; }
     .meta .mono { font-family: "JetBrains Mono", monospace; }
+    .gmc-chip {
+      margin-top: .4rem; margin-left: auto; max-width: 280px;
+      text-align: left; padding: .45rem .55rem .5rem;
+      border: 1px solid var(--line); border-radius: 10px; background: var(--swatch-bg);
+    }
+    .gmc-chip .gc-k {
+      font-size: .62rem; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; color: var(--mute);
+    }
+    .gmc-chip .gc-row {
+      display: flex; align-items: baseline; justify-content: space-between; gap: .5rem; margin-top: .18rem;
+    }
+    .gmc-chip .gc-status { font-weight: 800; font-size: .82rem; color: var(--ink); }
+    .gmc-chip[data-level="ok"] .gc-status { color: var(--green); }
+    .gmc-chip[data-level="wait"] .gc-status { color: var(--amber); }
+    .gmc-chip[data-level="down"] .gc-status { color: var(--red); }
+    .gmc-chip .gc-file { font-family: "JetBrains Mono", monospace; font-size: .62rem; color: var(--dim); line-height: 1.35; margin-top: .2rem; }
+    .gmc-chip a { color: inherit; text-decoration: none; }
+    .gmc-chip.is-loading { opacity: .55; }
     .burn-panel {
       margin-top: .4rem; margin-left: auto; max-width: 280px;
       display: flex; flex-direction: column; align-items: flex-end; gap: .4rem;
@@ -411,6 +429,11 @@
       </div>
       <div class="meta">
         <div class="mono" id="clock">—</div>
+        <div class="gmc-chip is-loading" id="gmc-chip" data-level="wait" aria-label="GMCBot feed health">
+          <div class="gc-k">GMCBot</div>
+          <div class="gc-row"><a class="gc-status" id="gmc-status" href="https://gmcbot-production.up.railway.app/" target="_blank" rel="noopener">…</a></div>
+          <div class="gc-file" id="gmc-file">newest file —</div>
+        </div>
         <div class="burn-panel" id="burn-panel">
         <button type="button" class="burn-toggle" id="burn-toggle" aria-expanded="false" aria-controls="burn-stack">
           <span>Usage</span>
@@ -476,7 +499,7 @@
     <div class="board" id="board-root" aria-label="Whiteboard"></div>
 
     <p class="foot">
-      Interactive ops board · drag / edit / resolve · live sync · verify <code>coop-whiteboard-v2-2026-09-24-usage-collapse</code>
+      Interactive ops board · drag / edit / resolve · live sync · verify <code>coop-whiteboard-v2-2026-09-29-gmcbot</code>
     </p>
   </div>
 
@@ -1246,6 +1269,38 @@
       btn.addEventListener('click', function () {
         setOpen(!panel.classList.contains('is-open'));
       });
+    })();
+
+    (function loadGmcMeter() {
+      var root = document.getElementById('gmc-chip');
+      var statusEl = document.getElementById('gmc-status');
+      var fileEl = document.getElementById('gmc-file');
+      if (!root || !statusEl || !fileEl) return;
+      function fmt(iso) {
+        if (!iso) return null;
+        var d = new Date(iso);
+        if (isNaN(d)) return iso;
+        return d.toLocaleString('en-US', { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' });
+      }
+      fetch('https://gmcbot-production.up.railway.app/health', { cache: 'no-store' })
+        .then(function (r) { return r.json(); })
+        .then(function (h) {
+          root.classList.remove('is-loading');
+          var level = !h.ok ? 'down' : (h.last_file_at ? 'ok' : 'wait');
+          root.dataset.level = level;
+          statusEl.textContent = !h.ok ? 'Down' : (h.last_file_at ? 'Live' : 'Live · waiting');
+          var bits = [];
+          if (h.last_file_name) bits.push(h.last_file_name);
+          if (h.last_file_at) bits.push(fmt(h.last_file_at));
+          else bits.push('no file yet');
+          fileEl.textContent = bits.join(' · ');
+        })
+        .catch(function () {
+          root.classList.remove('is-loading');
+          root.dataset.level = 'down';
+          statusEl.textContent = 'Unreachable';
+          fileEl.textContent = 'newest file —';
+        });
     })();
 
     // SuperGrok Heavy weekly burn meter (JSON written by Hermes cron)
