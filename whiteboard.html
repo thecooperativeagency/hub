@@ -79,6 +79,12 @@
     .brand .sub { color: var(--red); font-weight: 600; font-size: .8rem; margin-top: .12rem; }
     .meta { text-align: right; color: var(--dim); font-size: .75rem; }
     .meta .mono { font-family: "JetBrains Mono", monospace; }
+    .corner-link {
+      display: inline-block; margin-top: .18rem;
+      font-size: .7rem; font-weight: 700; letter-spacing: .01em;
+      color: var(--mute);
+    }
+    .corner-link:hover { color: var(--link-hover); }
     .gmc-chip {
       margin-top: .4rem; margin-left: auto; max-width: 280px;
       text-align: left; padding: .45rem .55rem .5rem;
@@ -429,6 +435,7 @@
       </div>
       <div class="meta">
         <div class="mono" id="clock">—</div>
+        <a class="corner-link" href="https://thecooperativeagency.github.io/lance-2.0/" target="_blank" rel="noopener">Lance 2.0</a>
         <div class="gmc-chip is-loading" id="gmc-chip" data-level="wait" aria-label="GMCBot feed health">
           <div class="gc-k">GMCBot</div>
           <div class="gc-row"><a class="gc-status" id="gmc-status" href="https://gmcbot-production.up.railway.app/" target="_blank" rel="noopener">…</a></div>
@@ -499,7 +506,7 @@
     <div class="board" id="board-root" aria-label="Whiteboard"></div>
 
     <p class="foot">
-      Interactive ops board · drag / edit / resolve · live sync · verify <code>coop-whiteboard-v2-2026-09-29-gmcbot</code>
+      Interactive ops board · drag / edit / resolve · live sync · verify <code>coop-whiteboard-v2-2026-10-04-lance20</code>
     </p>
   </div>
 
