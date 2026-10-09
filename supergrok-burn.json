@@ -1,28 +1,28 @@
 {
   "onDemandCap": 0,
   "onDemandUsed": 0,
-  "pacePercent": 38.0,
+  "pacePercent": 32.5,
   "periodStart": "2026-10-03T22:31:33.812170+00:00",
   "plan": "SuperGrok Heavy",
   "prepaidUsd": 22.45,
   "products": [
     {
       "name": "Build",
-      "percent": 25.0
+      "percent": 26.0
     },
     {
       "name": "Chat",
       "percent": 0.0
     }
   ],
-  "remainingHours": 57.5,
+  "remainingHours": 33.5,
   "resetAt": "2026-10-10T22:31:33.812170+00:00",
   "resetLabel": "Sat Oct 10 5:31PM CT",
   "source": "cli-chat-proxy.grok.com/v1/billing?format=credits",
   "status": "Comfortable headroom",
   "statusLevel": "ok",
-  "updatedAt": "2026-10-08T13:00:47.343813+00:00",
-  "usedPercent": 25.0,
+  "updatedAt": "2026-10-09T13:00:47.863049+00:00",
+  "usedPercent": 26.0,
   "verify": "coop-supergrok-burn-v1",
-  "weekElapsedPercent": 65.8
+  "weekElapsedPercent": 80.1
 }
