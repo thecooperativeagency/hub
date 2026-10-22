@@ -624,15 +624,25 @@
       } catch (e) {}
       return next;
     }
+    var baseRev = null; // rev of the live board this page is based on (null = unknown, legacy save)
+    var syncing = false, syncQueued = false, syncConflict = false;
     function syncLive() {
       var token = saveToken();
       if (!token) {
         setStatus('dirty', 'local only · need sync key');
         return;
       }
+      if (syncConflict) {
+        setStatus('dirty', 'conflict · board changed elsewhere — reload');
+        return;
+      }
+      if (syncing) { syncQueued = true; return; }
+      syncing = true;
+      var headers = { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token };
+      if (baseRev !== null) headers['X-Base-Rev'] = String(baseRev);
       fetch(SYNC_URL, {
         method: 'PUT',
-        headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
+        headers: headers,
         body: JSON.stringify(state)
       }).then(function (r) {
         if (r.status === 401) {
@@ -640,10 +650,23 @@
           setStatus('dirty', 'sync key rejected');
           return;
         }
+        if (r.status === 409) {
+          syncConflict = true;
+          return r.json().catch(function () { return {}; }).then(function (j) {
+            setStatus('dirty', 'conflict · changed by ' + (j.updatedBy || 'someone') + ' — reload');
+          });
+        }
         if (!r.ok) throw new Error('sync ' + r.status);
-        setStatus('saved', 'synced · ' + new Date().toLocaleTimeString());
+        return r.json().catch(function () { return {}; }).then(function (j) {
+          if (j && j.rev != null) { baseRev = j.rev; state.rev = j.rev; }
+          if (j && j.updatedBy) state.updatedBy = j.updatedBy;
+          setStatus('saved', 'synced · ' + new Date().toLocaleTimeString());
+        });
       }).catch(function () {
         setStatus('dirty', 'local saved · sync failed');
+      }).then(function () {
+        syncing = false;
+        if (syncQueued) { syncQueued = false; syncLive(); }
       });
     }
     function loadLocal() {
@@ -1506,6 +1529,7 @@
     fetch(SYNC_URL, { cache: 'no-store' })
       .then(function (r) { return r.ok ? r.json() : Promise.reject(); })
       .then(function (live) {
+        baseRev = (live && live.rev != null && isFinite(Number(live.rev))) ? Number(live.rev) : 0;
         if (local && ts(local) > ts(live)) {
           boot(mergeResolved(local, seed));
           setStatus('saved', 'from local (newer)');
