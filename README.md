@@ -29,6 +29,18 @@ If neither secret is set, the API is in **open fixture mode** and says so. Do no
 
 `GET /api/planner/healthz` returns `{ "ok": true }` and no rows, with no PIN.
 
+### The quarter, then the work
+
+The desk is planned a quarter at a time. Each store has a theme for the quarter and for each month, the program, the events that fall in those months, and a target number of posts per channel. **Roll to the next quarter** copies the last plan forward. **From template** starts from the fictional cadence template (8 Instagram, 8 Facebook, and 4 Google Business posts a month for a rooftop; less for Coop).
+
+A calendar item with kind `post` is a brief: store, channels, date, goal, offer or program link, notes, and the creative request. From those briefs the Worker derives the photos and reels, one need per store + subject + format, keeping the earliest due date. A Drive, PostEngine, or delivered shoot asset with the same subject and format removes that need.
+
+Open needs become suggested shoots, grouped by store and a seven-day window, dated two days before the first due date. The shooter defaults to Lance and can be anyone (store staff or a freelancer). Accepting a suggestion puts it on the calendar and the shoot schedule. Marking the shoot delivered, or a shoot job coming back with asset URLs, closes the matching needs. Creative jobs stay blocked until those needs are covered.
+
+Jobs are Eleanor (design), Frances (copy), Ansel (photo edit), Steve (video), and Lance (shoot). Status is `requested`, `in_progress`, `delivered`, or `approved`. Bots poll and deliver through `docs/BOT_API.md`. When the creative jobs are delivered, the brief is waiting on Lance. His approve queues a PostEngine draft only if `PLANNER_PE_WRITE=1`. The default is `0`. The import call is specified in `docs/POSTENGINE_CONTRACT.md` because the current PostEngine create route has no import token, and a different route publishes. This desk never publishes.
+
+The calendar stage runs brief, creative, approved, queued, published. Each card says what it is blocked by.
+
 ### Posting health
 
 Read-only. The Worker never calls a create, publish, or review endpoint. Allowed GETs:
@@ -40,8 +52,11 @@ Read-only. The Worker never calls a create, publish, or review endpoint. Allowed
 | Secret | Use |
 | --- | --- |
 | `ZERNIO_API_KEY` | `Authorization: Bearer` for the Zernio reads above. |
-| `POSTENGINE_PIN` | `x-dashboard-pin` for PostEngine. |
+| `POSTENGINE_PIN` | `x-dashboard-pin` for PostEngine reads. |
 | `ZERNIO_ACCOUNT_MAP` | Optional JSON. Store id to Zernio account ids, for example `{"bhbmw":["…"],"abr":[],"hp":[],"bmwj":[],"coop":[]}`. When set, display-name matching is skipped. |
+| `PLANNER_BOT_TOKENS` | JSON of bot name to token. See `docs/BOT_API.md`. |
+| `POSTENGINE_IMPORT_TOKEN` | Bearer token for `POST /api/import/posts`. Unused while the write flag is off. |
+| `PLANNER_PE_WRITE` | Set to `1` only after PostEngine has the import route. Default `0`. |
 
 PostEngine dealership ids are fixed: 1 BMW of Jackson, 2 Brian Harris BMW, 3 Audi Baton Rouge, 4 Harris Porsche, 6 Coop.
 
@@ -101,8 +116,10 @@ This pull request does not deploy the Worker, create Cloudflare resources, set s
    npx wrangler secret put PLANNER_TOKEN
    npx wrangler secret put ZERNIO_API_KEY
    npx wrangler secret put POSTENGINE_PIN
+   npx wrangler secret put PLANNER_BOT_TOKENS
    ```
 
+   Leave `PLANNER_PE_WRITE` unset. Set `POSTENGINE_IMPORT_TOKEN` only when PostEngine has the import route in `docs/POSTENGINE_CONTRACT.md`, then set `PLANNER_PE_WRITE` to `1`.
    Optional, if name matching is not enough: `npx wrangler secret put ZERNIO_ACCOUNT_MAP`.
 6. Deploy the Worker: `npx wrangler deploy`. The config routes `hub.thecoopbrla.com/api/planner*` on the `thecoopbrla.com` zone. `workers_dev` is off. Logs and traces are on at full sample because this desk is one team, not a public API.
 7. Merge the hub change so `planner.html` is on Pages.

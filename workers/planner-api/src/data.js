@@ -36,6 +36,16 @@ function mapStore(row) {
   };
 }
 
+function parseList(value) {
+  if (Array.isArray(value)) return value;
+  try {
+    const parsed = JSON.parse(value || "[]");
+    return Array.isArray(parsed) ? parsed : [];
+  } catch {
+    return [];
+  }
+}
+
 function mapCalendar(row) {
   return {
     id: row.id,
@@ -44,9 +54,19 @@ function mapCalendar(row) {
     startsOn: row.starts_on,
     endsOn: row.ends_on,
     channel: row.channel,
+    channels: parseList(row.channels),
     owner: row.owner,
     status: row.status,
     notes: row.notes,
+    kind: row.kind || "note",
+    goal: row.goal || "",
+    offerLink: row.offer_link || "",
+    creativeRequest: row.creative_request || "",
+    subject: row.subject || "",
+    formats: parseList(row.formats),
+    pipeline: row.pipeline || "",
+    caption: row.caption || "",
+    postenginePostId: row.postengine_post_id || null,
     fixture: flag(row.fixture),
     createdAt: row.created_at,
     updatedAt: row.updated_at,
@@ -64,6 +84,10 @@ function mapShoot(row) {
     location: row.location,
     brief: row.brief,
     status: row.status,
+    durationMin: row.duration_min == null ? 60 : Number(row.duration_min),
+    shotList: parseList(row.shot_list),
+    windowStart: row.window_start || null,
+    windowEnd: row.window_end || null,
     fixture: flag(row.fixture),
     createdAt: row.created_at,
     updatedAt: row.updated_at,
@@ -112,6 +136,7 @@ function mapApproval(row) {
     status: row.status,
     notes: row.notes,
     dueOn: row.due_on,
+    briefId: row.brief_id || null,
     fixture: flag(row.fixture),
     createdAt: row.created_at,
     updatedAt: row.updated_at,
@@ -190,18 +215,33 @@ async function seedFixtures(db, today, nowIso) {
     await run(
       db,
       `INSERT OR IGNORE INTO calendar_items
-        (id, store_id, title, starts_on, ends_on, channel, owner, status, notes, fixture, created_at, updated_at)
-       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 1, ?, ?)`,
-      item.id, item.storeId, item.title, item.startsOn, item.endsOn, item.channel, item.owner, item.status, item.notes, nowIso, nowIso,
+        (id, store_id, title, starts_on, ends_on, channel, owner, status, notes, kind, channels, goal, offer_link, creative_request, subject, formats, pipeline, caption, fixture, created_at, updated_at)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 1, ?, ?)`,
+      item.id, item.storeId, item.title, item.startsOn, item.endsOn, item.channel, item.owner, item.status, item.notes,
+      item.kind || "note",
+      JSON.stringify(item.channels || (item.channel ? [item.channel] : [])),
+      item.goal || "",
+      item.offerLink || "",
+      item.creativeRequest || "",
+      item.subject || "",
+      JSON.stringify(item.formats || []),
+      item.pipeline || "",
+      item.caption || "",
+      nowIso, nowIso,
     );
   }
   for (const item of records.shoots) {
     await run(
       db,
       `INSERT OR IGNORE INTO shoots
-        (id, store_id, shoot_on, start_time, end_time, shooter, location, brief, status, fixture, created_at, updated_at)
-       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 1, ?, ?)`,
-      item.id, item.storeId, item.shootOn, item.startTime, item.endTime, item.shooter, item.location, item.brief, item.status, nowIso, nowIso,
+        (id, store_id, shoot_on, start_time, end_time, shooter, location, brief, status, duration_min, shot_list, window_start, window_end, fixture, created_at, updated_at)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 1, ?, ?)`,
+      item.id, item.storeId, item.shootOn, item.startTime, item.endTime, item.shooter, item.location, item.brief, item.status,
+      item.durationMin || 60,
+      JSON.stringify(item.shotList || []),
+      item.windowStart || null,
+      item.windowEnd || null,
+      nowIso, nowIso,
     );
   }
   for (const item of records.events) {
@@ -226,10 +266,52 @@ async function seedFixtures(db, today, nowIso) {
     await run(
       db,
       `INSERT OR IGNORE INTO approvals
-        (id, title, store_id, kind, requested_by, status, notes, due_on, fixture, created_at, updated_at)
-       VALUES (?, ?, ?, ?, ?, ?, ?, ?, 1, ?, ?)`,
-      item.id, item.title, item.storeId, item.kind, item.requestedBy, item.status, item.notes, item.dueOn, nowIso, nowIso,
+        (id, title, store_id, kind, requested_by, status, notes, due_on, brief_id, fixture, created_at, updated_at)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 1, ?, ?)`,
+      item.id, item.title, item.storeId, item.kind, item.requestedBy, item.status, item.notes, item.dueOn, item.briefId || null, nowIso, nowIso,
     );
+  }
+  for (const item of records.jobs || []) {
+    await run(
+      db,
+      `INSERT OR IGNORE INTO jobs
+        (id, brief_id, role, assignee, title, status, due_on, notes, caption_draft, asset_urls, fixture, created_at, updated_at)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 1, ?, ?)`,
+      item.id, item.briefId, item.role, item.assignee, item.title, item.status, item.dueOn || null, item.notes || "", item.captionDraft || "", JSON.stringify(item.assetUrls || []), nowIso, nowIso,
+    );
+  }
+  for (const item of records.assets || []) {
+    await run(
+      db,
+      `INSERT OR IGNORE INTO assets
+        (id, store_id, subject, format, source, url, shoot_id, fixture, created_at)
+       VALUES (?, ?, ?, ?, ?, ?, ?, 1, ?)`,
+      item.id, item.storeId, item.subject, item.format, item.source, item.url || "", item.shootId || null, nowIso,
+    );
+  }
+  for (const plan of records.quarters || []) {
+    await run(
+      db,
+      `INSERT OR IGNORE INTO quarter_plans (id, store_id, quarter, theme, notes, fixture, created_at, updated_at)
+       VALUES (?, ?, ?, ?, ?, 1, ?, ?)`,
+      plan.id, plan.storeId, plan.quarter, plan.theme, plan.notes, nowIso, nowIso,
+    );
+    for (const month of plan.months) {
+      await run(
+        db,
+        `INSERT OR IGNORE INTO quarter_months (id, plan_id, month, theme, program_name, notes)
+         VALUES (?, ?, ?, ?, ?, ?)`,
+        `${plan.id}-${month.month}`, plan.id, month.month, month.theme, month.programName || "", month.notes || "",
+      );
+    }
+    for (const slot of plan.slots) {
+      await run(
+        db,
+        `INSERT OR IGNORE INTO post_slots (id, plan_id, month, channel, target_count)
+         VALUES (?, ?, ?, ?, ?)`,
+        `${plan.id}-${slot.month}-${slot.channel}`, plan.id, slot.month, slot.channel, slot.targetCount,
+      );
+    }
   }
 }
 
@@ -347,7 +429,7 @@ export async function listRollouts(db, month) {
 }
 
 export async function fixtureRowCount(db) {
-  const tables = ["calendar_items", "shoots", "events", "tasks", "approvals", "rollouts"];
+  const tables = ["calendar_items", "shoots", "events", "tasks", "approvals", "rollouts", "jobs", "quarter_plans", "assets"];
   let total = 0;
   for (const table of tables) {
     const row = await first(db, `SELECT COUNT(*) AS n FROM ${table} WHERE fixture = 1`);
@@ -367,6 +449,14 @@ export async function clearFixtures(db) {
   await run(db, "DELETE FROM events WHERE fixture = 1");
   await run(db, "DELETE FROM tasks WHERE fixture = 1");
   await run(db, "DELETE FROM approvals WHERE fixture = 1");
+  await run(db, "DELETE FROM jobs WHERE fixture = 1");
+  await run(db, "DELETE FROM assets WHERE fixture = 1");
+  const plans = await all(db, "SELECT id FROM quarter_plans WHERE fixture = 1");
+  for (const plan of plans) {
+    await run(db, "DELETE FROM quarter_months WHERE plan_id = ?", plan.id);
+    await run(db, "DELETE FROM post_slots WHERE plan_id = ?", plan.id);
+  }
+  await run(db, "DELETE FROM quarter_plans WHERE fixture = 1");
   await run(db, "UPDATE planner_meta SET value = 'cleared' WHERE key = 'seeded'");
 }
 
@@ -378,9 +468,19 @@ export async function insertCalendar(db, item) {
   await run(
     db,
     `INSERT INTO calendar_items
-      (id, store_id, title, starts_on, ends_on, channel, owner, status, notes, fixture, created_at, updated_at)
-     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 0, ?, ?)`,
-    item.id, item.storeId, item.title, item.startsOn, item.endsOn, item.channel, item.owner, item.status, item.notes, item.nowIso, item.nowIso,
+      (id, store_id, title, starts_on, ends_on, channel, owner, status, notes, kind, channels, goal, offer_link, creative_request, subject, formats, pipeline, caption, fixture, created_at, updated_at)
+     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 0, ?, ?)`,
+    item.id, item.storeId, item.title, item.startsOn, item.endsOn, item.channel, item.owner, item.status, item.notes,
+    item.kind || "note",
+    JSON.stringify(item.channels || []),
+    item.goal || "",
+    item.offerLink || "",
+    item.creativeRequest || "",
+    item.subject || "",
+    JSON.stringify(item.formats || []),
+    item.pipeline || "",
+    item.caption || "",
+    item.nowIso, item.nowIso,
   );
   return mapCalendar(await first(db, "SELECT * FROM calendar_items WHERE id = ?", item.id));
 }
@@ -390,9 +490,19 @@ export async function updateCalendar(db, id, item) {
   await run(
     db,
     `UPDATE calendar_items
-     SET store_id = ?, title = ?, starts_on = ?, ends_on = ?, channel = ?, owner = ?, status = ?, notes = ?, updated_at = ?
+     SET store_id = ?, title = ?, starts_on = ?, ends_on = ?, channel = ?, owner = ?, status = ?, notes = ?,
+         kind = ?, channels = ?, goal = ?, offer_link = ?, creative_request = ?, subject = ?, formats = ?, caption = ?, updated_at = ?
      WHERE id = ?`,
-    item.storeId, item.title, item.startsOn, item.endsOn, item.channel, item.owner, item.status, item.notes, item.nowIso, id,
+    item.storeId, item.title, item.startsOn, item.endsOn, item.channel, item.owner, item.status, item.notes,
+    item.kind || "note",
+    JSON.stringify(item.channels || []),
+    item.goal || "",
+    item.offerLink || "",
+    item.creativeRequest || "",
+    item.subject || "",
+    JSON.stringify(item.formats || []),
+    item.caption || "",
+    item.nowIso, id,
   );
   return mapCalendar(await first(db, "SELECT * FROM calendar_items WHERE id = ?", id));
 }
@@ -408,9 +518,14 @@ export async function insertShoot(db, item) {
   await run(
     db,
     `INSERT INTO shoots
-      (id, store_id, shoot_on, start_time, end_time, shooter, location, brief, status, fixture, created_at, updated_at)
-     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 0, ?, ?)`,
-    item.id, item.storeId, item.shootOn, item.startTime, item.endTime, item.shooter, item.location, item.brief, item.status, item.nowIso, item.nowIso,
+      (id, store_id, shoot_on, start_time, end_time, shooter, location, brief, status, duration_min, shot_list, window_start, window_end, fixture, created_at, updated_at)
+     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 0, ?, ?)`,
+    item.id, item.storeId, item.shootOn, item.startTime, item.endTime, item.shooter, item.location, item.brief, item.status,
+    item.durationMin || 60,
+    JSON.stringify(item.shotList || []),
+    item.windowStart || null,
+    item.windowEnd || null,
+    item.nowIso, item.nowIso,
   );
   return mapShoot(await first(db, "SELECT * FROM shoots WHERE id = ?", item.id));
 }
@@ -525,4 +640,216 @@ export async function updateStep(db, storeId, month, stepKey, item) {
   const rows = await listRollouts(db, month);
   const rollout = rows.find((row) => row.storeId === storeId);
   return rollout ? rollout.steps.find((step) => step.stepKey === stepKey) : null;
+}
+
+function mapJob(row) {
+  return {
+    id: row.id,
+    briefId: row.brief_id,
+    role: row.role,
+    assignee: row.assignee,
+    title: row.title,
+    status: row.status,
+    dueOn: row.due_on,
+    notes: row.notes,
+    captionDraft: row.caption_draft,
+    assetUrls: parseList(row.asset_urls),
+    fixture: flag(row.fixture),
+    createdAt: row.created_at,
+    updatedAt: row.updated_at,
+  };
+}
+
+function mapAsset(row) {
+  return {
+    id: row.id,
+    storeId: row.store_id,
+    subject: row.subject,
+    format: row.format,
+    source: row.source,
+    url: row.url,
+    shootId: row.shoot_id,
+    fixture: flag(row.fixture),
+    createdAt: row.created_at,
+  };
+}
+
+export async function listBriefs(db) {
+  const rows = await all(db, "SELECT * FROM calendar_items WHERE kind = 'post' ORDER BY starts_on, title");
+  return rows.map(mapCalendar);
+}
+
+export async function getCalendarItem(db, id) {
+  const row = await first(db, "SELECT * FROM calendar_items WHERE id = ?", id);
+  return row ? mapCalendar(row) : null;
+}
+
+export async function listJobs(db, assignee) {
+  const rows = assignee
+    ? await all(db, "SELECT * FROM jobs WHERE assignee = ? ORDER BY due_on, title", assignee)
+    : await all(db, "SELECT * FROM jobs ORDER BY assignee, due_on, title");
+  return rows.map(mapJob);
+}
+
+export async function getJob(db, id) {
+  const row = await first(db, "SELECT * FROM jobs WHERE id = ?", id);
+  return row ? mapJob(row) : null;
+}
+
+export async function insertJob(db, item) {
+  await run(
+    db,
+    `INSERT INTO jobs
+      (id, brief_id, role, assignee, title, status, due_on, notes, caption_draft, asset_urls, fixture, created_at, updated_at)
+     VALUES (?, ?, ?, ?, ?, 'requested', ?, '', '', '[]', 0, ?, ?)`,
+    item.id, item.briefId, item.role, item.assignee, item.title, item.dueOn || null, item.nowIso, item.nowIso,
+  );
+  return mapJob(await first(db, "SELECT * FROM jobs WHERE id = ?", item.id));
+}
+
+export async function deliverJob(db, id, item) {
+  if (!(await first(db, "SELECT id FROM jobs WHERE id = ?", id))) throw new HttpError(404, "not found");
+  await run(
+    db,
+    `UPDATE jobs
+     SET status = 'delivered', caption_draft = ?, asset_urls = ?, notes = ?, updated_at = ?
+     WHERE id = ?`,
+    item.captionDraft || "",
+    JSON.stringify(item.assetUrls || []),
+    item.notes || "",
+    item.nowIso,
+    id,
+  );
+  return mapJob(await first(db, "SELECT * FROM jobs WHERE id = ?", id));
+}
+
+export async function insertAsset(db, item) {
+  await run(
+    db,
+    `INSERT INTO assets (id, store_id, subject, format, source, url, shoot_id, fixture, created_at)
+     VALUES (?, ?, ?, ?, ?, ?, ?, 0, ?)`,
+    item.id, item.storeId, item.subject, item.format, item.source, item.url || "", item.shootId || null, item.nowIso,
+  );
+  return mapAsset(await first(db, "SELECT * FROM assets WHERE id = ?", item.id));
+}
+
+export async function listAssets(db) {
+  const rows = await all(db, "SELECT * FROM assets ORDER BY created_at");
+  return rows.map(mapAsset);
+}
+
+export async function listShootsAll(db) {
+  const rows = await all(db, "SELECT * FROM shoots ORDER BY shoot_on");
+  return rows.map(mapShoot);
+}
+
+export async function setBriefQueued(db, id, peId, caption, nowIso) {
+  await run(
+    db,
+    `UPDATE calendar_items
+     SET postengine_post_id = ?, pipeline = 'queued', caption = ?, updated_at = ?
+     WHERE id = ?`,
+    peId, caption || "", nowIso, id,
+  );
+  return getCalendarItem(db, id);
+}
+
+export async function setBriefPipeline(db, id, pipeline, nowIso) {
+  await run(db, "UPDATE calendar_items SET pipeline = ?, updated_at = ? WHERE id = ?", pipeline, nowIso, id);
+  return getCalendarItem(db, id);
+}
+
+export async function ensureCreativeApproval(db, brief, caption, nowIso) {
+  const existing = await first(db, "SELECT * FROM approvals WHERE brief_id = ?", brief.id);
+  if (existing) {
+    await run(
+      db,
+      "UPDATE approvals SET notes = ?, status = CASE WHEN status = 'approved' THEN status ELSE 'pending' END, updated_at = ? WHERE id = ?",
+      caption || existing.notes,
+      nowIso,
+      existing.id,
+    );
+    return mapApproval(await first(db, "SELECT * FROM approvals WHERE id = ?", existing.id));
+  }
+  const id = crypto.randomUUID();
+  await run(
+    db,
+    `INSERT INTO approvals
+      (id, title, store_id, kind, requested_by, status, notes, due_on, brief_id, fixture, created_at, updated_at)
+     VALUES (?, ?, ?, 'creative', 'Daisy', 'pending', ?, ?, ?, 0, ?, ?)`,
+    id,
+    brief.title,
+    brief.storeId,
+    caption || "",
+    brief.startsOn,
+    brief.id,
+    nowIso,
+    nowIso,
+  );
+  return mapApproval(await first(db, "SELECT * FROM approvals WHERE id = ?", id));
+}
+
+export async function listQuarterBundle(db, quarter) {
+  const plans = await all(
+    db,
+    `SELECT quarter_plans.* FROM quarter_plans
+     JOIN stores ON stores.id = quarter_plans.store_id
+     WHERE quarter_plans.quarter = ?
+     ORDER BY stores.sort_order`,
+    quarter,
+  );
+  const out = [];
+  for (const plan of plans) {
+    const months = await all(db, "SELECT * FROM quarter_months WHERE plan_id = ? ORDER BY month", plan.id);
+    const slots = await all(db, "SELECT * FROM post_slots WHERE plan_id = ? ORDER BY month, channel", plan.id);
+    out.push({
+      id: plan.id,
+      storeId: plan.store_id,
+      quarter: plan.quarter,
+      theme: plan.theme,
+      notes: plan.notes,
+      fixture: flag(plan.fixture),
+      months: months.map((month) => ({
+        month: month.month,
+        theme: month.theme,
+        programName: month.program_name,
+        notes: month.notes,
+      })),
+      slots: slots.map((slot) => ({
+        month: slot.month,
+        channel: slot.channel,
+        targetCount: Number(slot.target_count),
+      })),
+    });
+  }
+  return out;
+}
+
+export async function replaceQuarter(db, plan, nowIso) {
+  const id = plan.id || `qp-${plan.storeId}-${plan.quarter}`;
+  await run(db, "DELETE FROM quarter_months WHERE plan_id = ?", id);
+  await run(db, "DELETE FROM post_slots WHERE plan_id = ?", id);
+  await run(db, "DELETE FROM quarter_plans WHERE id = ?", id);
+  await run(
+    db,
+    `INSERT INTO quarter_plans (id, store_id, quarter, theme, notes, fixture, created_at, updated_at)
+     VALUES (?, ?, ?, ?, ?, 0, ?, ?)`,
+    id, plan.storeId, plan.quarter, plan.theme || "", plan.notes || "", nowIso, nowIso,
+  );
+  for (const month of plan.months || []) {
+    await run(
+      db,
+      `INSERT INTO quarter_months (id, plan_id, month, theme, program_name, notes) VALUES (?, ?, ?, ?, ?, ?)`,
+      `${id}-${month.month}`, id, month.month, month.theme || "", month.programName || "", month.notes || "",
+    );
+  }
+  for (const slot of plan.slots || []) {
+    await run(
+      db,
+      `INSERT INTO post_slots (id, plan_id, month, channel, target_count) VALUES (?, ?, ?, ?, ?)`,
+      `${id}-${slot.month}-${slot.channel}`, id, slot.month, slot.channel, slot.targetCount,
+    );
+  }
+  const rows = await listQuarterBundle(db, plan.quarter);
+  return rows.find((row) => row.id === id) || null;
 }

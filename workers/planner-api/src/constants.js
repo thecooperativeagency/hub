@@ -35,6 +35,28 @@ export const EVENT_DECISION = ["pending", "yes", "no"];
 export const APPROVAL_STATUS = ["pending", "approved", "changes", "declined"];
 export const APPROVAL_KIND = ["creative", "publish", "sponsorship", "program", "other"];
 
+export const JOB_ROLES = [
+  { role: "design", assignee: "Eleanor", label: "Design / look" },
+  { role: "copy", assignee: "Frances", label: "Copy / captions" },
+  { role: "photo", assignee: "Ansel", label: "Photo and video edit" },
+  { role: "video", assignee: "Steve", label: "Video" },
+  { role: "shoot", assignee: "Lance", label: "Shoot" },
+];
+
+export const CREATIVE_ROLES = JOB_ROLES.filter((role) => role.role !== "shoot");
+
+export const BOT_ASSIGNEES = {
+  eleanor: "Eleanor",
+  frances: "Frances",
+  ansel: "Ansel",
+  steve: "Steve",
+  lance: "Lance",
+};
+
+export const JOB_STATUS = ["requested", "in_progress", "delivered", "approved"];
+export const ASSET_FORMATS = ["photo", "reel"];
+export const PIPELINE = ["brief", "creative", "approved", "queued", "published"];
+
 export const STORES = [
   {
     id: "bhbmw",

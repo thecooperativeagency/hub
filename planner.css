@@ -331,6 +331,31 @@ dialog {
 }
 dialog::backdrop { background: rgba(0, 0, 0, 0.45); }
 
+.quarter-grid, .need-grid { display: grid; gap: 0.8rem; }
+.quarter-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.month-pills { display: flex; flex-wrap: wrap; gap: 0.45rem; margin-top: 0.7rem; }
+.month-pill {
+  border: 1px solid var(--line);
+  background: var(--soft);
+  padding: 0.4rem 0.5rem;
+  min-width: 8rem;
+  font-size: 0.82rem;
+}
+.month-pill strong { display: block; font-weight: 600; }
+.block {
+  margin: 0.25rem 0 0;
+  color: var(--alert);
+  font-size: 0.82rem;
+}
+.job {
+  border-top: 1px solid var(--line);
+  padding: 0.45rem 0;
+  display: grid;
+  gap: 0.15rem;
+}
+.job .btn { width: auto; justify-self: start; }
+.covered { color: #333; }
+
 .foot {
   margin-top: 2.5rem;
   padding-top: 0.8rem;
@@ -350,7 +375,7 @@ dialog::backdrop { background: rgba(0, 0, 0, 0.45); }
 }
 @media (max-width: 680px) {
   .page { width: min(100% - 1.4rem, 1180px); }
-  .month-layout, .card-grid, .owner-grid { grid-template-columns: 1fr; }
+  .month-layout, .card-grid, .owner-grid, .quarter-grid { grid-template-columns: 1fr; }
   .cal { gap: 2px; }
   .cell { min-height: 4.6rem; padding: 0.2rem; }
   .chip { font-size: 0.6rem; }

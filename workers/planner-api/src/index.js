@@ -1,6 +1,7 @@
 import { identify } from "./auth.js";
 import {
   CHANNELS,
+  JOB_ROLES,
   OWNERS,
   STEPS,
   storeById,
@@ -8,22 +9,36 @@ import {
 import {
   clearFixtures,
   deleteById,
+  deliverJob,
+  ensureCreativeApproval,
   ensureRollouts,
   fixtureRowCount,
+  getCalendarItem,
+  getJob,
   insertApproval,
+  insertAsset,
   insertCalendar,
   insertEvent,
+  insertJob,
   insertShoot,
   insertTask,
   listApprovals,
+  listAssets,
+  listBriefs,
   listCalendar,
   listEvents,
+  listJobs,
+  listQuarterBundle,
   listRollouts,
   listShoots,
+  listShootsAll,
   listStores,
   listTasks,
   rangeFor,
   ready,
+  replaceQuarter,
+  setBriefPipeline,
+  setBriefQueued,
   updateApproval,
   updateCalendar,
   updateEvent,
@@ -33,10 +48,42 @@ import {
   updateStoreCadence,
   updateTask,
 } from "./data.js";
+import { annotateChain, nextQuarter, previousQuarter, quarterMonths, quarterOf, rollQuarter, templateQuarter } from "./derive.js";
 import { CORS, HttpError, json, readBody } from "./http.js";
 import { loadPosting } from "./posting.js";
+import { peWriteEnabled, queueDraft } from "./postengine-write.js";
 import { chicagoNow, zonedParts } from "./time.js";
 import { choice, channel, clock, day, enums, monthKey, owner, recordId, storeId, text } from "./validate.js";
+
+function stringList(value) {
+  if (Array.isArray(value)) return value.map((item) => String(item).trim()).filter(Boolean);
+  if (typeof value === "string" && value.trim()) return value.split(",").map((item) => item.trim()).filter(Boolean);
+  return [];
+}
+
+function formatsOf(value) {
+  const list = stringList(value);
+  if (list.some((item) => item !== "photo" && item !== "reel")) throw new HttpError(400, "formats must be photo or reel");
+  return list;
+}
+
+function channelsOf(value, primary) {
+  const list = stringList(value);
+  if (!list.length && primary) return [primary];
+  for (const item of list) channel(item);
+  return list;
+}
+
+function assetUrlsOf(value) {
+  const list = Array.isArray(value) ? value : [];
+  if (list.length > 12) throw new HttpError(400, "too many asset urls");
+  return list.map((url) => {
+    if (typeof url !== "string" || !/^https?:\/\//.test(url) && !url.startsWith("sample://")) {
+      throw new HttpError(400, "asset url must be http(s) or a sample link");
+    }
+    return url.trim();
+  });
+}
 
 const STEP_KEYS = new Set(STEPS.map((step) => step.key));
 
@@ -82,12 +129,53 @@ async function bundle(env, fetchImpl, monthValue) {
   });
   const range = rangeFor(month);
   const posts = posting.posts.filter((post) => post.date >= range.from && post.date <= range.to);
+  const briefs = await listBriefs(env.DB);
+  const jobs = await listJobs(env.DB);
+  const assets = await listAssets(env.DB);
+  const allShoots = await listShootsAll(env.DB);
+  const approvals = await listApprovals(env.DB);
+  const pePosts = posting.posts
+    .filter((post) => post.source === "postengine")
+    .map((post) => ({
+      peId: String(post.id).replace(/^postengine:/, "").replace(/^fixture:postengine:/, ""),
+      status: post.status,
+    }));
+  const chain = annotateChain({
+    posts: briefs,
+    assets,
+    shoots: allShoots,
+    jobs,
+    approvals,
+    pePosts,
+    peWriteEnabled: peWriteEnabled(env),
+  });
+  const stageById = new Map(chain.posts.map((post) => [post.id, post]));
+  const quarter = quarterOf(zoned.month);
+  const qMonths = quarterMonths(quarter);
+  const plans = await listQuarterBundle(env.DB, quarter);
+  const events = await listEvents(env.DB);
+  const quarterPlans = plans.map((plan) => ({
+    ...plan,
+    months: plan.months.map((month) => ({ ...month })),
+    slots: plan.slots.map((slot) => ({
+      ...slot,
+      filled: briefs.filter((brief) => brief.storeId === plan.storeId
+        && brief.startsOn.slice(0, 7) === slot.month
+        && (brief.channels.includes(slot.channel) || brief.channel === slot.channel)).length,
+    })),
+    events: events.filter((event) => event.storeId === plan.storeId && event.startsOn && qMonths.includes(event.startsOn.slice(0, 7))),
+  }));
   return {
     zoned,
     nowIso,
     month,
     range,
     stores,
+    quarter: { quarter, months: qMonths, next: nextQuarter(quarter), plans: quarterPlans },
+    needs: chain.needs,
+    suggestedShoots: chain.suggestedShoots,
+    jobs: chain.jobs,
+    peWrite: peWriteEnabled(env),
     posting: {
       mode: posting.mode,
       zernio: posting.zernio,
@@ -96,7 +184,10 @@ async function bundle(env, fetchImpl, monthValue) {
       stores: posting.stores,
     },
     posts,
-    calendar: await listCalendar(env.DB, range.from, range.to),
+    calendar: (await listCalendar(env.DB, range.from, range.to)).map((item) => {
+      const stage = stageById.get(item.id);
+      return stage ? { ...item, stage: stage.stage, blockedBy: stage.blockedBy, approvalId: stage.approvalId } : item;
+    }),
     shoots: await listShoots(env.DB, range.from, range.to),
     rollouts: await listRollouts(env.DB, month),
     events: await listEvents(env.DB),
@@ -107,15 +198,28 @@ async function bundle(env, fetchImpl, monthValue) {
 }
 
 function calendarInput(body, nowIso) {
+  const kind = choice(body.kind, ["note", "post"], "kind", "note");
+  const primary = channel(body.channel);
+  const channels = channelsOf(body.channels, primary);
+  const subject = text(body.subject, 180, { name: "subject", required: kind === "post" });
   return {
     storeId: storeId(body.storeId, { required: true }),
     title: text(body.title, 180, { required: true, name: "title" }),
     startsOn: day(body.startsOn, { required: true, name: "startsOn" }),
     endsOn: day(body.endsOn, { name: "endsOn" }),
-    channel: channel(body.channel),
+    channel: primary || channels[0] || null,
+    channels,
     owner: owner(body.owner, false),
     status: choice(body.status, enums.calendar, "status", "planned"),
     notes: text(body.notes, 2000, { name: "notes" }),
+    kind,
+    goal: text(body.goal, 500, { name: "goal" }),
+    offerLink: text(body.offerLink, 300, { name: "offerLink" }),
+    creativeRequest: text(body.creativeRequest, 2000, { name: "creativeRequest" }),
+    subject,
+    formats: formatsOf(body.formats),
+    pipeline: kind === "post" ? "brief" : "",
+    caption: text(body.caption, 2000, { name: "caption" }),
     nowIso,
   };
 }
@@ -174,6 +278,26 @@ function approvalInput(body, nowIso) {
   };
 }
 
+async function queueApprovedBrief(env, fetchImpl, approval, nowIso) {
+  const brief = await getCalendarItem(env.DB, approval.briefId);
+  if (!brief) return { queued: false, reason: "missing_brief" };
+  const jobs = await listJobs(env.DB);
+  const copy = jobs.find((job) => job.briefId === brief.id && job.role === "copy" && job.captionDraft);
+  const caption = (copy && copy.captionDraft) || brief.caption || approval.notes || "";
+  const assetUrls = [...new Set(jobs.filter((job) => job.briefId === brief.id).flatMap((job) => job.assetUrls || []))];
+  const store = storeById(brief.storeId);
+  try {
+    const result = await queueDraft({ env, fetchImpl, brief, store, caption, assetUrls });
+    if (result.queued) await setBriefQueued(env.DB, brief.id, result.id, caption, nowIso);
+    else await setBriefPipeline(env.DB, brief.id, "approved", nowIso);
+    return result;
+  } catch (err) {
+    await setBriefPipeline(env.DB, brief.id, "approved", nowIso);
+    console.log(JSON.stringify({ level: "warn", source: "postengine-import", message: String(err && err.message || err) }));
+    return { queued: false, reason: "upstream" };
+  }
+}
+
 async function route(request, env, fetchImpl) {
   const url = new URL(request.url);
   const path = url.pathname.replace(/\/+$/, "") || "/";
@@ -197,6 +321,11 @@ async function route(request, env, fetchImpl) {
 
   const auth = await identify(request, env);
   if (!auth.ok) return json({ error: "unauthorized" }, 401);
+  const deliverMatch = path.match(/^\/api\/planner\/jobs\/([^/]+)\/deliver$/);
+  if (auth.mode === "bot") {
+    const allowed = (path === "/api/planner/jobs" && request.method === "GET") || (deliverMatch && request.method === "POST");
+    if (!allowed) return json({ error: "forbidden" }, 403);
+  }
 
   const { nowIso } = clockFrom(env);
 
@@ -217,9 +346,15 @@ async function route(request, env, fetchImpl) {
       owners: OWNERS,
       channels: CHANNELS,
       steps: STEPS,
+      roles: JOB_ROLES,
+      peWrite: data.peWrite,
       posting: data.posting,
       posts: data.posts,
       calendar: data.calendar,
+      quarter: data.quarter,
+      needs: data.needs,
+      suggestedShoots: data.suggestedShoots,
+      jobs: data.jobs,
       shoots: data.shoots,
       rollouts: data.rollouts,
       events: data.events,
@@ -286,6 +421,139 @@ async function route(request, env, fetchImpl) {
     return json({ ok: true, rollout });
   }
 
+  if (path === "/api/planner/jobs" && request.method === "GET") {
+    await ready(env, nowIso, clockFrom(env).zoned.date);
+    const requested = url.searchParams.get("assignee") || "";
+    if (auth.mode === "bot" && requested && requested !== auth.assignee) return json({ error: "forbidden" }, 403);
+    const assignee = auth.mode === "bot" ? auth.assignee : (requested || null);
+    const jobs = await listJobs(env.DB, assignee);
+    const briefs = await listBriefs(env.DB);
+    const chain = annotateChain({
+      posts: briefs,
+      assets: await listAssets(env.DB),
+      shoots: await listShootsAll(env.DB),
+      jobs,
+      approvals: await listApprovals(env.DB),
+      pePosts: [],
+      peWriteEnabled: peWriteEnabled(env),
+    });
+    return json({ ok: true, assignee: assignee || null, jobs: chain.jobs });
+  }
+
+  if (deliverMatch && request.method === "POST") {
+    await ready(env, nowIso, clockFrom(env).zoned.date);
+    const id = recordId(decodeURIComponent(deliverMatch[1]));
+    const job = await getJob(env.DB, id);
+    if (!job) return json({ error: "not found" }, 404);
+    if (auth.mode === "bot" && job.assignee !== auth.assignee) return json({ error: "forbidden" }, 403);
+    const body = await readBody(request);
+    const delivered = await deliverJob(env.DB, id, {
+      captionDraft: text(body.captionDraft, 2000, { name: "captionDraft" }),
+      assetUrls: assetUrlsOf(body.assetUrls),
+      notes: text(body.note || body.notes, 2000, { name: "note" }),
+      nowIso,
+    });
+    const brief = await getCalendarItem(env.DB, job.briefId);
+    if (brief && delivered.role === "shoot") {
+      for (const format of brief.formats.length ? brief.formats : ["photo"]) {
+        await insertAsset(env.DB, {
+          id: crypto.randomUUID(),
+          storeId: brief.storeId,
+          subject: brief.subject || brief.title,
+          format,
+          source: "delivered",
+          url: delivered.assetUrls[0] || "",
+          shootId: null,
+          nowIso,
+        });
+      }
+    }
+    if (brief) {
+      const siblings = await listJobs(env.DB);
+      const creative = siblings.filter((item) => item.briefId === brief.id && item.role !== "shoot");
+      const ready = creative.length && creative.every((item) => item.status === "delivered" || item.status === "approved");
+      if (ready) {
+        const caption = creative.find((item) => item.role === "copy" && item.captionDraft)?.captionDraft
+          || delivered.captionDraft
+          || brief.caption;
+        await ensureCreativeApproval(env.DB, brief, caption, nowIso);
+      }
+    }
+    log({ msg: "planner.deliver", id, who: auth.who });
+    return json({ ok: true, job: delivered });
+  }
+
+  const jobsForBrief = path.match(/^\/api\/planner\/calendar\/([^/]+)\/jobs$/);
+  if (jobsForBrief && request.method === "POST") {
+    if (auth.mode === "bot") return json({ error: "forbidden" }, 403);
+    await ready(env, nowIso, clockFrom(env).zoned.date);
+    const brief = await getCalendarItem(env.DB, recordId(decodeURIComponent(jobsForBrief[1])));
+    if (!brief || brief.kind !== "post") return json({ error: "not found" }, 404);
+    const existing = (await listJobs(env.DB)).filter((job) => job.briefId === brief.id);
+    const created = [];
+    for (const role of JOB_ROLES) {
+      if (existing.some((job) => job.role === role.role)) continue;
+      created.push(await insertJob(env.DB, {
+        id: crypto.randomUUID(),
+        briefId: brief.id,
+        role: role.role,
+        assignee: role.assignee,
+        title: `${brief.title} · ${role.label}`,
+        dueOn: brief.startsOn,
+        nowIso,
+      }));
+    }
+    log({ msg: "planner.jobs", id: brief.id, who: auth.who, count: created.length });
+    return json({ ok: true, jobs: created }, 201);
+  }
+
+  if (path === "/api/planner/quarters/roll" && request.method === "POST") {
+    if (auth.mode === "bot") return json({ error: "forbidden" }, 403);
+    await ready(env, nowIso, clockFrom(env).zoned.date);
+    const body = await readBody(request);
+    const id = storeId(body.storeId, { required: true });
+    const quarter = text(body.quarter, 8, { required: true, name: "quarter" });
+    if (!quarterMonths(quarter).length) throw new HttpError(400, "quarter must be YYYY-Q#");
+    const source = choice(body.source, ["template", "previous"], "source", "template");
+    let plan;
+    if (source === "template") {
+      plan = templateQuarter(id, quarter);
+    } else {
+      const prior = previousQuarter(quarter);
+      const rows = await listQuarterBundle(env.DB, prior);
+      const found = rows.find((row) => row.storeId === id);
+      if (!found) throw new HttpError(400, "no previous quarter to roll");
+      plan = rollQuarter({ ...found, storeId: id, quarter: prior }, quarter);
+    }
+    const saved = await replaceQuarter(env.DB, { ...plan, storeId: id }, nowIso);
+    log({ msg: "planner.quarter", id: `${id}:${quarter}`, who: auth.who, source });
+    return json({ ok: true, plan: saved }, 201);
+  }
+
+  if (path === "/api/planner/shoots/accept" && request.method === "POST") {
+    if (auth.mode === "bot") return json({ error: "forbidden" }, 403);
+    await ready(env, nowIso, clockFrom(env).zoned.date);
+    const body = await readBody(request);
+    const shoot = await insertShoot(env.DB, {
+      id: crypto.randomUUID(),
+      storeId: storeId(body.storeId, { required: true }),
+      shootOn: day(body.shootOn, { required: true, name: "shootOn" }),
+      startTime: clock(body.startTime, "startTime"),
+      endTime: clock(body.endTime, "endTime"),
+      shooter: text(body.shooter, 80, { name: "shooter" }) || "Lance",
+      location: text(body.location, 180, { name: "location" }) || "Lot",
+      brief: text(body.brief, 2000, { name: "brief" }),
+      status: "confirmed",
+      durationMin: Number.isInteger(Number(body.durationMin)) ? Number(body.durationMin) : 60,
+      shotList: Array.isArray(body.shotList) ? body.shotList : [],
+      windowStart: body.windowStart || null,
+      windowEnd: body.windowEnd || null,
+      nowIso,
+    });
+    log({ msg: "planner.write", collection: "shoots", id: shoot.id, who: auth.who, action: "accept" });
+    return json({ ok: true, item: shoot }, 201);
+  }
+
   const collections = {
     "/api/planner/calendar": {
       name: "calendar",
@@ -348,6 +616,10 @@ async function route(request, env, fetchImpl) {
         const item = collection.input(body, nowIso);
         const record = await collection.update(env.DB, id, item);
         log({ msg: "planner.write", collection: collection.name, id, who: auth.who, action: "update" });
+        if (collection.name === "approvals" && record.status === "approved" && record.briefId) {
+          const queued = await queueApprovedBrief(env, fetchImpl, record, nowIso);
+          return json({ ok: true, item: record, postengine: queued });
+        }
         return json({ ok: true, item: record });
       }
       if (request.method === "DELETE") {

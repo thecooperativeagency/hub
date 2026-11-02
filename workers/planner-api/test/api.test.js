@@ -386,6 +386,141 @@ describe("posting health", () => {
   });
 });
 
+describe("pipeline", () => {
+  test("quarter plans, needs, and the bot job queue stay inside the desk", async () => {
+    const { app, env } = boot();
+    const res = await send(app, env, "/api/planner");
+    assert.equal(res.json.quarter.quarter, "2026-Q4");
+    assert.equal(res.json.quarter.plans.length, 5);
+    assert.equal(res.json.peWrite, false);
+    const photo = res.json.needs.find((need) => need.subject === "SAMPLE red coupe" && need.format === "photo");
+    const reel = res.json.needs.find((need) => need.subject === "SAMPLE red coupe" && need.format === "reel");
+    assert.equal(photo.covered, true);
+    assert.equal(photo.coveredBy.source, "drive");
+    assert.equal(reel.covered, false);
+    assert.match(reel.blockedBy[0], /shoot/);
+    const copy = res.json.jobs.find((job) => job.role === "copy");
+    assert.equal(copy.assignee, "Frances");
+    assert.match(copy.blockedBy[0], /reel/);
+    const brief = res.json.calendar.find((item) => item.id === "fx-cal-coupe");
+    assert.equal(brief.kind, "post");
+    assert.equal(brief.goal.length > 0, true);
+  });
+
+  test("roll a quarter from the template", async () => {
+    const { app, env } = boot();
+    const rolled = await send(app, env, "/api/planner/quarters/roll", {
+      method: "POST",
+      body: { storeId: "bmwj", quarter: "2027-Q1", source: "template" },
+    });
+    assert.equal(rolled.status, 201);
+    assert.deepEqual(rolled.json.plan.months.map((month) => month.month), ["2027-01", "2027-02", "2027-03"]);
+    const again = await send(app, env, "/api/planner/quarters/roll", {
+      method: "POST",
+      body: { storeId: "bmwj", quarter: "2027-Q2", source: "previous" },
+    });
+    assert.equal(again.status, 201);
+    assert.equal(again.json.plan.months[0].theme, rolled.json.plan.months[0].theme);
+    assert.equal(again.json.plan.months[0].month, "2027-04");
+  });
+
+  test("bot tokens can poll and deliver only their own jobs", async () => {
+    const { app, env } = boot({
+      PLANNER_PIN: "correct-horse",
+      PLANNER_BOT_TOKENS: JSON.stringify({ frances: "frances-bot", eleanor: "eleanor-bot" }),
+    });
+    const denied = await send(app, env, "/api/planner", { token: "frances-bot" });
+    assert.equal(denied.status, 403);
+    const queue = await send(app, env, "/api/planner/jobs?assignee=Frances", { token: "frances-bot" });
+    assert.equal(queue.status, 200);
+    assert.ok(queue.json.jobs.every((job) => job.assignee === "Frances"));
+    const cross = await send(app, env, "/api/planner/jobs?assignee=Eleanor", { token: "frances-bot" });
+    assert.equal(cross.status, 403);
+    const job = queue.json.jobs[0];
+    const delivered = await send(app, env, `/api/planner/jobs/${job.id}/deliver`, {
+      method: "POST",
+      token: "frances-bot",
+      body: { assetUrls: ["https://example.com/sample-caption.txt"], captionDraft: "SAMPLE caption for the coupe." },
+    });
+    assert.equal(delivered.status, 200);
+    assert.equal(delivered.json.job.status, "delivered");
+    assert.equal(delivered.json.job.captionDraft, "SAMPLE caption for the coupe.");
+    const steal = await send(app, env, `/api/planner/jobs/${job.id}/deliver`, {
+      method: "POST",
+      token: "eleanor-bot",
+      body: { assetUrls: ["https://example.com/nope.txt"], captionDraft: "no" },
+    });
+    assert.equal(steal.status, 403);
+  });
+
+  test("Lance approve does not call PostEngine while the write flag is off", async () => {
+    let called = false;
+    const { app, env } = boot({}, async () => {
+      called = true;
+      throw new Error("should not call");
+    });
+    const res = await send(app, env, "/api/planner/approvals/fx-approval-still", {
+      method: "PATCH",
+      body: {
+        title: "SAMPLE — approve the red coupe still",
+        storeId: "bhbmw",
+        kind: "creative",
+        requestedBy: "Daisy",
+        status: "approved",
+        notes: "Yes, queue it when the flag is on.",
+      },
+    });
+    assert.equal(res.status, 200);
+    assert.equal(res.json.postengine.reason, "write_off");
+    assert.equal(called, false);
+  });
+
+  test("with the write flag on, approve queues a draft and never publishes", async () => {
+    const calls = [];
+    const fetchImpl = async (url, init) => {
+      calls.push({ url: String(url), method: init && init.method, body: init && init.body, headers: init && init.headers });
+      if (String(url).endsWith("/api/import/posts") && init.method === "POST") {
+        return new Response(JSON.stringify({ id: 440, status: "queued" }), { status: 201 });
+      }
+      if (String(url).includes("/api/posts") && (!init || init.method === "GET")) {
+        return new Response(JSON.stringify([]), { status: 200 });
+      }
+      if (String(url).includes("/api/v1/")) {
+        return new Response(JSON.stringify({ posts: [], accounts: [] }), { status: 200 });
+      }
+      throw new Error(`unexpected ${init && init.method} ${url}`);
+    };
+    const { app, env } = boot({
+      PLANNER_PE_WRITE: "1",
+      POSTENGINE_IMPORT_TOKEN: "import-test-token",
+      ZERNIO_API_KEY: "zernio-test-key",
+      POSTENGINE_PIN: "postengine-test-pin",
+    }, fetchImpl);
+    const res = await send(app, env, "/api/planner/approvals/fx-approval-still", {
+      method: "PATCH",
+      body: {
+        title: "SAMPLE — approve the red coupe still",
+        storeId: "bhbmw",
+        kind: "creative",
+        requestedBy: "Daisy",
+        status: "approved",
+        notes: "Queue the draft.",
+      },
+    });
+    assert.equal(res.status, 200);
+    assert.equal(res.json.postengine.queued, true);
+    assert.equal(res.json.postengine.id, "440");
+    const write = calls.find((call) => call.method === "POST");
+    assert.equal(write.url, "https://postengine.thecoopbrla.com/api/import/posts");
+    assert.equal(write.headers.Authorization, "Bearer import-test-token");
+    const body = JSON.parse(write.body);
+    assert.equal(body.status, "queued");
+    assert.equal(body.dealershipId, 2);
+    assert.equal(calls.some((call) => String(call.url).includes("publish")), false);
+    assert.equal(res.text.includes("import-test-token"), false);
+  });
+});
+
 describe("repo guards", () => {
   test("migration matches the worker schema", () => {
     const file = readFileSync(new URL("../migrations/0001_init.sql", import.meta.url), "utf8");
@@ -394,9 +529,15 @@ describe("repo guards", () => {
 
   test("worker source never sends a publish or a non-GET upstream call", () => {
     const posting = readFileSync(new URL("../src/posting.js", import.meta.url), "utf8");
+    const writer = readFileSync(new URL("../src/postengine-write.js", import.meta.url), "utf8");
     assert.doesNotMatch(posting, /publishNow/);
     assert.doesNotMatch(posting, /method:\s*["'](?!GET)[A-Z]+["']/);
     assert.match(posting, /method:\s*"GET"/);
+    assert.match(writer, /\/api\/import\/posts/);
+    assert.doesNotMatch(writer, /publishNow/);
+    assert.doesNotMatch(writer, /\/publish/);
+    assert.doesNotMatch(writer, /bulk-approve/);
+    assert.equal(writer.includes("status: \"queued\""), true);
   });
 
   test("committed planner files do not carry the draft's real items", () => {

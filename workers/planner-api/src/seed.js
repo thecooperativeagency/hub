@@ -1,4 +1,5 @@
-import { STEPS, STORES } from "./constants.js";
+import { JOB_ROLES, STEPS, STORES } from "./constants.js";
+import { quarterOf, templateQuarter } from "./derive.js";
 import { dayInMonth } from "./time.js";
 
 const SAMPLE_NOTE = "Fictional sample. Not a real client item.";
@@ -19,14 +20,39 @@ export function fixtureRecords(today, nowIso) {
     ["fx-cal-walk", "bmwj", "SAMPLE — showroom walk frame", on(12), null, "gbp", "Ansel", "planned"],
     ["fx-cal-desk", "coop", "SAMPLE — agency desk photo", on(4), null, "instagram", "Lance", "planned"],
   ].map(([id, storeId, title, startsOn, endsOn, channel, owner, status]) => ({
-    id, storeId, title, startsOn, endsOn, channel, owner, status, notes: SAMPLE_NOTE, nowIso,
+    id, storeId, title, startsOn, endsOn, channel, owner, status, notes: SAMPLE_NOTE, nowIso, kind: "note",
   }));
 
+  const coupe = calendar.find((item) => item.id === "fx-cal-coupe");
+  Object.assign(coupe, {
+    kind: "post",
+    startsOn: on(8),
+    channels: ["instagram", "facebook"],
+    goal: "SAMPLE — put the coupe on the front line",
+    offerLink: "sample:program/red-coupe",
+    creativeRequest: "SAMPLE — one still and a 15-second walkaround. Caption in our voice.",
+    subject: "SAMPLE red coupe",
+    formats: ["photo", "reel"],
+    pipeline: "creative",
+  });
+  const wagon = calendar.find((item) => item.id === "fx-cal-service");
+  Object.assign(wagon, {
+    kind: "post",
+    startsOn: on(12),
+    channels: ["facebook"],
+    goal: "SAMPLE — service-drive reminder",
+    offerLink: "sample:program/service",
+    creativeRequest: "SAMPLE — a short reel at the service drive.",
+    subject: "SAMPLE silver wagon",
+    formats: ["reel"],
+    pipeline: "brief",
+  });
+
   const shoots = [
-    ["fx-shoot-front", "bhbmw", on(4), "09:00", "12:00", "Lance", "SAMPLE front line", "Fictional shoot. Walk the front line and the service drive.", "confirmed"],
-    ["fx-shoot-travel", "bmwj", on(12), "10:00", "14:00", "Lance", "SAMPLE showroom", "Fictional travel-day shoot.", "planned"],
-  ].map(([id, storeId, shootOn, startTime, endTime, shooter, location, brief, status]) => ({
-    id, storeId, shootOn, startTime, endTime, shooter, location, brief, status, nowIso,
+    ["fx-shoot-front", "bhbmw", on(4), "09:00", "12:00", "Lance", "SAMPLE front line", "Fictional shoot. Reel of the sample red coupe.", "confirmed", 90, [{ subject: "SAMPLE red coupe", format: "reel", key: "bhbmw|sample red coupe|reel" }], on(4), on(7)],
+    ["fx-shoot-travel", "bmwj", on(12), "10:00", "14:00", "Lance", "SAMPLE showroom", "Fictional travel-day shoot.", "planned", 120, [], null, null],
+  ].map(([id, storeId, shootOn, startTime, endTime, shooter, location, brief, status, durationMin, shotList, windowStart, windowEnd]) => ({
+    id, storeId, shootOn, startTime, endTime, shooter, location, brief, status, durationMin, shotList, windowStart, windowEnd, nowIso,
   }));
 
   const events = [
@@ -77,7 +103,8 @@ export function fixtureRecords(today, nowIso) {
       requestedBy: "Daisy",
       status: "pending",
       notes: "Fictional approval. Nothing publishes from this desk.",
-      dueOn: on(4),
+      dueOn: on(8),
+      briefId: "fx-cal-coupe",
       nowIso,
     },
     {
@@ -152,5 +179,39 @@ export function fixtureRecords(today, nowIso) {
     }),
   }));
 
-  return { month, calendar, shoots, events, tasks, approvals, rollouts };
+  const jobs = JOB_ROLES.map((role) => ({
+    id: `fx-job-${role.role}`,
+    briefId: "fx-cal-coupe",
+    role: role.role,
+    assignee: role.assignee,
+    title: `SAMPLE — ${role.label.toLowerCase()} for the red coupe`,
+    status: role.role === "design" ? "in_progress" : "requested",
+    dueOn: on(8),
+    notes: SAMPLE_NOTE,
+    captionDraft: "",
+    assetUrls: [],
+    nowIso,
+  }));
+
+  const assets = [
+    {
+      id: "fx-asset-coupe-photo",
+      storeId: "bhbmw",
+      subject: "SAMPLE red coupe",
+      format: "photo",
+      source: "drive",
+      url: "sample://library/red-coupe-still",
+      nowIso,
+    },
+  ];
+
+  const quarter = quarterOf(today);
+  const quarters = STORES.map((store) => {
+    const plan = templateQuarter(store.id, quarter);
+    const current = plan.months.find((item) => item.month === month);
+    if (current && (store.id === "bhbmw" || store.id === "hp")) current.programName = `SAMPLE — ${label} sheet`;
+    return { ...plan, id: `fx-qp-${store.id}-${quarter}`, nowIso };
+  });
+
+  return { month, calendar, shoots, events, tasks, approvals, rollouts, jobs, assets, quarters };
 }

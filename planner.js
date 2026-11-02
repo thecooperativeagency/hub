@@ -1,7 +1,11 @@
 const KEY = "coop-planner-key";
 const VIEWS = [
   ["desk", "Desk"],
+  ["quarter", "Quarter"],
   ["month", "Month"],
+  ["needs", "Needs"],
+  ["briefs", "Briefs"],
+  ["queue", "Queue"],
   ["week", "Week"],
   ["shoots", "Shoots"],
   ["programs", "Programs"],
@@ -334,7 +338,11 @@ function render() {
   renderBanner();
   const view = {
     desk: renderDesk,
+    quarter: renderQuarter,
     month: renderMonth,
+    needs: renderNeeds,
+    briefs: renderBriefs,
+    queue: renderQueue,
     week: renderWeek,
     shoots: renderShoots,
     programs: renderPrograms,
@@ -471,7 +479,7 @@ function dayCell(cell) {
   const bag = itemsOn(cell.date);
   const chips = [
     ...bag.shoots.map((item) => h("button", { type: "button", class: "chip shoot", onClick: (event) => { event.stopPropagation(); editShoot(item); } }, item.location || item.brief || "Shoot")),
-    ...bag.planned.map((item) => h("button", { type: "button", class: "chip", onClick: (event) => { event.stopPropagation(); editCalendar(item); } }, item.title.replace(/^SAMPLE — /, ""))),
+        ...bag.planned.map((item) => h("button", { type: "button", class: "chip", onClick: (event) => { event.stopPropagation(); editCalendar(item); } }, `${item.kind === "post" ? `${item.stage || "brief"} · ` : ""}${item.title.replace(/^SAMPLE — /, "")}`)),
     ...bag.posts.map((item) => h("button", { type: "button", class: "chip engine", onClick: (event) => { event.stopPropagation(); showReadOnly(item); } }, `${(item.channels || []).join(" ") || "Post"} · ${item.title.replace(/^SAMPLE — /, "")}`)),
     ...bag.events.filter((item) => item.decision === "pending").map((item) => h("button", { type: "button", class: "chip event", onClick: (event) => { event.stopPropagation(); setView("events"); } }, "Needs a yes")),
   ];
@@ -514,7 +522,7 @@ function renderWeek() {
       return h("article", { class: date === state.data.today ? "is-today" : "" },
         h("span", { class: "num" }, prettyDay(date)),
         ...bag.shoots.map((item) => h("button", { type: "button", class: "chip shoot", onClick: () => editShoot(item) }, item.location || "Shoot")),
-        ...bag.planned.map((item) => h("button", { type: "button", class: "chip", onClick: () => editCalendar(item) }, item.title.replace(/^SAMPLE — /, ""))),
+        ...bag.planned.map((item) => h("button", { type: "button", class: "chip", onClick: () => editCalendar(item) }, `${item.kind === "post" ? `${item.stage || "brief"} · ` : ""}${item.title.replace(/^SAMPLE — /, "")}`)),
         ...bag.posts.map((item) => h("p", { class: "note" }, item.title.replace(/^SAMPLE — /, ""))),
         h("button", { type: "button", class: "text-button", onClick: () => editCalendar(null, date) }, "Add"));
     }))));
@@ -673,15 +681,24 @@ async function setApproval(item, status) {
   await load();
 }
 
-function editCalendar(item, date) {
+function editCalendar(item, date, forceKind) {
+  const kind = forceKind || (item && item.kind) || "note";
   openEditor({
-    title: item ? "Edit planned item" : "Add planned item",
+    title: item ? (item.kind === "post" ? "Edit post brief" : "Edit planned item") : (kind === "post" ? "Add a post brief" : "Add planned item"),
     fields: [
       storeSelect(item ? item.storeId : state.data.stores[0].id, false),
+      choiceSelect("kind", "Kind", [["note", "Note"], ["post", "Post brief"]], kind),
       { name: "title", label: "Title", value: item ? item.title : "" },
       { name: "startsOn", label: "Date", type: "date", value: item ? item.startsOn : date },
       { name: "endsOn", label: "Through", type: "date", value: item && item.endsOn || "" },
+      { name: "channels", label: "Channels", value: ((item && item.channels) || []).join(", ") },
       channelSelect(item && item.channel),
+      { name: "subject", label: "Subject / vehicle", value: item && item.subject || "" },
+      { name: "formats", label: "Formats (photo, reel)", value: ((item && item.formats) || []).join(", ") },
+      { name: "goal", label: "Goal", value: item && item.goal || "" },
+      { name: "offerLink", label: "Offer or program", value: item && item.offerLink || "" },
+      { name: "creativeRequest", label: "What creative is needed", type: "textarea", value: item && item.creativeRequest || "" },
+      { name: "caption", label: "Caption", type: "textarea", value: item && item.caption || "" },
       ownerSelect("owner", "Owner", item && item.owner, true),
       choiceSelect("status", "Status", CAL_STATUS, item && item.status),
       { name: "notes", label: "Notes", type: "textarea", value: item ? item.notes : "" },
@@ -699,7 +716,7 @@ function editShoot(item) {
       { name: "shootOn", label: "Date", type: "date", value: item ? item.shootOn : state.data.today },
       { name: "startTime", label: "Start", type: "time", value: item && item.startTime || "09:00" },
       { name: "endTime", label: "End", type: "time", value: item && item.endTime || "" },
-      { name: "shooter", label: "Shooter", value: item ? item.shooter : "Lance" },
+      { name: "shooter", label: "Shooter — Lance, store staff, or a freelancer", value: item ? item.shooter : "Lance" },
       { name: "location", label: "Where", value: item ? item.location : "" },
       { name: "brief", label: "Brief", type: "textarea", value: item ? item.brief : "" },
       choiceSelect("status", "Status", SHOOT_STATUS, item && item.status),
@@ -796,6 +813,140 @@ function showReadOnly(item) {
     ],
     onSubmit: async () => {},
   });
+}
+
+function storeLabel(id) {
+  return storeName(id);
+}
+
+function renderQuarter() {
+  const quarter = state.data.quarter;
+  appEl.append(h("section", {},
+    h("div", { class: "section-head" },
+      h("div", {},
+        h("p", { class: "kicker" }, "Planned a quarter at a time"),
+        h("h2", {}, quarter.quarter.replace("-", " "))),
+      h("p", { class: "note" }, "Themes, programs, events, and how many posts each channel should carry. Roll the next quarter from this one or from the template.")),
+    h("div", { class: "quarter-grid" }, ...quarter.plans.map((plan) => h("article", { class: "sheet" },
+      h("p", { class: "kicker" }, storeLabel(plan.storeId)),
+      h("h3", {}, plan.theme || storeLabel(plan.storeId)),
+      plan.notes ? h("p", { class: "note" }, plan.notes) : null,
+      h("div", { class: "month-pills" }, ...plan.months.map((month) => {
+        const slots = plan.slots.filter((slot) => slot.month === month.month);
+        const events = (plan.events || []).filter((event) => event.startsOn && event.startsOn.startsWith(month.month));
+        return h("div", { class: "month-pill" },
+          h("strong", {}, prettyMonth(month.month)),
+          month.theme || "No theme",
+          h("div", {}, month.programName || "No program yet"),
+          h("div", { class: "muted" }, slots.map((slot) => `${slot.channel} ${slot.filled || 0}/${slot.targetCount}`).join(" · ") || "No slots"),
+          events.length ? h("div", {}, events.map((event) => event.title.replace(/^SAMPLE — /, "")).join(", ")) : null);
+      })),
+      h("div", { class: "pager", style: "margin-top:0.8rem" },
+        h("button", { type: "button", class: "btn ghost", onClick: () => rollQuarter(plan.storeId, quarter.next, "previous") }, `Roll to ${quarter.next}`),
+        h("button", { type: "button", class: "btn ghost", onClick: () => rollQuarter(plan.storeId, quarter.next, "template") }, "From template")))))));
+}
+
+async function rollQuarter(storeId, quarter, source) {
+  await api("/api/planner/quarters/roll", { method: "POST", body: { storeId, quarter, source } });
+  await load();
+}
+
+function renderNeeds() {
+  const needs = state.data.needs || [];
+  const suggestions = (state.data.suggestedShoots || []).filter((shoot) => !shoot.bookedShootId);
+  const needRows = needs.map((need) => h("div", { class: "job" },
+    h("strong", {}, `${storeLabel(need.storeId)} · ${need.subject}`),
+    h("div", {}, `${need.format} · due ${prettyDay(need.dueOn)} · ${need.postIds.length} post${need.postIds.length === 1 ? "" : "s"}`),
+    need.covered
+      ? h("div", { class: "covered" }, `Covered · ${need.coveredBy.source}${need.coveredBy.url ? ` · ${need.coveredBy.url}` : ""}`)
+      : h("p", { class: "block" }, need.blockedBy.join(" · "))));
+  const shootRows = suggestions.map((shoot) => h("div", { class: "job" },
+    h("strong", {}, `${storeLabel(shoot.storeId)} · ${prettyDay(shoot.shootOn)}`),
+    h("div", {}, `${shoot.shooter} · ${shoot.durationMin} min · ${shoot.location}`),
+    h("div", { class: "muted" }, shoot.shotList.map((shot) => `${shot.format} · ${shot.subject}`).join(" · ")),
+    h("button", { type: "button", class: "btn", onClick: () => acceptShoot(shoot) }, "Put on the calendar")));
+  const needList = needs.length ? h("div", {}, ...needRows) : h("p", { class: "empty" }, "No post briefs yet, so nothing to shoot.");
+  const shootList = suggestions.length ? h("div", {}, ...shootRows) : h("p", { class: "empty" }, "Every open need is already on a shoot, or the library already has it.");
+  appEl.append(h("section", {},
+    h("div", { class: "section-head" },
+      h("div", {}, h("p", { class: "kicker" }, "From the posts"), h("h2", {}, "Needs and shoots")),
+      h("p", { class: "note" }, "Photos and reels, deduped. Covered when Drive, PostEngine, or a finished shoot already has the asset. Open needs become a shoot before the due date.")),
+    h("div", { class: "need-grid" },
+      h("article", { class: "sheet" }, h("h3", {}, "Asset needs"), needList),
+      h("article", { class: "sheet" }, h("h3", {}, "Suggested shoots"), shootList))));
+}
+
+async function acceptShoot(shoot) {
+  await api("/api/planner/shoots/accept", {
+    method: "POST",
+    body: {
+      storeId: shoot.storeId,
+      shootOn: shoot.shootOn,
+      shooter: shoot.shooter,
+      location: shoot.location,
+      durationMin: shoot.durationMin,
+      windowStart: shoot.windowStart,
+      windowEnd: shoot.windowEnd,
+      shotList: shoot.shotList,
+      brief: shoot.shotList.map((shot) => `${shot.format}: ${shot.subject}`).join("; "),
+    },
+  });
+  await load();
+}
+
+function renderBriefs() {
+  const posts = (state.data.calendar || []).filter((item) => item.kind === "post");
+  const cards = posts.map((post) => {
+    const jobs = (state.data.jobs || []).filter((job) => job.briefId === post.id);
+    const jobRows = jobs.map((job) => h("div", { class: "job" },
+      h("strong", {}, `${job.assignee} · ${job.role} · ${job.status.replaceAll("_", " ")}`),
+      job.blockedBy && job.blockedBy.length
+        ? h("div", { class: "block" }, job.blockedBy.join(" · "))
+        : h("div", { class: "covered" }, "Clear to work")));
+    return h("article", { class: "sheet" },
+      h("p", { class: "kicker" }, `${storeLabel(post.storeId)} · ${prettyDay(post.startsOn)} · ${post.stage || "brief"}`),
+      h("h3", {}, post.title),
+      h("p", {}, post.goal || "No goal yet."),
+      h("p", { class: "note" }, post.creativeRequest || "No creative request yet."),
+      h("p", { class: "muted" }, [(post.channels || []).join(", ") || post.channel, (post.formats || []).join(", "), post.offerLink, post.subject].filter(Boolean).join(" · ")),
+      post.blockedBy && post.blockedBy.length ? h("p", { class: "block" }, post.blockedBy.join(" · ")) : null,
+      jobs.length ? h("div", {}, ...jobRows) : h("p", { class: "empty" }, "No jobs yet."),
+      h("div", { class: "pager", style: "margin-top:0.7rem" },
+        h("button", { type: "button", class: "btn ghost", onClick: () => editCalendar(post) }, "Edit brief"),
+        h("button", { type: "button", class: "btn", onClick: () => makeJobs(post) }, "Make the jobs")));
+  });
+  const body = posts.length
+    ? h("div", { class: "stack" }, ...cards)
+    : h("p", { class: "sheet empty" }, "No post briefs this month. Add one, or open the quarter and fill the slots.");
+  appEl.append(h("section", {},
+    h("div", { class: "section-head" },
+      h("div", {}, h("p", { class: "kicker" }, "What creative is needed"), h("h2", {}, "Briefs")),
+      h("button", { type: "button", class: "btn", onClick: () => editCalendar(null, state.data.today, "post") }, "Add a post")),
+    body));
+}
+
+async function makeJobs(post) {
+  await api(`/api/planner/calendar/${post.id}/jobs`, { method: "POST", body: {} });
+  await load();
+}
+
+function renderQueue() {
+  const jobs = state.data.jobs || [];
+  const names = [...new Set(jobs.map((job) => job.assignee))];
+  const columns = names.map((name) => h("section", { class: "owner-col" },
+    h("h3", {}, name),
+    ...jobs.filter((job) => job.assignee === name).map((job) => h("div", { class: "job" },
+      h("strong", {}, job.title.replace(/^SAMPLE — /, "")),
+      h("div", { class: "muted" }, `${job.role} · ${job.status.replaceAll("_", " ")}${job.dueOn ? ` · ${prettyDay(job.dueOn)}` : ""}`),
+      job.blockedBy && job.blockedBy.length
+        ? h("div", { class: "block" }, job.blockedBy.join(" · "))
+        : h("div", { class: "covered" }, "Ready")))));
+  const body = names.length ? h("div", { class: "owner-grid" }, ...columns) : h("p", { class: "empty" }, "No jobs yet.");
+  appEl.append(h("section", {},
+    h("div", { class: "section-head" },
+      h("div", {}, h("p", { class: "kicker" }, "What the bots poll"), h("h2", {}, "Job queue")),
+      h("p", { class: "note" }, "GET /api/planner/jobs?assignee=Frances with that bot’s token. Deliver comes back on the same job.")),
+    body));
 }
 
 function tickClock() {

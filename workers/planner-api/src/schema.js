@@ -24,10 +24,22 @@ CREATE TABLE IF NOT EXISTS calendar_items (
   owner TEXT,
   status TEXT NOT NULL DEFAULT 'planned',
   notes TEXT NOT NULL DEFAULT '',
+  kind TEXT NOT NULL DEFAULT 'note',
+  channels TEXT NOT NULL DEFAULT '[]',
+  goal TEXT NOT NULL DEFAULT '',
+  offer_link TEXT NOT NULL DEFAULT '',
+  creative_request TEXT NOT NULL DEFAULT '',
+  subject TEXT NOT NULL DEFAULT '',
+  formats TEXT NOT NULL DEFAULT '[]',
+  pipeline TEXT NOT NULL DEFAULT '',
+  caption TEXT NOT NULL DEFAULT '',
+  postengine_post_id TEXT,
   fixture INTEGER NOT NULL DEFAULT 0,
   created_at TEXT NOT NULL,
   updated_at TEXT NOT NULL,
   CHECK (status IN ('planned', 'in_progress', 'ready', 'done', 'dropped')),
+  CHECK (kind IN ('note', 'post')),
+  CHECK (pipeline IN ('', 'brief', 'creative', 'approved', 'queued', 'published')),
   CHECK (owner IS NULL OR owner IN ('Daisy', 'Eleanor', 'Frances', 'Ansel', 'Steve', 'Della', 'Lance')),
   CHECK (fixture IN (0, 1))
 );
@@ -42,6 +54,10 @@ CREATE TABLE IF NOT EXISTS shoots (
   location TEXT NOT NULL DEFAULT '',
   brief TEXT NOT NULL DEFAULT '',
   status TEXT NOT NULL DEFAULT 'planned',
+  duration_min INTEGER NOT NULL DEFAULT 60,
+  shot_list TEXT NOT NULL DEFAULT '[]',
+  window_start TEXT,
+  window_end TEXT,
   fixture INTEGER NOT NULL DEFAULT 0,
   created_at TEXT NOT NULL,
   updated_at TEXT NOT NULL,
@@ -116,6 +132,7 @@ CREATE TABLE IF NOT EXISTS approvals (
   status TEXT NOT NULL DEFAULT 'pending',
   notes TEXT NOT NULL DEFAULT '',
   due_on TEXT,
+  brief_id TEXT,
   fixture INTEGER NOT NULL DEFAULT 0,
   created_at TEXT NOT NULL,
   updated_at TEXT NOT NULL,
@@ -130,4 +147,74 @@ CREATE INDEX IF NOT EXISTS idx_shoots_on ON shoots (shoot_on);
 CREATE INDEX IF NOT EXISTS idx_tasks_owner ON tasks (owner, status);
 CREATE INDEX IF NOT EXISTS idx_approvals_status ON approvals (status);
 CREATE INDEX IF NOT EXISTS idx_events_decision ON events (decision);
+
+CREATE TABLE IF NOT EXISTS jobs (
+  id TEXT PRIMARY KEY,
+  brief_id TEXT NOT NULL,
+  role TEXT NOT NULL,
+  assignee TEXT NOT NULL,
+  title TEXT NOT NULL,
+  status TEXT NOT NULL DEFAULT 'requested',
+  due_on TEXT,
+  notes TEXT NOT NULL DEFAULT '',
+  caption_draft TEXT NOT NULL DEFAULT '',
+  asset_urls TEXT NOT NULL DEFAULT '[]',
+  fixture INTEGER NOT NULL DEFAULT 0,
+  created_at TEXT NOT NULL,
+  updated_at TEXT NOT NULL,
+  CHECK (role IN ('design', 'copy', 'photo', 'video', 'shoot')),
+  CHECK (status IN ('requested', 'in_progress', 'delivered', 'approved')),
+  CHECK (fixture IN (0, 1))
+);
+
+CREATE TABLE IF NOT EXISTS quarter_plans (
+  id TEXT PRIMARY KEY,
+  store_id TEXT NOT NULL,
+  quarter TEXT NOT NULL,
+  theme TEXT NOT NULL DEFAULT '',
+  notes TEXT NOT NULL DEFAULT '',
+  fixture INTEGER NOT NULL DEFAULT 0,
+  created_at TEXT NOT NULL,
+  updated_at TEXT NOT NULL,
+  UNIQUE (store_id, quarter),
+  CHECK (fixture IN (0, 1))
+);
+
+CREATE TABLE IF NOT EXISTS quarter_months (
+  id TEXT PRIMARY KEY,
+  plan_id TEXT NOT NULL,
+  month TEXT NOT NULL,
+  theme TEXT NOT NULL DEFAULT '',
+  program_name TEXT NOT NULL DEFAULT '',
+  notes TEXT NOT NULL DEFAULT '',
+  UNIQUE (plan_id, month)
+);
+
+CREATE TABLE IF NOT EXISTS post_slots (
+  id TEXT PRIMARY KEY,
+  plan_id TEXT NOT NULL,
+  month TEXT NOT NULL,
+  channel TEXT NOT NULL,
+  target_count INTEGER NOT NULL,
+  UNIQUE (plan_id, month, channel)
+);
+
+CREATE TABLE IF NOT EXISTS assets (
+  id TEXT PRIMARY KEY,
+  store_id TEXT NOT NULL,
+  subject TEXT NOT NULL,
+  format TEXT NOT NULL,
+  source TEXT NOT NULL,
+  url TEXT NOT NULL DEFAULT '',
+  shoot_id TEXT,
+  fixture INTEGER NOT NULL DEFAULT 0,
+  created_at TEXT NOT NULL,
+  CHECK (format IN ('photo', 'reel')),
+  CHECK (source IN ('delivered', 'postengine', 'drive')),
+  CHECK (fixture IN (0, 1))
+);
+
+CREATE INDEX IF NOT EXISTS idx_jobs_brief ON jobs (brief_id);
+CREATE INDEX IF NOT EXISTS idx_jobs_assignee ON jobs (assignee, status);
+CREATE INDEX IF NOT EXISTS idx_assets_match ON assets (store_id, format);
 `.trim() + "\n";
