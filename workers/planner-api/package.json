@@ -1,0 +1,17 @@
+{
+  "name": "hub-planner",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "test": "node --test test/*.test.js",
+    "dev:fixture": "node dev-server.mjs",
+    "dev": "wrangler dev --local --port 8787",
+    "types": "wrangler types"
+  },
+  "devDependencies": {
+    "wrangler": "4.46.0"
+  }
+}

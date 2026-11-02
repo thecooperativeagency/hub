@@ -1,0 +1,11 @@
+# Copy to .dev.vars for `wrangler dev`. Do not commit .dev.vars.
+# Leave these empty to run in fixture mode. Never put real values in git.
+
+PLANNER_PIN=
+PLANNER_TOKEN=
+ZERNIO_API_KEY=
+POSTENGINE_PIN=
+
+# Optional. JSON object of store id -> Zernio account ids.
+# When set, name matching is skipped. Example shape only:
+# ZERNIO_ACCOUNT_MAP={"bhbmw":[],"abr":[],"hp":[],"bmwj":[],"coop":[]}

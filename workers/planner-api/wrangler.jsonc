@@ -1,0 +1,33 @@
+{
+  "$schema": "./node_modules/wrangler/config-schema.json",
+  "name": "hub-planner",
+  "main": "src/index.js",
+  "compatibility_date": "2026-11-02",
+  "workers_dev": false,
+  "observability": {
+    "enabled": true,
+    "logs": {
+      "head_sampling_rate": 1
+    },
+    "traces": {
+      "enabled": true,
+      "head_sampling_rate": 1
+    }
+  },
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "hub-planner",
+      // Replace database_id after `npx wrangler d1 create hub-planner`.
+      // The zero id is a placeholder so this public repo does not point at a real database.
+      "database_id": "00000000-0000-0000-0000-000000000000",
+      "migrations_dir": "migrations"
+    }
+  ],
+  "routes": [
+    {
+      "pattern": "hub.thecoopbrla.com/api/planner*",
+      "zone_name": "thecoopbrla.com"
+    }
+  ]
+}

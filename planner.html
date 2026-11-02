@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex, nofollow">
+  <meta name="referrer" content="no-referrer">
+  <title>Marketing planner — Coop Operator Hub</title>
+  <link rel="icon" href="https://thecoopbrla.com/public/images/brand/favicon.ico">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="./planner.css">
+</head>
+<body>
+  <div class="page">
+    <header class="top">
+      <a class="wordmark" href="./index.html" aria-label="The Cooperative Agency, back to the operator hub">
+        <img src="./assets/brand/logo-wordmark-on-light.png" alt="The Cooperative Agency">
+      </a>
+      <div class="title-block">
+        <p class="eyebrow">Operator hub</p>
+        <h1>Marketing planner</h1>
+      </div>
+      <div class="top-side">
+        <p class="clock" id="clock">Central time</p>
+        <a class="text-link" href="./index.html">Back to the hub</a>
+        <button type="button" class="text-button" id="lock-btn" hidden>Lock</button>
+      </div>
+    </header>
+
+    <p class="lede">The month, the rooftops, and what still needs a yes.</p>
+    <noscript><p class="lede">This page is the shell. It needs JavaScript to reach the planner API, and it stores no client work itself.</p></noscript>
+
+    <div id="banner"></div>
+    <nav id="nav" class="views" aria-label="Planner"></nav>
+    <div id="app"></div>
+
+    <footer class="foot">
+      The Cooperative Agency · Baton Rouge · Nothing on this page publishes.
+    </footer>
+  </div>
+
+  <section id="lock" class="lock" hidden>
+    <form id="lock-form">
+      <p class="eyebrow">Operator hub</p>
+      <h2>The desk is locked.</h2>
+      <p>Enter the planner PIN. Real store work stays on the Worker, not in this page.</p>
+      <label>PIN or token
+        <input name="pin" type="password" autocomplete="current-password" required>
+      </label>
+      <p class="form-error" id="lock-error" hidden></p>
+      <button type="submit" class="btn">Open the desk</button>
+    </form>
+  </section>
+
+  <dialog id="editor" aria-label="Edit planner item"></dialog>
+  <script type="module" src="./planner.js"></script>
+</body>
+</html>
