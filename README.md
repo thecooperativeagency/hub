@@ -62,6 +62,12 @@ PostEngine dealership ids are fixed: 1 BMW of Jackson, 2 Brian Harris BMW, 3 Aud
 
 With a secret missing, or when a read fails, that source falls back to a fictional feed. A live empty response stays empty. It is not filled with samples. Days behind are counted in America/Chicago against each store's cadence (2 days for the rooftops, 7 for Coop). Cadence is editable on the desk, from 1 to 30.
 
+### Shot lists
+
+`GET /api/planner/shots` is the same PostEngine read (`GET /api/posts`, header `x-dashboard-pin`), counted per model for Audi Baton Rouge, Harris Porsche, Brian Harris BMW, and BMW of Jackson. The desk tab is **Shot lists**. A row is the model, distinct photo file names, post count, last published date, and a flag. Open a row for the shot checklist and any upcoming calendar item that names that model.
+
+Thresholds live in `workers/planner-api/src/shots.js`: few is 4 or fewer photos, stale is nothing published in 60 days, overused is one photo or shoot folder over 40% of that model's posts or one photo used 3 or more times. A model with no posts is none, including one that only shows up on the calendar. `vehicleInfo` becomes a brand and model (`2026 BMW X5 M60` → BMW X5, year kept on the row). Lifestyle copy and anything unrecognized go to Other. Drafts and rejected posts are skipped. This is not a Drive catalog. With no `POSTENGINE_PIN`, the tab shows a fictional sample.
+
 ### Data model
 
 | Table | What it holds |

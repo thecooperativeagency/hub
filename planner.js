@@ -8,6 +8,7 @@ const VIEWS = [
   ["queue", "Queue"],
   ["week", "Week"],
   ["shoots", "Shoots"],
+  ["shots", "Shot lists"],
   ["programs", "Programs"],
   ["events", "Events"],
   ["tasks", "Tasks"],
@@ -72,6 +73,11 @@ const state = {
   error: "",
   showDecided: false,
   busy: false,
+  shots: null,
+  shotsLoading: false,
+  shotsError: "",
+  shotStore: "abr",
+  shotOpen: "",
 };
 
 const appEl = document.getElementById("app");
@@ -291,6 +297,8 @@ async function load() {
     state.locked = false;
     state.offline = false;
     state.error = "";
+    state.shots = null;
+    state.shotsError = "";
     if (!state.selected) state.selected = data.today;
     if (!state.week) state.week = mondayOf(data.today);
     render();
@@ -345,6 +353,7 @@ function render() {
     queue: renderQueue,
     week: renderWeek,
     shoots: renderShoots,
+    shots: renderShots,
     programs: renderPrograms,
     events: renderEvents,
     tasks: renderTasks,
@@ -557,6 +566,113 @@ function renderShoots() {
       h("div", {}, h("p", { class: "kicker" }, "Lance is the shooter for now"), h("h2", {}, "Shoots")),
       h("button", { type: "button", class: "btn", onClick: () => editShoot(null) }, "Add a shoot")),
     shoots.length ? h("div", { class: "table-wrap" }, table) : h("p", { class: "empty" }, "No shoots in this month. Add one when Della has a day.")));
+}
+
+const FLAG_LABEL = {
+  none: "None",
+  few: "Few",
+  overused: "Overused",
+  stale: "Stale",
+};
+
+async function loadShots() {
+  state.shotsLoading = true;
+  state.shotsError = "";
+  if (state.view === "shots") render();
+  try {
+    state.shots = await api("/api/planner/shots");
+    const stores = state.shots.stores || [];
+    if (!stores.some((store) => store.id === state.shotStore) && stores[0]) state.shotStore = stores[0].id;
+  } catch (err) {
+    if (err.message === "locked") return;
+    state.shots = null;
+    state.shotsError = err.offline ? "The planner API isn’t answering." : err.message;
+  } finally {
+    state.shotsLoading = false;
+    if (state.view === "shots") render();
+  }
+}
+
+function renderShots() {
+  if (!state.shots && !state.shotsLoading && !state.shotsError) {
+    loadShots();
+    return;
+  }
+  if (state.shotsLoading && !state.shots) {
+    appEl.append(h("section", { class: "sheet" },
+      h("p", { class: "kicker" }, "Per store"),
+      h("h2", {}, "Shot lists"),
+      h("p", {}, "Reading PostEngine…")));
+    return;
+  }
+  if (!state.shots) {
+    appEl.append(h("section", { class: "sheet" },
+      h("h2", {}, "Shot lists"),
+      h("p", {}, state.shotsError || "The shot list didn’t load."),
+      h("button", { type: "button", class: "btn", onClick: () => { state.shotsError = ""; loadShots(); } }, "Try again")));
+    return;
+  }
+  const data = state.shots;
+  const stores = data.stores || [];
+  const current = stores.find((store) => store.id === state.shotStore) || stores[0];
+  const modeLabel = data.mode === "live" ? "PostEngine live" : data.mode === "error" ? "PostEngine unread" : "Sample";
+  const rows = current ? current.models : [];
+  const body = rows.flatMap((row) => {
+    const openId = `${current.id}:${row.key}`;
+    const open = state.shotOpen === openId;
+    const years = row.years && row.years.length ? row.years.join(", ") : "";
+    const flagNodes = row.flags.map((flag) => h("span", { class: `mark ${flag}` }, FLAG_LABEL[flag] || flag));
+    const main = h("tr", { class: open ? "shot-row is-open" : "shot-row", onClick: () => toggleShot(openId) },
+      h("td", {},
+        h("button", {
+          type: "button",
+          class: "text-button shot-model",
+          "aria-expanded": open ? "true" : "false",
+          onClick: (event) => { event.stopPropagation(); toggleShot(openId); },
+        }, row.key),
+        years ? h("div", { class: "muted" }, years) : null),
+      h("td", {}, String(row.photoCount)),
+      h("td", {}, String(row.postCount)),
+      h("td", {}, row.lastUsed ? prettyDay(row.lastUsed) : "—"),
+      h("td", {}, flagNodes.length ? h("span", { class: "flags" }, ...flagNodes) : "—"));
+    if (!open) return [main];
+    const needed = row.neededFor && row.neededFor.length
+      ? h("p", {}, h("span", { class: "muted" }, "Needed for "), row.neededFor.map((item) => `${String(item.title).replace(/^SAMPLE — /, "")} · ${prettyDay(item.startsOn)}`).join("; "))
+      : null;
+    const detail = h("tr", { class: "shot-detail" },
+      h("td", { colspan: "5" },
+        h("p", { class: "kicker" }, "Shots to get"),
+        h("ul", { class: "checklist" }, ...(data.checklist || []).map((item) => h("li", {}, item.label))),
+        needed));
+    return [main, detail];
+  });
+  const tableRows = body.length
+    ? body
+    : [h("tr", {}, h("td", { colspan: "5" }, h("p", { class: "empty" }, "No models in this read.")))];
+  const table = h("table", {},
+    h("thead", {}, h("tr", {}, ...["Model", "Photos", "Posts", "Last used", "Flag"].map((label) => h("th", {}, label)))),
+    h("tbody", {}, ...tableRows));
+  const thresholds = data.thresholds || {};
+  const share = Math.round(Number(thresholds.overusedShare || 0) * 100);
+  appEl.append(h("section", { class: "sheet" },
+    h("div", { class: "section-head" },
+      h("div", {}, h("p", { class: "kicker" }, modeLabel), h("h2", {}, "Shot lists")),
+      h("p", { class: "note" }, "Photos already used on posts. Not a catalog of raws still in Drive.")),
+    data.warning ? h("p", { class: "block" }, data.warning) : null,
+    h("div", { class: "store-switch", role: "group", "aria-label": "Store" }, ...stores.map((store) => h("button", {
+      type: "button",
+      "aria-pressed": current && store.id === current.id ? "true" : "false",
+      onClick: () => { state.shotStore = store.id; state.shotOpen = ""; render(); },
+    }, store.name))),
+    h("div", { class: "table-wrap" }, table),
+    h("details", { class: "shot-notes" },
+      h("summary", {}, "How the flags are set"),
+      h("p", {}, `Few is ${thresholds.fewPhotos} or fewer distinct photos. Stale means nothing published in ${thresholds.staleDays} days. Overused means one photo or shoot folder accounts for over ${share}% of that model's posts, or one photo is used ${thresholds.overusedRepeats} or more times. A model named on an upcoming calendar item with no posts is marked none.`))));
+}
+
+function toggleShot(openId) {
+  state.shotOpen = state.shotOpen === openId ? "" : openId;
+  render();
 }
 
 function renderPrograms() {

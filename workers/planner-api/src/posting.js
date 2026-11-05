@@ -375,13 +375,17 @@ export async function loadZernio(env, fetchImpl) {
   return posts;
 }
 
-export async function loadPostEngine(env, fetchImpl) {
+export async function loadPostEngineRows(env, fetchImpl) {
   const payload = await upstreamJson(POSTENGINE_POSTS, {
     Accept: "application/json",
     "x-dashboard-pin": env.POSTENGINE_PIN,
   }, fetchImpl);
+  return asList(payload);
+}
+
+export async function loadPostEngine(env, fetchImpl) {
   const posts = [];
-  for (const row of asList(payload)) {
+  for (const row of await loadPostEngineRows(env, fetchImpl)) {
     const post = normalizePostEnginePost(row);
     if (post) posts.push(post);
   }
