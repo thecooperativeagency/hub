@@ -544,6 +544,7 @@ describe("repo guards", () => {
     const files = [
       new URL("../src/seed.js", import.meta.url),
       new URL("../src/posting.js", import.meta.url),
+      new URL("../src/shots.js", import.meta.url),
       new URL("../../../planner.html", import.meta.url),
       new URL("../../../planner.js", import.meta.url),
     ];

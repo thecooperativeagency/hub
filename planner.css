@@ -356,6 +356,27 @@ dialog::backdrop { background: rgba(0, 0, 0, 0.45); }
 .job .btn { width: auto; justify-self: start; }
 .covered { color: #333; }
 
+.store-switch { display: flex; flex-wrap: wrap; gap: 0.35rem; margin-bottom: 0.9rem; }
+.store-switch button {
+  background: transparent;
+  border: 1px solid #000;
+  min-height: 2.2rem;
+  padding: 0.2rem 0.7rem;
+  cursor: pointer;
+}
+.store-switch button[aria-pressed="true"] { background: #000; color: #fff; }
+.shot-row { cursor: pointer; }
+.shot-model { font-weight: 600; text-align: left; }
+.flags { display: flex; flex-wrap: wrap; gap: 0.3rem; }
+.mark.none, .mark.few, .mark.stale { color: var(--alert); }
+.mark.overused { background: var(--alert); color: #fff; padding: 0.12rem 0.35rem; }
+.shot-detail td { background: var(--soft); padding-top: 0.15rem; }
+.checklist { margin: 0.15rem 0 0.55rem; padding-left: 1.15rem; }
+.checklist li { margin: 0.12rem 0; }
+.shot-notes { margin-top: 0.95rem; }
+.shot-notes summary { cursor: pointer; }
+.shot-notes p { margin: 0.45rem 0 0; color: var(--muted); max-width: 42rem; }
+
 .foot {
   margin-top: 2.5rem;
   padding-top: 0.8rem;

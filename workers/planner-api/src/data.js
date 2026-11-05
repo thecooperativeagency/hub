@@ -344,6 +344,17 @@ export async function listStores(db) {
   return rows.map(mapStore);
 }
 
+export async function listUpcomingCalendar(db, today) {
+  const rows = await all(
+    db,
+    `SELECT * FROM calendar_items
+     WHERE starts_on >= ? AND status NOT IN ('dropped', 'done')
+     ORDER BY starts_on, title`,
+    today,
+  );
+  return rows.map(mapCalendar);
+}
+
 export async function listCalendar(db, from, to) {
   const rows = await all(
     db,

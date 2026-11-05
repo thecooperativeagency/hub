@@ -51,6 +51,7 @@ import {
 import { annotateChain, nextQuarter, previousQuarter, quarterMonths, quarterOf, rollQuarter, templateQuarter } from "./derive.js";
 import { CORS, HttpError, json, readBody } from "./http.js";
 import { loadPosting } from "./posting.js";
+import { loadShotLists } from "./shots.js";
 import { peWriteEnabled, queueDraft } from "./postengine-write.js";
 import { chicagoNow, zonedParts } from "./time.js";
 import { choice, channel, clock, day, enums, monthKey, owner, recordId, storeId, text } from "./validate.js";
@@ -361,6 +362,13 @@ async function route(request, env, fetchImpl) {
       tasks: data.tasks,
       approvals: data.approvals,
     });
+  }
+
+  if (path === "/api/planner/shots" && request.method === "GET") {
+    const { zoned } = clockFrom(env);
+    await ready(env, nowIso, zoned.date);
+    const shots = await loadShotLists({ env, fetchImpl, db: env.DB, today: zoned.date });
+    return json({ ok: true, ...shots });
   }
 
   if (path === "/api/planner/fixtures" && request.method === "DELETE") {
