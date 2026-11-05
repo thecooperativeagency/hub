@@ -9,10 +9,10 @@ import {
   findModels,
   fixtureShotPosts,
   flagsFor,
+  driveFileId,
   mediaBasenames,
   normalizeVehicle,
   overusedPosts,
-  shootFolder,
 } from "../src/shots.js";
 import { addDays } from "../src/time.js";
 
@@ -99,9 +99,9 @@ describe("model normalization", () => {
       ])),
       ["white-coupe.jpg", "blue-sedan.jpg"],
     );
-    assert.equal(shootFolder("sample/picnic-lawn/q3-1.jpg"), "picnic-lawn");
-    assert.equal(shootFolder("https://files.example.com/sample/picnic-lawn/q3-1.jpg"), "picnic-lawn");
-    assert.equal(shootFolder("file-abc"), "");
+    assert.equal(driveFileId("sample-category/file-9"), "file-9");
+    assert.equal(driveFileId("https://files.example.com/sample-category/file-9"), "file-9");
+    assert.equal(driveFileId("file-abc"), "file-abc");
   });
 });
 
@@ -130,24 +130,81 @@ describe("shot flags", () => {
     assert.deepEqual(flagsFor({ postCount: 4, photoCount: 6, lastUsed: null, overused: true, today }), ["overused", "stale"]);
   });
 
-  test("one photo or one shoot folder, not a single post", () => {
-    assert.equal(overusedPosts([{ basenames: ["a.jpg"], folder: "only", sourceId: "only/a.jpg" }]), false);
-    const even = Array.from({ length: 5 }, (_, index) => ({
-      basenames: [`p${index}.jpg`],
-      folder: index < 2 ? "same" : `other-${index}`,
-      sourceId: `same/p${index}.jpg`,
+  test("one photo is overused, a shared category folder is not", () => {
+    assert.equal(overusedPosts([{ basenames: ["a.jpg"], fileId: "file-a" }]), false);
+    const distinct = Array.from({ length: 5 }, (_, index) => ({
+      basenames: [`frame-${index}.jpg`],
+      fileId: `file-${index}`,
     }));
-    assert.equal(overusedPosts(even), false);
-    const heavy = even.map((post, index) => (index < 3 ? { ...post, folder: "same" } : post));
-    assert.equal(overusedPosts(heavy), true);
+    assert.equal(overusedPosts(distinct), false);
+    const two = distinct.map((post, index) => (index < 2 ? { basenames: ["same.jpg"], fileId: "file-same" } : post));
+    assert.equal(overusedPosts(two), false);
+    const three = distinct.map((post, index) => (index < 3 ? { ...post, fileId: "file-same" } : post));
+    assert.equal(overusedPosts(three), true);
     const repeats = [
-      { basenames: ["hero.jpg", "a.jpg"], folder: "a", sourceId: "a/1" },
-      { basenames: ["hero.jpg", "b.jpg"], folder: "b", sourceId: "b/2" },
-      { basenames: ["hero.jpg", "c.jpg"], folder: "c", sourceId: "c/3" },
-      { basenames: ["d.jpg"], folder: "d", sourceId: "d/4" },
-      { basenames: ["e.jpg"], folder: "e", sourceId: "e/5" },
+      { basenames: ["hero.jpg"], fileId: "f1" },
+      { basenames: ["hero.jpg"], fileId: "f2" },
+      { basenames: ["hero.jpg"], fileId: "f3" },
+      { basenames: ["d.jpg"], fileId: "f4" },
+      { basenames: ["e.jpg"], fileId: "f5" },
     ];
     assert.equal(overusedPosts(repeats), true);
+  });
+
+  test("SAMPLE rows that share a category folder but not a file id are not overused", () => {
+    const posts = [];
+    for (let n = 1; n <= 5; n += 1) {
+      posts.push({
+        dealershipId: 4,
+        status: "published",
+        vehicleInfo: "SAMPLE Porsche 911",
+        mediaUrls: [`https://example.com/sample/frame-${n}.jpg`],
+        folderSource: `sample-category/file-${n}`,
+        publishedAt: "2026-10-20T18:00:00.000Z",
+      });
+    }
+    posts.push({
+      dealershipId: 4,
+      status: "published",
+      vehicleInfo: "SAMPLE BMW 8 Series",
+      mediaUrls: ["https://example.com/sample/eight.jpg"],
+      folderSource: "sample-category/file-eight",
+      publishedAt: "2026-10-20T18:00:00.000Z",
+    });
+    posts.push({
+      dealershipId: 2,
+      status: "published",
+      vehicleInfo: "SAMPLE BMW 8 Series",
+      mediaUrls: ["https://example.com/sample/eight-b.jpg"],
+      folderSource: "sample-category/file-eight-b",
+      publishedAt: "2026-10-22T18:00:00.000Z",
+    });
+    for (let n = 1; n <= 3; n += 1) {
+      posts.push({
+        dealershipId: 3,
+        status: "published",
+        vehicleInfo: "SAMPLE Audi Q5",
+        mediaUrls: [`https://example.com/sample/q5-${n}.jpg`],
+        folderSource: "sample-category/file-same",
+        publishedAt: "2026-10-20T18:00:00.000Z",
+      });
+    }
+    assert.equal(normalizeVehicle("SAMPLE BMW 8 Series").models[0].key, "BMW 8 Series");
+    const stores = buildShotLists({
+      posts,
+      calendar: [{ id: "cal-off", storeId: "hp", title: "SAMPLE — BMW 8 Series note", startsOn: "2026-11-12", status: "planned" }],
+      today: TODAY,
+    });
+    const porsche = modelRow(stores, "hp", "Porsche 911");
+    assert.equal(porsche.postCount, 5);
+    assert.equal(porsche.photoCount, 5);
+    assert.equal(porsche.flags.includes("overused"), false);
+    assert.equal(modelRow(stores, "hp", "BMW 8 Series"), null);
+    const other = modelRow(stores, "hp", "Other");
+    assert.equal(other.postCount, 1);
+    assert.equal(other.neededFor.length, 0);
+    assert.equal(modelRow(stores, "bhbmw", "BMW 8 Series").key, "BMW 8 Series");
+    assert.ok(modelRow(stores, "abr", "Audi Q5").flags.includes("overused"));
   });
 
   test("groups posts by model and keeps a calendar-only model", () => {
@@ -249,7 +306,7 @@ describe("shot flags", () => {
     const blob = JSON.stringify(stores);
     assert.equal(blob.includes("example.com/sample/"), false);
     assert.deepEqual(modelRow(stores, "abr", "Audi Q7").flags, ["few"]);
-    assert.deepEqual(modelRow(stores, "abr", "Audi Q3").flags, ["overused"]);
+    assert.equal(modelRow(stores, "abr", "Audi Q3").flags.includes("overused"), false);
     assert.ok(modelRow(stores, "abr", "Other").flags.includes("stale"));
     assert.deepEqual(modelRow(stores, "hp", "Porsche 911").flags, ["stale"]);
     assert.deepEqual(modelRow(stores, "bhbmw", "BMW X5").flags, []);
@@ -297,7 +354,7 @@ describe("shot list endpoint", () => {
         status: "published",
         vehicleInfo: "SAMPLE Audi Q3",
         mediaUrls: ["https://cdn.example.com/sample/q3-1.jpg"],
-        folderSource: "sample/picnic-lawn/q3-1.jpg",
+        folderSource: "sample-category/file-q3-1",
         publishedAt: "2026-10-18T18:00:00.000Z",
       },
     ];
@@ -308,7 +365,7 @@ describe("shot list endpoint", () => {
         status: "published",
         vehicleInfo: "SAMPLE Audi Q3",
         mediaUrls: [`https://cdn.example.com/sample/q3-${i}.jpg`],
-        folderSource: `sample/picnic-lawn/q3-${i}.jpg`,
+        folderSource: `sample-category/file-q3-${i}`,
         publishedAt: "2026-10-10T18:00:00.000Z",
       });
     }
@@ -392,7 +449,7 @@ describe("shot list endpoint", () => {
     const q3 = modelRow(res.json.stores, "abr", "Audi Q3");
     assert.equal(q3.photoCount, 5);
     assert.equal(q3.postCount, 5);
-    assert.deepEqual(q3.flags, ["overused"]);
+    assert.equal(q3.flags.includes("overused"), false);
     const q9 = modelRow(res.json.stores, "abr", "Audi Q9");
     assert.deepEqual(q9.flags, ["none"]);
     assert.equal(q9.postCount, 0);

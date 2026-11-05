@@ -667,7 +667,7 @@ function renderShots() {
     h("div", { class: "table-wrap" }, table),
     h("details", { class: "shot-notes" },
       h("summary", {}, "How the flags are set"),
-      h("p", {}, `Few is ${thresholds.fewPhotos} or fewer distinct photos. Stale means nothing published in ${thresholds.staleDays} days. Overused means one photo or shoot folder accounts for over ${share}% of that model's posts, or one photo is used ${thresholds.overusedRepeats} or more times. A model named on an upcoming calendar item with no posts is marked none.`))));
+      h("p", {}, `Few is ${thresholds.fewPhotos} or fewer distinct photos. Stale means nothing published in ${thresholds.staleDays} days. Overused means one photo is used ${thresholds.overusedRepeats} or more times, or one photo accounts for over ${share}% of that model's posts. A model named on an upcoming calendar item with no posts is marked none.`))));
 }
 
 function toggleShot(openId) {

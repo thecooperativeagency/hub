@@ -7,7 +7,7 @@ import { daysBetween, zonedParts } from "./time.js";
 export const FEW_PHOTO_MAX = 4;
 /** No publish in more than this many days is stale. */
 export const STALE_DAYS = 60;
-/** One photo or shoot folder above this share of a model's posts is overused. */
+/** One photo above this share of a model's posts is overused. */
 export const OVERUSED_SHARE = 0.4;
 /** One photo used this many times is overused even below the share. */
 export const OVERUSED_REPEATS = 3;
@@ -15,6 +15,13 @@ export const OVERUSED_REPEATS = 3;
 export const OVERUSED_MIN_POSTS = 3;
 
 export const SHOT_STORE_IDS = ["abr", "hp", "bhbmw", "bmwj"];
+
+const STORE_BRAND = {
+  abr: "Audi",
+  hp: "Porsche",
+  bhbmw: "BMW",
+  bmwj: "BMW",
+};
 
 export const SHOT_CHECKLIST = [
   { id: "front-34", label: "Exterior 3/4 front" },
@@ -154,24 +161,21 @@ export function mediaBasenames(value) {
   return names;
 }
 
-/** Parent folder of a path or URL. A bare file id is not a shoot folder. */
-export function shootFolder(folderSource) {
-  const raw = String(folderSource || "").trim();
-  if (!raw) return "";
-  let path = raw.split("#")[0].split("?")[0];
-  try {
-    if (/^https?:\/\//i.test(path)) path = decodeURIComponent(new URL(path).pathname);
-  } catch {
-    /* keep the raw path */
-  }
-  const parts = path.replace(/\\/g, "/").split("/").filter(Boolean);
-  if (parts.length < 2) return "";
-  return parts[parts.length - 2].toLowerCase();
+/**
+ * PostEngine folderSource is `{categoryFolderId}/{fileId}`. The first segment
+ * is a Drive category such as New Cars, shared by the whole store, not a shoot.
+ * The photo is the last segment.
+ */
+export function driveFileId(folderSource) {
+  return fileBase(folderSource).toLowerCase();
 }
 
-function sourceIdentity(folderSource) {
-  const raw = String(folderSource || "").trim();
-  return raw ? raw.toLowerCase() : "";
+function modelForStore(storeId, model) {
+  const expected = STORE_BRAND[storeId];
+  if (expected && model.brand && model.brand !== expected) {
+    return { key: "Other", brand: "", model: "Other" };
+  }
+  return model;
 }
 
 export function classifyShotPost(row) {
@@ -203,21 +207,15 @@ function shareHit(count, total) {
 export function overusedPosts(posts) {
   const total = posts.length;
   const photos = new Map();
-  const folders = new Map();
-  const sources = new Map();
+  const files = new Map();
   for (const post of posts) {
     for (const name of new Set(post.basenames || [])) photos.set(name, (photos.get(name) || 0) + 1);
-    if (post.folder) folders.set(post.folder, (folders.get(post.folder) || 0) + 1);
-    if (post.sourceId) sources.set(post.sourceId, (sources.get(post.sourceId) || 0) + 1);
+    if (post.fileId) files.set(post.fileId, (files.get(post.fileId) || 0) + 1);
   }
-  for (const count of photos.values()) {
-    if (count >= OVERUSED_REPEATS || shareHit(count, total)) return true;
-  }
-  for (const count of sources.values()) {
-    if (count >= OVERUSED_REPEATS || shareHit(count, total)) return true;
-  }
-  for (const count of folders.values()) {
-    if (shareHit(count, total)) return true;
+  for (const counts of [photos, files]) {
+    for (const count of counts.values()) {
+      if (count >= OVERUSED_REPEATS || shareHit(count, total)) return true;
+    }
   }
   return false;
 }
@@ -304,20 +302,19 @@ export function buildShotLists({ posts, calendar, today }) {
     const info = String(firstValue(raw, ["vehicleInfo", "vehicle_info"]) || "");
     const normalized = normalizeVehicle(info);
     const names = mediaBasenames(firstValue(raw, ["mediaUrls", "media_urls"]));
-    const folderSource = firstValue(raw, ["folderSource", "folder_source"]);
+    const fileId = driveFileId(firstValue(raw, ["folderSource", "folder_source"]));
     const publishedOn = classified.kind === "published" ? chicagoDate(classified.at) : null;
+    const seen = new Set();
     for (const model of normalized.models) {
-      const row = take(store.id, model);
-      if (!normalized.other) {
+      const placed = modelForStore(store.id, model);
+      if (seen.has(placed.key)) continue;
+      seen.add(placed.key);
+      const row = take(store.id, placed);
+      if (!normalized.other && placed.brand) {
         for (const year of normalized.years) row.years.add(year);
       }
       for (const name of names) row.basenames.add(name);
-      row.posts.push({
-        basenames: names,
-        folder: shootFolder(folderSource),
-        sourceId: sourceIdentity(folderSource),
-        publishedOn,
-      });
+      row.posts.push({ basenames: names, fileId, publishedOn });
     }
   }
 
@@ -328,7 +325,9 @@ export function buildShotLists({ posts, calendar, today }) {
     const hay = [item.title, item.subject, item.notes, item.goal, item.creativeRequest].filter(Boolean).join("\n");
     const models = findModels(hay);
     for (const model of models) {
-      const row = take(item.storeId, model);
+      const placed = modelForStore(item.storeId, model);
+      if (!placed.brand) continue;
+      const row = take(item.storeId, placed);
       if (!row.posts.length) {
         for (const year of yearsIn(hay)) row.years.add(year);
       }
