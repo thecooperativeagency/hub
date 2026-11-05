@@ -145,7 +145,12 @@ function mapApproval(row) {
 
 export async function ready(env, nowIso, today) {
   if (!env.DB) throw new HttpError(500, "planner database is not bound");
-  await env.DB.exec(SCHEMA);
+  // D1's exec() treats each line as a statement, so run the schema as one batch of statements.
+  if (typeof env.DB.batch === "function" && typeof env.DB.prepare === "function") {
+    await env.DB.batch(SCHEMA.split(";").map((s) => s.trim()).filter(Boolean).map((s) => env.DB.prepare(s)));
+  } else {
+    await env.DB.exec(SCHEMA);
+  }
   for (const store of STORES) {
     await run(
       env.DB,
