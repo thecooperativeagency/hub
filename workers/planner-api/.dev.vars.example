@@ -1,0 +1,18 @@
+# Copy to .dev.vars for `wrangler dev`. Do not commit .dev.vars.
+# Leave these empty to run in fixture mode. Never put real values in git.
+
+PLANNER_PIN=
+PLANNER_TOKEN=
+ZERNIO_API_KEY=
+POSTENGINE_PIN=
+
+# Bot tokens, JSON object of name -> token. See docs/BOT_API.md.
+# PLANNER_BOT_TOKENS={"eleanor":"","frances":"","ansel":"","steve":"","lance":""}
+
+# Keep at 0 until docs/POSTENGINE_CONTRACT.md is implemented on PostEngine.
+PLANNER_PE_WRITE=0
+# POSTENGINE_IMPORT_TOKEN=
+
+# Optional. JSON object of store id -> Zernio account ids.
+# When set, name matching is skipped. Example shape only:
+# ZERNIO_ACCOUNT_MAP={"bhbmw":[],"abr":[],"hp":[],"bmwj":[],"coop":[]}
